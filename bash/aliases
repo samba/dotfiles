@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# COLORIZING {{{
+if [ "$TERM" != "dumb" ] && [ -x /usr/bin/dircolors ]; then
+    eval "`dircolors -b`"
+    alias ls='ls --color=auto'
+    alias dir='ls --color=auto --format=vertical'
+    alias vdir='ls --color=auto --format=long'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+# }}}
+# FILE LISTING {{{
+alias ll='ls -lh'
+alias la='ls -A'
+alias l='ls -CF'
+# }}}
+
+# Process Listing and Task Management{{{
+
+# set my preferred PS output format - this is handled by 'ps' directly
+export PS_FORMAT="pid,state,%cpu,%mem,euser:15,command"
+p () {
+	case $1 in
+		waiting) ps -ae | awk '$2 ~ /^D$/ { print }';;
+		watch) shift; PS_FORMAT='pid,user,state,vsz,rsz,%mem,%cpu,command' watch -n 1 ps $@;;
+		*) ps;;
+	esac
+}
+
+
+# prefer htop over top if htop is present
+which htop >/dev/null && alias top='htop'
+
+
+# }}}
+
+# User/Session Management {{{ 
+alias who='who -T'
+alias me='who -m'
+
+
+alias j='jobs -l'
+alias d='dirs -l -v'
+# }}}
+
+
+alias aes='aespipe -H rmd160 -e aes256'
+alias unaes='aespipe -d -H rmd160 -e aes256'
+
+
+enable_ibm_hotkey () {
+	echo 'echo enable,0x00ffffff > /proc/acpi/ibm/hotkey' | sudo /bin/sh
+}
+
+
+# vim: foldenable foldmethod=marker

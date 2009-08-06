@@ -1,0 +1,86 @@
+# screen runtime configuration
+ 
+#  get system default. {{{
+ source /etc/screenrc
+# }}}
+# key bindings {{{
+
+# use C-\  instead of C-a for screen control char
+# escape \034\034 
+
+# use C-[ instead of C-a - this also matches the ESC key in many systems.
+# escape ^[x
+
+# Simulate F1 to bypass gnome-terminal and the like from picking it up... use C-a F1
+#bind k1 stuff k1
+
+# Stop screen from catching C-S and C-Q, XON and XOFF
+defflow off
+
+# Evil evil keybindings. Do Not Want!
+bind ^\
+bind \\
+bind ^h
+bind h
+bind ^Q
+bind q
+bind ^S
+bind s
+
+# for launching some of the stuff i use most
+bind b screen -t 'btg' btgncli -a
+bind v screen vim
+bind i screen irssi
+bind t screen -t 'ps/top' bash -c "which htop > /dev/null && htop || top"
+bind R screen -t '#|root:' sudo -s
+
+
+# }}} 
+
+
+
+# detach on hangup. {{{
+autodetach on
+# }}} 
+# each window should be a login shell... {{{
+shell -$SHELL # this may cause problems with key interpretation, e.g. backspace
+# }}} 
+# terminal sharing {{{
+multiuser on # so I can attach from multiple points.
+# }}} 
+
+# custom fields for the caption and hardstatus... {{{
+# syntax: backtick $id $valid_time $reload_time $command...
+# load average
+#backtick	110	2	2	sh -c "cat /proc/loadavg | tr -s ' ' \"\t\" | cut -f 1"
+# number of processors
+#backtick 	111	60	60	sh -c "cat /proc/cpuinfo | grep -E '^processor' | wc -l"
+# mem consumption %
+#backtick	112	2	2	sh -c "free -b | grep -E '^Mem:' | tr -s ' ' \"\t\" | cut -f 2,3 | while read a b; do  echo \"scale=2; (\$b / \$a)*100;\" | bc | sed 's/.00/%/'; done"
+# }}}
+
+
+
+shelltitle '$|?'
+
+# stat line at the bottom of each screen 
+caption splitonly "%{= .g}%{+u} %= %{-}[%n %{= .y}%t%{-}]"
+
+# stat line at the  very bottom of the terminal 
+hardstatus alwayslastline '%{= .g}%{b G}%H%{-} %= %?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g} %{= .y}%u%{-} %{= .b}%f%{-} l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
+ 
+
+# If a window goes unresponsive, don't block the whole session waiting for it.
+nonblock on
+#
+
+
+# Filename for the paste buffer
+bufferfile screen.buf
+
+# altscreen on
+vbell off
+
+
+
+# vim: foldmethod=marker foldenable

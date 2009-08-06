@@ -1,0 +1,15 @@
+*.gz
+*.zip
+
+vim/rc.d/original.tar.gz
+vim/view
+vim/LICENSE.EnhancedCommentify
+vim/README.bashsupport
+vim/bash-support
+vim/doc/
+vim/autoload/
+vim/ftplugin/
+vim/plugin/
+vim/GetLatest/
+vim/.VimballRecord
+vim/viminfo
