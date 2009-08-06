@@ -45,77 +45,10 @@ declare list= source_dir= target_dir= files=`mktemp` exclude=`mktemp` sedscript=
 }
 # }}}
 
-# Dotfiles online integration {{{
-# A script to download from and upload to dotfiles.org
-
-# Who are you? 
-DFRoot=$HOME/.dotfiles
-DFCredentials=$DFRoot/login
-
-dotfiles () {
-	source $DFCredentials
-	DFSource="http://dotfiles.org/~$Username"
-	DFList=${DFSource}/dotfiles.list
-
-	push_real_dotfiles=y
-
-	dotfiles_list=`mktemp`
-	wget -U 'curl' $DFList -O $dotfiles_list 2>/dev/null
-	# for some reason it comes in with funky end-of-line chars
-	sed 's/[\r]//' -i $dotfiles_list
-	echo >> $dotfiles_list # and just in case there is no trailing blank line, we add one
-
-	if [ ! -z $1 ]; then 
-	case $1 in 
-		pull|download)
-		while read d; do
-			echo "Syncing: ${d}" >&2
-			wget -U 'curl' $DFSource/${d} -O ${DFRoot}/${d} >/dev/null 2>/dev/null
-			[ $? -ne 0 ] && echo "Pull failed: $d">&2;
-		done < $dotfiles_list
-		;;	
-		push|upload)
-		push_root=$DFRoot
-		[ "$push_real_dotfiles" = 'y' ] && push_root=$HOME
-		while read d; do
-			description=${DFRoot}/${d}.description;
-			if [ ! -r "${description}" ]; then
-				echo "No description present for ${d}. Please update ${description} and push again. (Proceeding anyway...)">&2
-				echo "## description for ${d}" > ${description}
-				# $EDITOR ${DFRoot}/${d}.description || continue;
-				[ `cat ${description} | wc -l` -gt 0 ] || continue;
-			fi 
-			echo "Uploading: ${d}" >&2
-			target=`curl $DFSource/${d}/edit 2>/dev/null | \
-				grep -E "<form method=\"post\" action=\"/update/[0-9]+\">" | \
-				sed -r 's/^(.*)action="(.*)"(.*)$/\2/'`
-			target="http://${Username}:${Password}@dotfiles.org${target}"
-
-			# push the data via curl
-			curl \
-				--data-urlencode filename=$d \
-				--data-urlencode contents@${push_root}/${d} \
-				--data-urlencode description@${description} \
-				$target >/dev/null 2>/dev/null
-			[ $? -ne 0 ] && echo "Push failed: $d">&2;
-		done < $dotfiles_list
-		;;
-		*) echo "Unknown verb: $1">&2;;
-
-	esac
-	else 
-		echo "no verb."
-	fi
-
-	rm $dotfiles_list
-}
-
-# }}}
-
 if ! [[ "$0" =~ `basename $SHELL`$ ]]; then
 	v=$1; shift;
 	case $v in
-		replicate|dotfiles) $v $@;;
+		replicate) $v $@;;
 		*) echo "$0 was called without a verb.";;
 	esac
 #else

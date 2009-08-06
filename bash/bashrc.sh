@@ -25,7 +25,7 @@ fi
 
 # Load all core scripts - these should NOT produce any output
 # as this can interfere with tools that pipe over SSH, e.g. unison
-for i in ${HOME}/.bash.d/core/*.sh; do
+for i in ${HOME}/.dotfiles/bash/core/*.sh; do
     source $i;
 done
 
@@ -33,15 +33,15 @@ done
 # load the enhancements for all login shells
 [ $isLoginShell = 'yes' ] && {
     [ -e ~/.bash_aliases ] && source ~/.bash_aliases
-    [ -e ~/.bash.d/aliases ] && source ~/.bash.d/aliases
-    for i in ${HOME}/.bash.d/onlogin/*.sh; do
+		[ -e ~/.dotfiles/bash/aliases ] && source ~/.dotfiles/bash/aliases
+		for i in ${HOME}/.dotfiles/bash/on_login/*.sh; do
 	source $i;
     done
 
 }
 
 function exit_handler () {
-	for i in ${HOME}/.bash.d/onexit/*.sh; do
+	for i in ${HOME}/.dotfiles/bash/on_exit/*.sh; do
 		source $i
 	done
 }

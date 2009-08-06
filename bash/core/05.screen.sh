@@ -23,7 +23,7 @@ if  which screen > /dev/null; then
     # if i'm already in screen...
     if [[ "$TERM" =~ 'screen' ]]; then
     	# load scripts in the inscreen directory
-	for i in ${HOME}/.bash.d/inscreen/*.sh; do
+			for i in ${HOME}/.dotfiles/bash/in_screen/*.sh; do
 	    source $i;
 	done
     else
