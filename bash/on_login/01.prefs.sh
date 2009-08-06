@@ -13,4 +13,4 @@ export BASH_SESSION_PATH="${HOME}/.bash_sessions.d"
 
 PYTHONSTARTUP=~/.pythonrc
 
-PATH="${PATH}:~/Projects/SafeDesk/Tools/"
+PATH="${PATH}:~/.dotfiles/bin/:~/Projects/SafeDesk/Tools/"

@@ -1,0 +1,55 @@
+#!/usr/bin/awk -f
+
+BEGIN { 
+	true = 1; 
+	false = -1; 
+	m = false;
+	if(host){
+		gsub(/\./, "\\.", host)
+		gsub(/\*/, ".*", host)
+	}
+	if(key){
+		gsub(/\./, "\\.", key)
+		gsub(/\*/, ".*", key)
+	}
+	if(verbose) print "# host:", host
+	if(verbose) print "# key:", key
+
+	if(argc < 1){
+		print "This script queries your ssh config file." 
+		print "Arguments:" 
+		print "\t-v key=*\t\t(wildcard pattern, e.g. User, Local*)" 
+		print "\t-v host=*\t\t(wildcard pattern, e.g. www.*.com)"
+		print "\t <file>\t\t\t(the file you want to parse, ~/.ssh/config)" 
+		exit 1
+	}	
+}
+
+function match_host(line, host) {
+	for (i in line) {
+		if(verbose) print "# comparing:", host, "~", line[i], "(", i, ")"
+		if(match(host, line[i])) return i
+		if(match(line[i], host)) return i
+	}
+	return false
+}
+
+
+{
+
+	if( /^Host/ && ! /^Hostname/ ){ 
+		delete line
+		for (x = NF; x > 1; x--){
+			if(verbose) print "# loading host:", $x
+			line[NF - x] = $x
+		}
+		m = match_host(line, host)
+		if(verbose) print "# match: ", m
+	}else{
+		
+		if(NF > 0 && $1 !~ /^#/ && m != false && $1 ~ key) { printf("%s: %s\n", line[m], $0);	}
+	}
+
+
+
+}
