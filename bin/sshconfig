@@ -1,21 +1,22 @@
 #!/usr/bin/awk -f
 
+function wildcard_translate (s) {
+	gsub(/\./, "\\.", s)
+	gsub(/\*/, ".*", s)
+	return ("^" s "$")
+}
+
 BEGIN { 
 	true = 1; 
 	false = -1; 
 	m = false;
-	if(host){
-		gsub(/\./, "\\.", host)
-		gsub(/\*/, ".*", host)
-	}
-	if(key){
-		gsub(/\./, "\\.", key)
-		gsub(/\*/, ".*", key)
-	}
+	if(host) host = wildcard_translate(host)
+	if(key) key = wildcard_translate(key)
 	if(verbose) print "# host:", host
 	if(verbose) print "# key:", key
 
-	if(argc < 1){
+
+	if(ARGC < 2){
 		print "This script queries your ssh config file." 
 		print "Arguments:" 
 		print "\t-v key=*\t\t(wildcard pattern, e.g. User, Local*)" 
@@ -23,20 +24,25 @@ BEGIN {
 		print "\t <file>\t\t\t(the file you want to parse, ~/.ssh/config)" 
 		exit 1
 	}	
+
+
 }
 
 function match_host(line, host) {
 	for (i in line) {
-		if(verbose) print "# comparing:", host, "~", line[i], "(", i, ")"
-		if(match(host, line[i])) return i
-		if(match(line[i], host)) return i
+		p = wildcard_translate(line[i])
+
+		if(verbose) print "# comparing:", host, "~", p, "(", i, ")"
+		if(match(host, p)) return i
+
+		if(verbose) print "# comparing:", p, "~", host, "(", i, ")"
+		if(match(p, host)) return i
 	}
 	return false
 }
 
-
+# this runs for every line...
 {
-
 	if( /^Host/ && ! /^Hostname/ ){ 
 		delete line
 		for (x = NF; x > 1; x--){
