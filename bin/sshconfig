@@ -1,8 +1,8 @@
 #!/usr/bin/awk -f
 
 function wildcard_translate (s) {
-	gsub(/\./, "\\.", s)
-	gsub(/\*/, ".*", s)
+#	gsub(/\./, "\\.", s)
+	gsub(/\*/, "(.*)", s)
 	return ("^" s "$")
 }
 
@@ -10,8 +10,8 @@ BEGIN {
 	true = 1; 
 	false = -1; 
 	m = false;
-	if(host) host = wildcard_translate(host)
-	if(key) key = wildcard_translate(key)
+	if(host) host_p = wildcard_translate(host)
+	if(key) key_p = wildcard_translate(key)
 	if(verbose) print "# host:", host
 	if(verbose) print "# key:", key
 
@@ -35,8 +35,8 @@ function match_host(line, host) {
 		if(verbose) print "# comparing:", host, "~", p, "(", i, ")"
 		if(match(host, p)) return i
 
-		if(verbose) print "# comparing:", p, "~", host, "(", i, ")"
-		if(match(p, host)) return i
+		if(verbose) print "# comparing:", line[i], "~", host_p, "(", i, ")"
+		if(match(line[i], host_p)) return i
 	}
 	return false
 }
