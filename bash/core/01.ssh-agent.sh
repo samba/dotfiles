@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SSH_AGENT_PID=${SSH_AGENT_PID:-0}
-ps $SSH_AGENT_PID >/dev/null 2>/dev/null && exit 0
+ps $SSH_AGENT_PID >/dev/null 2>/dev/null || { 
 
 eval $(ssh-agent)
 
@@ -17,3 +17,4 @@ ssh-add $(cat $keys);
 
 rm $keys
 
+}

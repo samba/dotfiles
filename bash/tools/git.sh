@@ -94,6 +94,56 @@ function git.snapshot () {
 		tar -czvf $(basename $i).$(date +%s).tar.gz $i --exclude=.git --exclude=*.deb
 	done
 }
+
+function git.branchremote (){
+	# this is a re-implementation of: http://github.com/webmat/git_remote_branch
+	# http://github.com/webmat/git_remote_branch/blob/35f6af55ad1802a5368b9b9b0d1652a05de7d3c8/lib/git_remote_branch.rb
+	mode="$1" branch="$2"; origin="${3:-origin}";
+	shift 3;
+
+	git rev-parse --git-dir &> /dev/null || return 0;
+	curr_branch=$(git branch | grep -oE '^\* (.*)' | cut -c3-)
+
+	case $mode in
+		create) 
+			git push $origin $curr_branch:refs/heads/$branch
+			git fetch $origin
+			git branch --track $branch $origin/$branch
+			git checkout $branch
+			;;
+		publish)
+			git push $origin $branch:refs/heads/$branch
+			git fetch $origin
+			git config branch.$branch.remote $origin
+			git config branch.$branch.merge refs/heads/$branch
+			git checkout $branch
+		;;
+		rename)
+			git.branchremote create $branch $origin
+			git push $origin :refs/heads/$curr_branch
+			git branch -d $curr_branch
+		;;
+		delete)
+			git push $origin :refs/heads/$branch
+			[ "$brach" == "$curr_branch" ] && git checkout master
+			git branch -d $branch
+		;;
+		track)
+			git fetch $origin
+		# TODO: improve this check to make sure a branch with **exactly** this name exists
+			if git branch | grep $branch >/dev/null; then
+				git config branch.$branch.remote $origin
+				git config branch.$branch.merge refs/heads/$branch
+			else
+				git branch --track $branch $origin/$branch
+			fi
+		;;
+		*)
+esac
+
+}
+
+
 # }}}
 
 
