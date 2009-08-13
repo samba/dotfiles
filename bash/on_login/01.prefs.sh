@@ -13,4 +13,4 @@ export BASH_SESSION_PATH="${HOME}/.bash_sessions.d"
 
 PYTHONSTARTUP=~/.pythonrc
 
-PATH="${PATH}:~/.dotfiles/bin/:~/Projects/SafeDesk/Tools/"
+PATH="${PATH}:~/.dotfiles/bin/:/opt/google_appengine/:~/Projects/SafeDesk/Tools/"

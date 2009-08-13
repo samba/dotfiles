@@ -16,24 +16,24 @@ install: install-bash install-vim install-screen install-python
 
 
 install-bash: ~/.bashrc 
-	mv $< $<-$(DATE)
+	-mv $< $<-$(DATE)
 	ln -s ~/.dotfiles/bash/bashrc.sh $< 
-	mv ~/.bash_aliases ~/.bash_aliases-$(DATE)
+	-mv ~/.bash_aliases ~/.bash_aliases-$(DATE)
 	ln -s ~/.dotfiles/bash/aliases ~/.bash_aliases
-	mv ~/.bash_logout ~/.bash_logout-$(DATE)
+	-mv ~/.bash_logout ~/.bash_logout-$(DATE)
 	ln -s ~/.dotfiles/bash/logout.sh ~/.bash_logout
 
 install-vim: ~/.vimrc 
-	mv $< $<-$(DATE)
+	-mv $< $<-$(DATE)
 	ln -s ~/.dotfiles/vim/vimrc $<
-	mv ~/.vim ~/.vim-$(DATE)
+	-mv ~/.vim ~/.vim-$(DATE)
 	ln -s ~/.dotfiles/vim ~/.vim
 
 install-screen: ~/.screenrc
-	mv $< $<-$(DATE)
+	-mv $< $<-$(DATE)
 	ln -s ~/.dotfiles/screenrc $<
 
 
 install-python: ~/.pythonrc.py
-	mv $< $<-$(DATE)
+	-mv $< $<-$(DATE)
 	ln -s ~/.dotfiles/pythonrc.py $<

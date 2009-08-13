@@ -58,6 +58,7 @@ function dpkg.prepdir () {
 			Architecture:
 			Maintainer:
 			Depends:
+			Section:
 			Description:
 
 EOF
