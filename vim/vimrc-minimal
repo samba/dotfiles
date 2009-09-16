@@ -6,3 +6,4 @@ set number
 set modeline
 set foldenable
 
+" to deploy: wget http://github.com/samba/dotfiles/raw/master/vim/vimrc-minimal -O ~/.vimrc

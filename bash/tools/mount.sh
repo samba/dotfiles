@@ -52,65 +52,109 @@ function s.fstab () {
 }
 
 
-function mount.img () {
-    OPTIND=1 img= dir= s= mountopt= parts= VERBOSE=n
-    while getopts ':i:d:o:sp:v' Option; do
+function mount.img.examine () {
+OPTIND=1 img= s= mountopt= parts= 
+while getopts ':i:d:o:sp:vu' Option; do
 	case $Option in
-	    i) img=${OPTARG};;
-	    d) dir=${OPTARG};;
-	    s) s=sudo;;
-	    o) mountopt="${OPTARG},";;
-	    p) parts="${OPTARG}";;
-	    v) VERBOSE=y;;
+		i) img=${OPTARG};;
+		s) s=sudo;;
+		o) mountopt="${OPTARG},";;
+		p) parts="${OPTARG}";;
 	esac
-    done
-    [ -f "$img" ] || return 1;
-    [ -d "$dir" ] || return 2;
+done
 
-    b=$(basename $img);
-    if [ $VERBOSE = 'y' ]; then
+
+echo "examining partition table in the image" >&2
+b=$(basename $img);
+partitions=$(mktemp)
+$s sfdisk -l -uS $img 2>/dev/null | grep -E "^${b}" | tr '*' ' ' | tr -s ' ' | cut -d ' ' -f 1,2,3,4 > $partitions
+
+echo "partitions: ($partitions)" >&2 && cat $partitions >&2
+
+while read n start end sectors; do
+	printf 'n:%s start:%s end:%s sectors:%s\n' $n $start $end $sectors >&2
+	[ -z $start ] && { echo 'empty start' >&2; continue; }
+	[ "$end" = '-' ] && { echo 'blank end' >&2; continue; }
+	i=$( echo $n | sed "s%$b%%" )
+#	if [ ! -z $parts ]; then i
+#		echo "$parts" | tr ',' '\n' | grep -E "^$i" || { echo 'no partitions'; continue; }
+#	fi
+	printf -v opt "%sloop,offset=%d" "${mountopt}" $((start * 512))
+	printf "%s\t%s\t%s\n" "$img" "./$i" "$opt"
+done  < $partitions
+
+
+rm $partitions
+
+}
+
+
+function mount.img () {
+OPTIND=1 img= dir= s= mountopt= parts= VERBOSE=n mode=mount
+while getopts ':i:d:o:sp:vu' Option; do
+	case $Option in
+		i) img=${OPTARG};;
+		d) dir=${OPTARG};;
+		s) s=sudo;;
+		o) mountopt="${OPTARG},";;
+		p) parts="${OPTARG}";;
+		v) VERBOSE=y;;
+		u) mode=umount;;
+	esac
+done
+[ -f "$img" ] || return 1;
+[ -d "$dir" ] || return 2;
+
+b=$(basename $img);
+if [ $VERBOSE = 'y' ]; then
 	v='-v'
 	exec 5>&2
-    else
+else
 	v=''
 	exec 5>/dev/null
-    fi
+fi
 
+mountopt="$mountopt,loop,uid=$USER"
 
-    echo 'Trying to mount' $b 'to dir' $dir >&5
-    # first try mounting it directly, assuming it's just a partition
-    $s mount $v -o loop,uid=$USER $img $dir 2>&5
-    ret=$?
-    case $ret in
-	0) echo "success" >&5;;
-	32) 
-	    echo "examining partition table in the image" >&5
-	# if that doesn't fly, parse it as a disk, looking for partitions.
-	    partitions=$(mktemp)
-	    $s sfdisk -l -uS $img 2>/dev/null | grep -E "^${b}" | tr '*' ' ' | tr -s ' ' | cut -d ' ' -f 1,2,3,4 > $partitions
+echo 'Trying to mount' $b 'to dir' $dir >&5
+# first try mounting it directly, assuming it's just a partition
+case $mode in
+	mount) 
+		$s mount $v -o $mountopt $img $dir 2>&5
+		ret=$?
+		case $ret in
+			0) echo "success" >&5;;
+			32)
+			sudo=''; [ "$s" = "sudo" ] && sudo=-s
+			mount.img.examine -i $img $sudo -p $parts -o $mountopt | while read I D O; do
+				$s mkdir $v -p $dir/$D 2>&5
+				$s mount $v -o $O $I $dir/$D 2>&5
+			done
 
-	    echo "partitions: ($partitions)" >&5 && cat $partitions >&5
-
-	    while read n start end sectors; do
-		printf 'n:%s start:%s end:%s sectors:%s\n' $n $start $end $sectors >&5
-		[ -z $start ] && { echo 'empty start' >&5; continue; }
-		[ "$end" = '-' ] && { echo 'blank end' >&5; continue; }
-		i=$( echo $n | sed "s%$b%%" )
-		[ -z $parts ] || {
-		    echo "$parts" | tr ',' '\n' | grep -E "^$i" || { echo 'no partitions'; continue; }
-		}
-		$s mkdir $v -p $dir/$i >&5
-		printf -v opt "%sloop,offset=%d" "${mountopt}" $((start * 512))
-		$s mount $v -o $opt $img $dir/$i 2>&5
-
-	    done  < $partitions
-
-	    ret=$?;
+			ret=$?;
+			;;
+			*) echo "unknown error: $ret" >&5;;
+		esac
 	;;
-	*) echo "error: $ret" >&5;;
-    esac
+	umount) 
+		$s umount $v $dir 2>&5
+		ret=$?
+		case $ret in
+			0) echo "success" >&5;;
+			1) 
+			mount.img.examine -i $img $sudo -p $parts -o $mountopt | while read I D O; do
+				$s umount $v $dir/$D 2>&5
+			done
 
-    exec 5>&-
-    return $ret
+			;;
+			*) echo "unknown error: $ret" >&5;;			
+		
+		esac
+	;;
+esac
+
+
+exec 5>&-
+return $ret
 }
 

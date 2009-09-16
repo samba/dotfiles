@@ -16,12 +16,15 @@ fi
 alias ll='ls -lh'
 alias la='ls -A'
 alias l='ls -CF'
+
+
+
 # }}}
 
 # Process Listing and Task Management{{{
 
 # set my preferred PS output format - this is handled by 'ps' directly
-export PS_FORMAT="pid,state,%cpu,%mem,euser:15,command"
+export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
 p () {
 	case $1 in
 		waiting) ps -ae | awk '$2 ~ /^D$/ { print }';;
