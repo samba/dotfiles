@@ -21,7 +21,7 @@ while getopts c:lk:sa O; do
 	a) # auto connect mode
 	h=$(hostname)
 	case $h in
-	    ragnorak|wssbriesemeister) 
+	    fenrir|ragnorak|wssbriesemeister) 
 	    tunnel -c gateway
 	    ;;
 
