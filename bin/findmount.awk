@@ -1,5 +1,8 @@
 #!/usr/bin/awk -f
 
+# USAGE: findmount.awk -v path=/path/to/your/file /proc/mounts
+
+
 BEGIN { 
 	longestpath = ""
 	mountpoint = ""
