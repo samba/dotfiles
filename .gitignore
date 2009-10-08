@@ -1,5 +1,7 @@
 *.gz
 *.zip
+*.sw*
+
 
 vim/rc.d/original.tar.gz
 vim/view
