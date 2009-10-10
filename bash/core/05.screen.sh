@@ -10,35 +10,35 @@
 [ "$isLoginShell" = 'yes' ] || return
 # if present
 if  which screen > /dev/null; then 
-    screen -wipe > /dev/null
-
-   
-    # if a 'default' session does not exist, create a new one in the background
-    screen -ls | grep -E '[0-9]+.default' > /dev/null || {
-	echo "Creating default screen session" >&2
-	[ $USER != 'root' ] && [ $UID -ne 0 ] && screen -d -m -S default 
-    }
+	screen -wipe > /dev/null
 
 
-    # if i'm already in screen...
-    if [[ "$TERM" =~ 'screen' ]]; then
-    	# load scripts in the inscreen directory
-			for i in ${HOME}/.dotfiles/bash/in_screen/*.sh; do
-	    source $i;
+	# if a 'default' session does not exist, create a new one in the background
+	screen -ls | grep -E '[0-9]+.default' > /dev/null || {
+		echo "Creating default screen session" >&2
+		[ $USER != 'root' ] && [ $UID -ne 0 ] && $SSH_AGENT_CMD screen -d -m -S default 
+	}
+
+
+# if i'm already in screen...
+if [[ "$TERM" =~ 'screen' ]]; then
+	# load scripts in the inscreen directory
+	for i in ${HOME}/.dotfiles/bash/in_screen/*.sh; do
+		source $i;
 	done
-    else
+else
 	# set the terminal type properly
 	# wrap to simplify work from multiple locations
 	alias scr="screen -T ${TERM} -rx -S default"
 
 	# automatically join the screen session (only if NOSCREEN isn't set)
 	[ -n $NOSCREEN ] || screen -T ${TERM} -rx -S default
-    fi
+fi
 
 fi
 
 
 # if we're in a screen session (and a login shell), print the name
 [ ! -z "$STY" ] && [ ! -z "$PS1" ] && {
-    echo "You are in screen session: $STY" >&2
+echo "You are in screen session: $STY" >&2
 }
