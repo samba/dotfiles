@@ -32,7 +32,7 @@ bind b screen -t 'btg' btgncli -a
 bind v screen vim
 bind i screen irssi
 bind t screen -t 'ps/top' bash -c "which htop > /dev/null && htop || top"
-bind R screen -t '#|root:' sudo -s
+bind R screen -t '#|root:' sudo -i
 
 
 # }}} 
