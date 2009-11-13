@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # If not running interactively, don't do anything
 if [ ! -z "$PS1" ]; then
@@ -13,15 +13,26 @@ if [ ! -z "$PS1" ]; then
 
 	# what shell title sequence to use
 	case $TERM in
-		xterm*) title='\[\e]0;\u@\h: \w\a\]';;
-		screen*) title='\[\ek\e\\\]';;
+		xterm*) 
+			title='\[\e[0;\u@\h: \w\a\]'
+			;;
+		screen*) 
+			# printf -v PROMPT_COMMAND "%s; %s" 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' "$PROMPT_COMMAND"
+			# title='\[\e\]\u@\h\[\a\e\\\]'
+			printf -v title "%s" '\[\e]0;\u@\h\a\]'
+			printf -v title "%s%s" "$title" '\[\e[0000m\ek\h\e\\\]'
+			# [ -z "$SSH_TTY" ] || printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
+			;;
 		*) title='';;
 	esac
 
 
 	if [ "$color_prompt" = 'yes' ] && [ "$shell" = 'full' ]; then
-		ch=''
-		[ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ] && ch="$(cat /etc/debian_chroot) "
+		ch='' chroot_trail=''
+		if [ -z "$debian_chroot" -a -r /etc/debian_chroot ]; then
+			ch="$(cat /etc/debian_chroot)"
+			chroot_trail=' '
+		fi
 
 		# NOTE: all non-printing characters must be surrounded by \[ and \]
 		# flags: 
@@ -42,10 +53,6 @@ if [ ! -z "$PS1" ]; then
 		color_chroot=31 # red
 		color_shell=0 # none
 
-		# directories on the stack: yellow	
-		# dirs='dirs: \[\e[00;33m\]${#DIRSTACK[@]}\[\e[0m\];'
-
-
 		# username: red, if root or UID=0
 		if [ $USER = 'root' ] || [ $UID -eq 0 ]; then 
 			color_user=31; 
@@ -56,12 +63,11 @@ if [ ! -z "$PS1" ]; then
 		printf -v user '\[\e[01;%dm\]\u\[\e[0m\]' $color_user
 		printf -v host '\[\e[01;%dm\]\h\[\e[0m\]' $color_host
 		printf -v workdir '\[\e[01;%dm\]\W\[\e[0m\]' $color_dir
-		printf -v chroot '\[\e[01;%dm\]%s\[\e[0m\] ' $color_chroot "$ch" # trailing space
+		printf -v chroot '\[\e[01;%dm\]%s\[\e[0m\]%s' $color_chroot "$ch" "$chroot_trail" # no trailing space
 		printf -v shell '\[\e[00;%dm\]\\$\[\e[0m\] ' $color_shell # trailing space
 
-
 		# Throw it all together
-		printf -v PS1 '%s%s %s@%s %s %s' "$chroot" "$now" "$user" "$host" "$workdir" "$shell"
+		printf -v PS1 '%s%s%s %s@%s %s %s' "$title" "$chroot" "$now" "$user" "$host" "$workdir" "$shell"
 
 		PS2='\[\e[00;33m\]>\[\e[0m\] '
 		PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4

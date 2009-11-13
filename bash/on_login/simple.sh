@@ -45,31 +45,4 @@ function rreplace () {
 
 
 
-function find.type () {
-	local fs=$(mktemp) a=$(mktemp)
-	until [ $# -eq 0 ]; do
-		if [ -d "$1" ]; then
-				echo "$1" >> $fs;
-				shift;
-				continue;
-		elif [ -f "$1" ]; then
-			echo "$1" >> $fs;
-			shift;
-			continue;
-		else
-			echo "\$2 ~ /$1/" >> $a;
-			shift;
-			continue;
-		fi
-	done
-	sed '$! { s/$/||/; }' -i $a
-
-	
-	#	find packaging/ -type f | xargs file -F ::  | awk -F '::' '$2 ~ /XML/ || $2 ~ /HTML/ { print $1 }'
-
-	
-	find $(cat $fs) -type f | xargs file -F ::  | awk -F '::' "$(cat $a) { print \$1; }"
-	rm $fs $a
-}
-
 # vim: foldenable foldmethod=marker

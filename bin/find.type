@@ -1,0 +1,28 @@
+#!/bin/sh
+
+function main () {
+	local fs=$(mktemp) a=$(mktemp)
+	until [ $# -eq 0 ]; do
+		if [ -d "$1" ]; then
+			echo "$1" >> $fs;
+			shift;
+			continue;
+		elif [ -f "$1" ]; then
+			echo "$1" >> $fs;
+			shift;
+			continue;
+		else
+			echo "\$2 ~ /$1/" >> $a;
+			shift;
+			continue;
+		fi
+	done
+	sed '$! { s/$/||/; }' -i $a
+
+
+	find $(cat $fs) -type f | xargs file -F ::  | awk -F '::' "$(cat $a) { print \$1; }"
+	rm $fs $a
+}
+
+main $@
+
