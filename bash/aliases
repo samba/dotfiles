@@ -55,13 +55,12 @@ s () {
 
 	if [ $system = 'yes' ]; then
 		printf "uptime: %s\n" "$(uptime)" 
-		if which cpufreq-info >/dev/null; then
+		if which cpufreq-info >/dev/null 2>/dev/null; then
 			printf "cpufreq: %s\n" "$(cpufreq-info -fm)"
 		fi
 
 		printf "me:\t%s\n" "$(who -m)"
-		echo 'who:'
-		who -T | sed 's/^/\t/'
+		who -T | sed 's/^/\t/; 1{ s/^/who:/ };'
 	fi
 		
 	jobs -l | sed 's/^/\t/; 1{ s/^/jobs:/ };'

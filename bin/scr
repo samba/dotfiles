@@ -18,7 +18,7 @@ main () {
 		[ $USER != 'root' ] && [ $UID -ne 0 ] && $SSH_AGENT_CMD screen -d -m -S default 
 	fi
 
-	screen -T ${TERM} -rx -S default
+	screen -rx -S default # -T ${TERM}
 }
 
 
