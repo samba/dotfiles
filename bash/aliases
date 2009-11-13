@@ -68,7 +68,10 @@ s () {
 
 	# TODO: other stats... current directory's git status, etc.
 	
-	
+	for i in ${HOME}/.dotfiles/bash/stat/*.sh; do
+		# basename $i >&2
+		[ -x $i ] && $i $@
+	done
 
 }
 

@@ -24,13 +24,13 @@ autocmd BufEnter * let &titlestring=expand("%:t")
 "set titlestring =%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\ %{v:servername}
 " let &titlestring = hostname() . "[vim(" . expand("%:t") . ")]"
 " TODO: make this work in screen properly
-if &term == "screen"
-	set t_ts=^[k
-	set t_fs=^[\
-endif
-if &term == "screen" || &term == "xterm"
-	set title
-endif
+" if &term == "screen"
+"	set t_ts=^[k
+"	set t_fs=^[\
+" endif
+"if &term == "screen" || &term == "xterm"
+"	set title
+"endif
 
 
 " Nice statusbar"{{{

@@ -43,7 +43,7 @@ bind R screen -t '#|root:' sudo -i
 autodetach on
 # }}} 
 # each window should be a login shell... {{{
-shell -$SHELL # this may cause problems with key interpretation, e.g. backspace
+# shell -$SHELL # this may cause problems with key interpretation, e.g. backspace
 # }}} 
 # terminal sharing {{{
 multiuser on # so I can attach from multiple points.
@@ -62,14 +62,14 @@ multiuser on # so I can attach from multiple points.
 
 # some tweaks for various terminals
 # see also: http://www.delhage.se/.screenrc http://companionway.net/files/utils/sample.screenrc
-termcapinfo  * '' 'hs:ts=\E_:fs=\E\\:ds=\E_\E\\' # advertize hardstatus support
-termcapinfo xterm|rxvt* 'hs:ts=\E]0;:fs=\007:ds=\E]0;screen\007'
-termcapinfo xterm* OL=100 # large output buffer
-termcapinfo xterm 'hs@:cs=\E[%i%d;%dr:im=\E[4h:ei=\E[4l'
-termcapinfo xterm 'hs@:cs=\E[%i%p1%d;%p2%dr:im=\E[4h:ei=\E[4l'
-termcapinfo xterm 'VR=\E[?5h:VN=\E[?5l'
-termcapinfo xterm 'k1=\E[11~:k2=\E[12~:k3=\E[13~:k4=\E[14~'
-termcapinfo xterm 'kh=\E[1~:kI=\E[2~:kD=\E[3~:kH=\E[4~:kP=\E[H:kN=\E[6~'
+#termcapinfo  * '' 'hs:ts=\E_:fs=\E\\:ds=\E_\E\\' # advertize hardstatus support
+#termcapinfo xterm|rxvt* 'hs:ts=\E]0;:fs=\007:ds=\E]0;screen\007'
+#termcapinfo xterm* OL=100 # large output buffer
+#termcapinfo xterm 'hs@:cs=\E[%i%d;%dr:im=\E[4h:ei=\E[4l'
+#termcapinfo xterm 'hs@:cs=\E[%i%p1%d;%p2%dr:im=\E[4h:ei=\E[4l'
+#termcapinfo xterm 'VR=\E[?5h:VN=\E[?5l'
+#termcapinfo xterm 'k1=\E[11~:k2=\E[12~:k3=\E[13~:k4=\E[14~'
+#termcapinfo xterm 'kh=\E[1~:kI=\E[2~:kD=\E[3~:kH=\E[4~:kP=\E[H:kN=\E[6~'
 
 shelltitle '$|?'
 
