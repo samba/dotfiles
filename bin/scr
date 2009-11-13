@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# if we're in a screen session (and a login shell), print the name
+if [ ! -z "$STY" -a ! -z "$PS1" ]; then
+	echo "You are in screen session: $STY" >&2
+fi
+
+main () {
+	[ -z $NOSCREEN ] || return
+	echo "$TERM" | grep -q screen && return  # if i'm already in screen...
+	which screen >/dev/null || return
+	screen -wipe
+	# if GNU screen is present, automitically start a 'default' session, or reattach to it if it already exists.
+	
+	if ! screen -ls | grep -E '[0-9]+.default' > /dev/null; then
+		# if a 'default' session does not exist, create a new one in the background
+		echo "Creating default screen session" >&2
+		[ $USER != 'root' ] && [ $UID -ne 0 ] && $SSH_AGENT_CMD screen -d -m -S default 
+	fi
+
+	screen -T ${TERM} -rx -S default
+}
+
+
+main $@
+exit $?
+
+

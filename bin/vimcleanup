@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+# cleanup
+keepdays=15 # days to keep
+find ${HOME}/.vim/view -type f -mtime +${keepdays} -print -delete >> ${HOME}/.vim/view/deletion.log
+
+
+

@@ -1,19 +1,20 @@
 #!/bin/bash
 
 
-function ddwatch () {
+function main () {
 # seconds to wait before checking 'dd' status
 waitTime=10
 
 dd $@ &
 p=$!
 
-while ps $p >/dev/null; do
-	kill -USR1 ${p}
+while kill -USR1 ${p}; do
 	sleep ${waitTime}
-	clear
 done
 
 wait
 
 }
+
+main $@
+

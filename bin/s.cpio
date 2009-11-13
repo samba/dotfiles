@@ -1,5 +1,18 @@
 #!/bin/bash
 
+function s.cpio.usage () {
+cat <<EOF
+	s.cpio: usage
+	s.cpio -c -i <source dir> -o <dest file.gz>	    create a cpio image (initrd)
+	s.cpio -x -i <source file.gz> -o <dest dir>	    extract a cpio image
+
+	s.cpio: defaults
+		in create mode:	    input=<dirname>		output=<dirname>.img.gz
+		in extract mode:    input (required!)	output=./
+EOF
+
+}
+
 function s.mkcpio () {
 	o=$(pwd)
 	for i in $@; do
@@ -10,11 +23,12 @@ function s.mkcpio () {
 }
 
 
-function s.cpio () {
+function main () {
 	declare verb= numinput=0 input= output= loud= exclude=$(mktemp)
 	OPTIND=1
-	while getopts :e:i:o:xvc Option; do
+	while getopts :he:i:o:xvc Option; do
 		case $Option in
+			h) s.cpio.usage; exit 0 ;;
 			i) input="${input} $OPTARG"; numinput=$((numinput + 1));;
 			o) output="$OPTARG";;
 			c|x) verb=$Option;;
@@ -77,15 +91,5 @@ function s.cpio () {
 		
 }
 
-function s.cpio.usage () {
-cat <<EOF
-	s.cpio: usage
-	s.cpio -c -i <source dir> -o <dest file.gz>	    create a cpio image (initrd)
-	s.cpio -x -i <source file.gz> -o <dest dir>	    extract a cpio image
 
-	s.cpio: defaults
-		in create mode:	    input=<dirname>		output=<dirname>.img.gz
-		in extract mode:    input (required!)	output=./
-EOF
-
-}
+main $@
