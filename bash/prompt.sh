@@ -14,7 +14,7 @@ if [ ! -z "$PS1" ]; then
 	# what shell title sequence to use
 	case $TERM in
 		xterm*) 
-			title='\[\e[0;\u@\h: \w\a\]'
+			title='\[\e]0;\u@\h: \w\a\]'
 			;;
 		screen*) 
 			# printf -v PROMPT_COMMAND "%s; %s" 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' "$PROMPT_COMMAND"

@@ -64,11 +64,8 @@ s () {
 		who -T | sed 's/^/\t/'
 	fi
 		
-	echo 'jobs:'
-	jobs -l | sed 's/^/\t/'
-	
-	echo 'dirs:'
-	dirs -l -v | sed 's/^/\t/'
+	jobs -l | sed 's/^/\t/; 1{ s/^/jobs:/ };'
+	dirs -l -v | sed 's/^/\t/; 1{ s/^/dirs:/ };'
 
 	# TODO: other stats... current directory's git status, etc.
 	

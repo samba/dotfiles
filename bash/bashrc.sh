@@ -95,9 +95,7 @@ if [ $isLoginShell = 'yes' ]; then
 fi
 
 function exit_handler () {
-	for i in ${HOME}/.dotfiles/bash/on_exit/*.sh; do
-		source $i
-	done
+	printf "exit: %s@%s\n" "$USER" "$HOSTNAME" >&2
 }
 
 trap exit_handler EXIT
