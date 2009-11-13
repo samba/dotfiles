@@ -18,10 +18,9 @@ if [ ! -z "$PS1" ]; then
 			;;
 		screen*) 
 			# printf -v PROMPT_COMMAND "%s; %s" 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' "$PROMPT_COMMAND"
-			# title='\[\e\]\u@\h\[\a\e\\\]'
-			printf -v title "%s" '\[\e]0;\u@\h\a\]'
-			printf -v title "%s%s" "$title" '\[\e[0000m\ek\W\e\\\]'
 			# [ -z "$SSH_TTY" ] || printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
+			printf -v title "%s" '\[\e]0;\u\a\]' # sets title
+			printf -v title "%s%s" "$title" '\[\e[0000m\ek\h:\W\e\\\]' # sets hardstatus
 			;;
 		*) title='';;
 	esac
