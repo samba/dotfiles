@@ -77,7 +77,7 @@ shelltitle '$|?'
 caption splitonly "%{= .g}%{+u} %= %{-}[%n %{= .y}%t%{-}]"
 
 # stat line at the  very bottom of the terminal 
-hardstatus alwayslastline '%{= .g}%{b G}%H%{-} %= %?%-w%?%{=b y}%n %t %{-} %{= .b}[%h]%{-} %?%+w%?%= %{= .g} %{= .y}%u%{-} %{= .b} %f%{-} l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
+hardstatus alwayslastline '%{= .g}%{b G}%H%{-} %= %?%-w%?%{=b y}%n %t%{-} %{= .b}[%h]%{-} %?%+w%?%= %{= .y}%u%{-} %{= .b} %f%{-} l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
  
 
 # If a window goes unresponsive, don't block the whole session waiting for it.

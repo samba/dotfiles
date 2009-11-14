@@ -19,8 +19,8 @@ if [ ! -z "$PS1" ]; then
 		screen*) 
 			# printf -v PROMPT_COMMAND "%s; %s" 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' "$PROMPT_COMMAND"
 			# [ -z "$SSH_TTY" ] || printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
-			printf -v title "%s" '\[\e]0;\u\a\]' # sets title
-			printf -v title "%s%s" "$title" '\[\e[0000m\ek\h:\W\e\\\]' # sets hardstatus
+			printf -v title "%s" '\[\e]0;\u \W\a\]' # sets title
+			printf -v title "%s%s" "$title" '\[\e[0000m\ek\h\e\\\]' # sets hardstatus
 			;;
 		*) title='';;
 	esac
@@ -64,9 +64,11 @@ if [ ! -z "$PS1" ]; then
 		printf -v workdir '\[\e[01;%dm\]\W\[\e[0m\]' $color_dir
 		printf -v chroot '\[\e[01;%dm\]%s\[\e[0m\]%s' $color_chroot "$ch" "$chroot_trail" # no trailing space
 		printf -v shell '\[\e[00;%dm\]\\$\[\e[0m\] ' $color_shell # trailing space
+		printf -v jobs '\j' # no formatting
+		
 
 		# Throw it all together
-		printf -v PS1 '%s%s%s %s@%s %s %s' "$title" "$chroot" "$now" "$user" "$host" "$workdir" "$shell"
+		printf -v PS1 '%s%s%s %s@%s %s %s %s' "$title" "$chroot" "$now" "$user" "$host" "$workdir" "$jobs" "$shell"
 
 		PS2='\[\e[00;33m\]>\[\e[0m\] '
 		PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
