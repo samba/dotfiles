@@ -10,8 +10,6 @@ vim/README.bashsupport
 vim/bash-support
 vim/doc/
 vim/autoload/
-vim/ftplugin/
-vim/plugin/
 vim/GetLatest/
 vim/.VimballRecord
 vim/viminfo

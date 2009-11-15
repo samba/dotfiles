@@ -74,10 +74,10 @@ multiuser on # so I can attach from multiple points.
 shelltitle '$|?'
 
 # stat line at the bottom of each screen 
-caption splitonly "%{= .g}%{+u} %= %{-}[%n %{= .y}%t%{-}]"
+caption always "%{=dd}%{= .y}%n%{-} %{= .g}%t%{-} %{= .b}%f%{-} %u %= %{= .b}[%h]%{-}"
 
 # stat line at the  very bottom of the terminal 
-hardstatus alwayslastline '%{= .g}%{b G}%H%{-} %= %?%-w%?%{=b y}%n %t%{-} %{= .b}[%h]%{-} %?%+w%?%= %{= .y}%u%{-} %{= .b} %f%{-} l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
+hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
  
 
 # If a window goes unresponsive, don't block the whole session waiting for it.

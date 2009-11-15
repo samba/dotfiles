@@ -12,13 +12,15 @@ main () {
 	screen -wipe
 	# if GNU screen is present, automitically start a 'default' session, or reattach to it if it already exists.
 	
-	if ! screen -ls | grep -E '[0-9]+.default' > /dev/null; then
+	name=${1:-default}
+
+	if ! screen -ls | grep -E "[0-9]+.$name" > /dev/null; then
 		# if a 'default' session does not exist, create a new one in the background
 		echo "Creating default screen session" >&2
-		[ $USER != 'root' ] && [ $UID -ne 0 ] && $SSH_AGENT_CMD screen -d -m -S default 
+		[ $USER != 'root' ] && [ $UID -ne 0 ] && $SSH_AGENT_CMD screen -d -m -S $name
 	fi
 
-	screen -rx -S default # -T ${TERM}
+	screen -rx -S $name # -T ${TERM}
 }
 
 

@@ -13,13 +13,16 @@ if [ ! -z "$PS1" ]; then
 
 	# what shell title sequence to use
 	case $TERM in
-		xterm*) 
+		xterm*|gnome*) 
 			title='\[\e]0;\u@\h: \w\a\]'
 			;;
 		screen*) 
 			# printf -v PROMPT_COMMAND "%s; %s" 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' "$PROMPT_COMMAND"
-			# [ -z "$SSH_TTY" ] || printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
-			printf -v title "%s" '\[\e]0;\u \W\a\]' # sets title
+			if [ -z "$SSH_TTY" ]; then
+				# this prints the hostname as window title if in screen - only once.
+				printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
+			fi
+			# printf -v title "%s" '\[\e]0;\u \W\a\]' # sets title
 			printf -v title "%s%s" "$title" '\[\e[0000m\ek\h\e\\\]' # sets hardstatus
 			;;
 		*) title='';;

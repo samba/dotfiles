@@ -59,7 +59,7 @@ s () {
 			printf "cpufreq: %s\n" "$(cpufreq-info -fm)"
 		fi
 
-		printf "me:\t%s\n" "$(who -m)"
+		printf "me:\t%s\n" "$(who -T -m)"
 		who -T | sed 's/^/\t/; 1{ s/^/who:/ };'
 	fi
 		
