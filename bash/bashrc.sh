@@ -95,7 +95,7 @@ if [ $isLoginShell = 'yes' ]; then
 fi
 
 function exit_handler () {
-	printf "exit: %s@%s\n" "$USER" "$HOSTNAME" >&2
+	[ $isLoginShell = 'yes' ] && printf "exit: %s@%s\n" "$USER" "$HOSTNAME" >&2
 }
 
 trap exit_handler EXIT
