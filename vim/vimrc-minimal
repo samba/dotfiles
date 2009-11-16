@@ -1,6 +1,6 @@
 filetype plugin indent on
 if has('syntax')
-        syntax on
+	syntax on
 endif
 set number
 set modeline
