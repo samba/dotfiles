@@ -13,22 +13,19 @@ while getopts c:lk:sa O; do
 	case $O in
 		c) h=$OPTARG; 
 		# create a tunnel if there isn't one already
-		tunnel -l | grep "\-Nf $h" >/dev/null && return 0;
+		main -l | grep "\-Nf $h" >/dev/null && return 0;
 		ssh -Nf $h -o ConnectTimeout=5 -o BatchMode=yes -o TCPKeepAlive=yes -o Compression=yes
 		;;
 		l) $PSBIN -C ssh -o pid,command | grep '\-Nf';;
-		k) kill $(tunnel -l | grep $OPTARG | tr -s ' ' '\t' | cut -f 2);;
-		s) tunnel_count=$( tunnel -l | wc -l )
+		k) kill $(main -l | grep $OPTARG | tr -s ' ' '\t' | cut -f 2);;
+		s) tunnel_count=$( main -l | wc -l )
 		echo -en "ssh: \e[32m$tunnel_count\e[0m, \e[33m$(ls ~/.ssh/sock/ -1 | wc -l)\e[0m;";
 		;;
 		a) # auto connect mode
 		h=$(hostname)
 		case $h in
 			fenrir|ragnorak|wssbriesemeister) 
-			tunnel -c gateway
-			;;
-			fenrir|celery|gateway) 
-			tunnel -c corp.safedesk.com 
+			main -c gateway
 			;;
 		esac
 		;;

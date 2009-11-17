@@ -53,7 +53,7 @@ if [ ! -z "$PS1" ]; then
 		color_host=33 # yellow
 		color_dir=34 # blue
 		color_chroot=31 # red
-		color_shell=0 # none
+		color_shell=32 # none
 
 		# username: red, if root or UID=0
 		if [ $USER = 'root' ] || [ $UID -eq 0 ]; then 
