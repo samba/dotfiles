@@ -34,6 +34,8 @@ bind i screen irssi
 bind t screen -t 'ps/top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '#|root:' sudo -i
 
+bind ' ' windowlist -m
+
 
 # }}} 
 
@@ -43,7 +45,7 @@ bind R screen -t '#|root:' sudo -i
 autodetach on
 # }}} 
 # each window should be a login shell... {{{
-shell -$SHELL # this may cause problems with key interpretation, e.g. backspace
+# shell -$SHELL # this may cause problems with key interpretation, e.g. backspace
 # }}} 
 # terminal sharing {{{
 multiuser on # so I can attach from multiple points.
@@ -60,15 +62,35 @@ multiuser on # so I can attach from multiple points.
 # }}}
 
 
+# some tweaks for various terminals
+# see also: http://www.delhage.se/.screenrc http://companionway.net/files/utils/sample.screenrc
+#termcapinfo  * '' 'hs:ts=\E_:fs=\E\\:ds=\E_\E\\' # advertize hardstatus support
+#termcapinfo xterm|rxvt* 'hs:ts=\E]0;:fs=\007:ds=\E]0;screen\007'
+#termcapinfo xterm* OL=100 # large output buffer
+#termcapinfo xterm 'hs@:cs=\E[%i%d;%dr:im=\E[4h:ei=\E[4l'
+#termcapinfo xterm 'hs@:cs=\E[%i%p1%d;%p2%dr:im=\E[4h:ei=\E[4l'
+#termcapinfo xterm 'VR=\E[?5h:VN=\E[?5l'
+#termcapinfo xterm 'k1=\E[11~:k2=\E[12~:k3=\E[13~:k4=\E[14~'
+#termcapinfo xterm 'kh=\E[1~:kI=\E[2~:kD=\E[3~:kH=\E[4~:kP=\E[H:kN=\E[6~'
 
-shelltitle '$|?'
+shelltitle '$ |?'
 
 # stat line at the bottom of each screen 
-caption splitonly "%{= .g}%{+u} %= %{-}[%n %{= .y}%t%{-}]"
+caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%{-}%? %?%u%? %= %?%?%{+ .b}[%h]%?%{-} %{+ .y}%l%{-} %{+ .g}%0c:%s%{-}"
 
 # stat line at the  very bottom of the terminal 
-hardstatus alwayslastline '%{= .g}%{b G}%H%{-} %= %?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g} %{= .y}%u%{-} %{= .b}%f%{-} l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
+#hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
+hardstatus off
  
+# configure the window list, via C-A "
+# windowlist title "%{= .y}Num%{-}   %{= .g}Title%{-}%{-} %=  %{= .b}Flags%{-}"
+# windowlist string "%{= .y}%3n%{-} %{= .g}%t%{-} %= %{= .b}%f%{-}"
+
+
+windowlist title  "Flag Num Title"
+windowlist string "%f%04= %3n %t"
+
+
 
 # If a window goes unresponsive, don't block the whole session waiting for it.
 nonblock on
