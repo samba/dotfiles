@@ -1,41 +1,57 @@
 DATE := $(shell date +%Y-%m-%d-%H:%M:%S)
-BASHFILES := $(shell find bash/ -type f)
-VIMRCFILES := $(shell find vim/rc.d/ -type f)
 DOTFILES_DIR := $(shell pwd)
+MY_BASHFILES := $(shell find bash/ -type f)
+MY_VIMRCFILES := $(shell find vim/rc.d/ -type f)
+MY_SCREENFILES = screenrc
+MY_PYTHONFILES = pythonrc.py
+
+DEST_FILES = ~/.bashrc ~/.bash_aliases ~/.bash_logout \
+						 ~/.gnome2/nautilus-scripts ~/.screenrc ~/.vimrc ~/.pythonrc.py
+BACKUP_OUTFILE := dotfiles-backup-$(shell date +%Y%m%d-%H%M%S).tar.gz
 
 
-.PHONY: bash-revisions vim-revisions install
+.PHONY: revisions-bash revisions-vim install clean
+
+clean:
+	-rm dotfiles-backup*.tar.gz
 
 
-bash-revisions: $(BASHFILES)
+list-active:
+	ls -alh $(DEST_FILES)
+
+backup-active: $(BACKUP_OUTFILE)
+
+$(BACKUP_OUTFILE): $(DEST_FILES)
+	tar -czf $@ $^
+
+revisions-bash: $(MY_BASHFILES)
 	$(shell echo $$EDITOR) $^
 
-vim-revisions: vim/vimrc vim/vimrc-minimal $(VIMRCFILES)
+revisions-vim: vim/vimrc vim/vimrc-minimal $(MY_VIMRCFILES)
 	$(shell echo $$EDITOR) $^
 
 
-install: install-bash install-vim install-screen install-python
+install: backup-active 
+	$(MAKE) install-nautilus-scripts
+	$(MAKE) install-bash
+	$(MAKE) install-vim
+	$(MAKE) install-screen
+	$(MAKE) install-python
 
+install-nautilus-scripts: ~/.gnome2/nautilus-scripts
+	ln -sf $(DOTFILES_DIR)/nautilus-scripts/* $</
 
-install-bash: ~/.bashrc 
-	-mv $< $<-$(DATE)
-	ln -s $(DOTFILES_DIR)/bash/bashrc.sh $< 
-	-mv ~/.bash_aliases ~/.bash_aliases-$(DATE)
-	ln -s $(DOTFILES_DIR)/bash/aliases ~/.bash_aliases
-	-mv ~/.bash_logout ~/.bash_logout-$(DATE)
-	ln -s $(DOTFILES_DIR)/bash/logout.sh ~/.bash_logout
+install-bash: $(MY_BASHFILES)
+	ln -sf $(DOTFILES_DIR)/bash/bashrc.sh ~/.bashrc
+	ln -sf $(DOTFILES_DIR)/bash/aliases ~/.bash_aliases
+	ln -sf $(DOTFILES_DIR)/bash/logout.sh ~/.bash_logout
 
-install-vim: ~/.vimrc 
-	-mv $< $<-$(DATE)
-	ln -s $(DOTFILES_DIR)/vim/vimrc $<
-	-mv ~/.vim ~/.vim-$(DATE)
-	ln -s $(DOTFILES_DIR)/vim ~/.vim
+install-vim: $(MY_VIMRCFILES)  $(DOTFILES_DIR)/vim/vimrc
+	ln -sf $(DOTFILES_DIR)/vim/vimrc ~/.vimrc
+	ln -nsf $(DOTFILES_DIR)/vim ~/.vim
 
-install-screen: ~/.screenrc
-	-mv $< $<-$(DATE)
-	ln -s $(DOTFILES_DIR)/screenrc $<
+install-screen: $(MY_SCREENFILES) 
+	ln -sf $(DOTFILES_DIR)/screenrc ~/.screenrc
 
-
-install-python: ~/.pythonrc.py
-	-mv $< $<-$(DATE)
-	ln -s $(DOTFILES_DIR)/pythonrc.py $<
+install-python: $(MY_PYTHONFILES)
+	ln -sf $(DOTFILES_DIR)/pythonrc.py ~/.pythonrc.py

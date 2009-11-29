@@ -88,7 +88,7 @@ if [ $isLoginShell = 'yes' ]; then
 	[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 
-	export PYTHONSTARTUP=${HOME}/.pythonrc
+	export PYTHONSTARTUP=${HOME}/.pythonrc.py
 
 	export PATH=${PATH}:${HOME}/.dotfiles/bin/
 

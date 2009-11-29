@@ -2,6 +2,7 @@
 *.zip
 *.sw*
 
+dotfiles-backup*.tar.gz
 
 vim/rc.d/original.tar.gz
 vim/view
@@ -12,3 +13,4 @@ vim/doc/
 vim/GetLatest/
 vim/.VimballRecord
 vim/viminfo
+vim/rc.d/.netrwhist
