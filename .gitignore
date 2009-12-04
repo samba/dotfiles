@@ -2,6 +2,7 @@
 *.zip
 *.sw*
 
+dotfiles-backup*.tar.gz
 
 vim/rc.d/original.tar.gz
 vim/view
@@ -9,7 +10,7 @@ vim/LICENSE.EnhancedCommentify
 vim/README.bashsupport
 vim/bash-support
 vim/doc/
-vim/autoload/
 vim/GetLatest/
 vim/.VimballRecord
 vim/viminfo
+vim/rc.d/.netrwhist

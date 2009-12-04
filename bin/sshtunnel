@@ -9,7 +9,7 @@
 
 function main () {
 local OPTIND=1 PSBIN=$(which ps)
-while getopts c:lk:sa O; do
+while getopts c:lK:k:sat: O; do
 	case $O in
 		c) h=$OPTARG; 
 		# create a tunnel if there isn't one already
@@ -29,7 +29,17 @@ while getopts c:lk:sa O; do
 			;;
 		esac
 		;;
-
+		t) # test the tunnel's socket
+			local s=${OPTARG};
+			shift 2; 
+			local OPTIND=1
+			ssh -M $s -O check $@ && ssh -M $s $@ 'date'
+		;;
+		K) local s=${OPTARG};
+			shift 2;
+			local OPTIND=1
+			ssh -M $s -O exit
+			;;
 		*) echo 'Unknown option' $O $OPTARG $OPTIND;;
 	esac
 done
