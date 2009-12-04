@@ -1,0 +1,3 @@
+Deployment instructions
+	git clone git@github.com:samba/dotfiles.git ~/.dotfiles
+	make -C ~/.dotfiles install

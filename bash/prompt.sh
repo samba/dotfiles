@@ -22,7 +22,7 @@ if [ ! -z "$PS1" ]; then
 				# this prints the hostname as window title if in screen - only once.
 				printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
 			fi
-			printf -v title "%s" '\[\e]0;\u \W\a\]' # sets hardstatus
+			printf -v title "%s" '\[\e]0;\u@\h: \W\a\]' # sets hardstatus
 			# printf -v title "%s%s" "$title" '\[\e[0000m\ek\h\e\\\]' # sets title
 			;;
 		*) title='';;
