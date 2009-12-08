@@ -15,6 +15,8 @@ exec 1>>$LOG 2>>$LOG
 files=$(mktemp)
 echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" > $files
 
+dpkg -l squashfs-tools >/dev/null || apt-get install squashfs-tools 
+
 
 d=$(date +%N);
 
@@ -26,7 +28,7 @@ while read f; do
 	s=$mnt/$d/$(basename "$f")
 	# mount the file (making the directory path as needed)
 	gksudo "mkdir '$s' -p"
-	gksudo "mount -v -o loop,uid=$(id -u) -t squashfs '$f' '$s'"
+	gksudo "mount -v -o loop,uid=$(id -u) -t squashfs '$f' '$s'" || dmesg | tail
 done < $files
 
 rm $files

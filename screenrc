@@ -83,12 +83,12 @@ caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%
 hardstatus off
  
 # configure the window list, via C-A "
-# windowlist title "%{= .y}Num%{-}   %{= .g}Title%{-}%{-} %=  %{= .b}Flags%{-}"
-# windowlist string "%{= .y}%3n%{-} %{= .g}%t%{-} %= %{= .b}%f%{-}"
+#windowlist title "%{= .y}Num%{-} %{= .b}Flags%{-} %{= .g}Title%{-}%{-} %= Hardstatus"
+#windowlist string "%{= .y}%3n%{-} %{= .b}%f%{-} %{= .g}%t%{-} %= %h"
 
 
-windowlist title  "Flag Num Title"
-windowlist string "%f%04= %3n %t"
+windowlist title  "Flag Num Title %= Hardstatus"
+windowlist string "%f%04= %3n %t %= %h"
 
 
 
