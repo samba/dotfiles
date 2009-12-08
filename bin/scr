@@ -20,7 +20,13 @@ main () {
 #		[ $USER != 'root' ] && [ $UID -ne 0 ] && $SSH_AGENT_CMD screen -d -m -S $name
 #	fi
 
-	$SSH_AGENT_CMD screen -d -RR -x -m -S $name # -T ${TERM}
+	if screen -ls | grep -E "[0-9]+.$name" > /dev/null; then
+		$SSH_AGENT_CMD screen -D -R -x -m -S $name # -T ${TERM}
+	else
+		$SSH_AGENT_CMD screen -D -R -m -S $name # -T ${TERM}
+	fi
+
+
 }
 
 
