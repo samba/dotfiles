@@ -19,16 +19,17 @@ endfunc
 
 
 " Nice window title
-autocmd BufEnter * let &titlestring=expand("%:t")
+autocmd BufEnter * let &titlestring="vim: " . expand("%:t") . " (" . hostname() . ")"
+let &titleold=hostname()
 " set titlestring="%f\ %h%m%r%w\ -\ %{v:progname}\ -\ %{substitute(getcwd(),\ $HOME,\ '~',\ '')}\ [&filetype]"
 "set titlestring =%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\ %{v:servername}
 " let &titlestring = hostname() . "[vim(" . expand("%:t") . ")]"
-" TODO: make this work in screen properly
-"if &term == "screen"
-"	set t_ts=^[k
-"	set t_fs=^[\
-"endif
-if &term == "screen" || &term == "xterm"
+" '\[\e]0;\u@\h: \W\a\]'
+if (&term =~ '^screen')
+	set t_ts=k
+	set t_fs=\
+endif
+if (&term == "screen" || &term == "xterm")
 	set title
 endif
 

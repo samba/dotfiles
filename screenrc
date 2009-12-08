@@ -87,8 +87,8 @@ hardstatus off
 #windowlist string "%{= .y}%3n%{-} %{= .b}%f%{-} %{= .g}%t%{-} %= %h"
 
 
-windowlist title  "Flag Num Title %= Hardstatus"
-windowlist string "%f%04= %3n %t %= %h"
+windowlist title  "%{+ y}Flag%{-} %{+ y}Num%{-} %{+ g}Title%{-} %= %{+ b}Hardstatus%{-}"
+windowlist string "%{+ y}%f%04=%{-} %{+ y}%3n%{-} %{+ g}%t%{-} %= %{+ b}%h%{-}"
 
 
 
