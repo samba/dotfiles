@@ -23,5 +23,9 @@ set ttyfast
 " seconds and bytes to wait idle before writing swap
 set updatetime=10 updatecount=30 
 
+inoremap  <C-s><C-s> :syn sync fromstart 
+nnoremap  <C-s><C-s> :syn sync fromstart 
+
+
 
 " set visualbell

@@ -88,7 +88,7 @@ hardstatus off
 
 
 windowlist title  "%{+ y}Flag%{-} %{+ y}Num%{-} %{+ g}Title%{-} %= %{+ b}Hardstatus%{-}"
-windowlist string "%{+ y}%f%04=%{-} %{+ y}%3n%{-} %{+ g}%t%{-} %= %{+ b}%h%{-}"
+windowlist string "%{+ y}%f%04=%{-} %{+ y}%3n%{-} %{+ g}%t%{-} %= %?[%u]%? %{+ b}%h%{-}"
 
 
 
@@ -103,6 +103,14 @@ bufferfile screen.buf
 # altscreen on
 vbell off
 
+
+startup_message off
+defutf8 on
+
+activity "Activity in %t (%n)"
+# activity "%c activity -> %n%f %t"
+bell "%c bell -> %n%f %t^G"
+vbell_msg "Bell on %t (%n)"
 
 
 # vim: foldmethod=marker foldenable
