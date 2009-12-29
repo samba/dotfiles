@@ -11,14 +11,5 @@ for additive in split(globpath(&runtimepath, 'sb.*.vim'), "\n")
 	exe "source ".additive
 endfor
 
-function EditVimConfig ()
-    " open all .vim in the runtime path
-    for conf in split(globpath(&runtimepath, '*.vim'), "\n")
-        exe "edit ".conf
-    endfor
-    " open vimrc itself
-    edit ~/.vimrc
-endfunc
-
 " modeline for .vimrc
 " vim: foldmethod=marker foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab
