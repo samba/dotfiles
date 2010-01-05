@@ -37,6 +37,10 @@ cat <<EOF
 
 	dest: which pastebin URL to post to
 		default: $def_pastebin_url
+		note: this gets handled as a format string.
+			if you want to post to a pastebin subdomain:
+				-d 'blah.%s'
+			results in dest=$(printf 'blah.%s' "$def_pastebin_url")
 
 EOF
 }
