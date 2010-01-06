@@ -21,7 +21,8 @@ main () {
 #	fi
 
 	if screen -ls | grep -E "[0-9]+.$name" > /dev/null; then
-		$SSH_AGENT_CMD screen -d -R -x -m -S $name # -T ${TERM}
+		# session already exists, reattach
+		$SSH_AGENT_CMD screen -x -S $name # -T ${TERM}
 	else
 		$SSH_AGENT_CMD screen -d -R -m -S $name # -T ${TERM}
 	fi
