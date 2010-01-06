@@ -1,0 +1,76 @@
+#!/bin/bash
+# Pastebin poster, by Sam Briesemeister
+# Inspired by 'Jaku': http://haxbyjaku.com/haxs/posting-data-to-pastebin-with-curl/
+
+
+# DEFAULTS
+def_pastebin_url=pastebin.com/pastebin.php # the generic location
+def_pastebin_fmt=text # no syntax highlighting
+def_pastebin_rtn=d # one day
+def_pastebin_src='standard input' # standard input
+def_pastebin_usr=$USER # active shell user
+
+
+usage () {
+cat <<EOF
+	$0 [-r retention] [-f format] [-U user] [-i input] [-d dest]
+
+	retention: how long your post is kept
+		values: {d: one day; m: one month; f: forever}
+		default: $def_pastebin_rtn
+
+	format: the syntax highlighting used in pastebin
+		values: (anything pastebin supports)
+			- c, cpp, csharp 
+			- bash, diff, bnf
+			- javascript, css, html4strict
+			- perl, php, python, ruby, rails
+			- sql, mysql, plswl (plsql?) 
+		default: $def_pastebin_fmt
+			
+	user: the pastebin user name
+		default: your active system username ($USER)
+	
+	input: where to get what I will post
+		values: a filename
+		default: $def_pastebin_src 
+
+	dest: which pastebin URL to post to
+		default: $def_pastebin_url
+		note: this gets handled as a format string.
+			if you want to post to a pastebin subdomain:
+				-d 'blah.%s'
+			results in dest=$(printf 'blah.%s' "$def_pastebin_url")
+
+EOF
+}
+
+
+
+while getopts ':r:f:U:i:d:h' Opt; do
+	case $Opt in
+		r) retain="$OPTARG";;
+		f) format="$OPTARG";;
+		U) user="$OPTARG";;
+		i) input="$OPTARG";;
+		d) printf -v dest "$OPTARG" "$def_pastebin_url";;
+		h) usage; exit 0;;
+	esac
+done
+
+user=${user:-$def_pastebin_usr}
+retain=${retain:-$def_pastebin_rtn} 
+format=${format:-$def_pastebin_fmt}
+input=${input:-$def_pastebin_src}
+
+if [ "$input" = "$def_pastebin_src" ]; then
+	# the standard input flag for CURL
+	input='-'
+fi
+
+
+curl -i -s -F "code2=<$input" -F paste=Send -F expiry=$retain -F poster=$user -F format=$format $dest | grep -i Location:
+
+
+exit $?
+

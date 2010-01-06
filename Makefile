@@ -16,6 +16,10 @@ clean:
 	-rm dotfiles-backup*.tar.gz
 
 
+$(DEST_FILES):
+	test -d "$@" || mkdir -p "$$(dirname "$@")"
+	test -f "$@" || touch "$@"
+
 list-active:
 	ls -alh $(DEST_FILES)
 
@@ -31,8 +35,8 @@ revisions-vim: vim/vimrc vim/vimrc-minimal $(MY_VIMRCFILES)
 	$(shell echo $$EDITOR) $^
 
 
-install: backup-active 
-	$(MAKE) install-nautilus-scripts
+install: $(DEST_FILES) backup-active 
+	test -d ~/.gnome2 && $(MAKE) install-nautilus-scripts || exit 0
 	$(MAKE) install-bash
 	$(MAKE) install-vim
 	$(MAKE) install-screen

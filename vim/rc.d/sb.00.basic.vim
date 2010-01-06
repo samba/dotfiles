@@ -19,9 +19,8 @@ set tabpagemax=6
 
 
 set ttyfast
-
-" seconds and bytes to wait idle before writing swap
-set updatetime=10 updatecount=30 
+" milliseconds and bytes to wait idle before writing swap
+set updatetime=30000 updatecount=100
 
 inoremap  <C-s><C-s> :syn sync fromstart 
 nnoremap  <C-s><C-s> :syn sync fromstart 
