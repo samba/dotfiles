@@ -1,0 +1,17 @@
+Indexing tool usage.
+
+index.py -i <in-dir> -o <out-dir> -c <config-file>
+
+	<in-dir>:		the input directory, the one to search.
+	<out-dir>:	the output directory, where your lists/indexes are written
+	<config-file>:	ini-file describing the searches and output files
+
+Configuration file format:
+	[searches]
+	<outfile>: <searchregex>[;;<regex flags>]
+
+... where: 
+	<outfile>: the name of the file in <out-dir>
+	<searchregex>: filename patterns to map to this <outfile>
+	<regex flags>: Python constants, e.g. re.IGNORECASE
+
