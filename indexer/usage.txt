@@ -1,17 +1,28 @@
 Indexing tool usage.
 
-index.py -i <in-dir> -o <out-dir> -c <config-file>
+index.py -i <in-dir> -o <out-dir> -c <config-file> -s
 
-	<in-dir>:		the input directory, the one to search.
-	<out-dir>:	the output directory, where your lists/indexes are written
-	<config-file>:	ini-file describing the searches and output files
+	-i <in-dir>:          the input directory, the one to search.
+	-o <out-dir>:         the output directory, where your lists/indexes are written
+	-c <config-file>:     ini-file describing the searches and output files
+
+	-s:                   sort the results by path/filename
 
 Configuration file format:
-	[searches]
-	<outfile>: <searchregex>[;;<regex flags>]
+	[<outfile>]
+	pattern=<searchregex>
+	flags=<regex flags>
 
 ... where: 
 	<outfile>: the name of the file in <out-dir>
 	<searchregex>: filename patterns to map to this <outfile>
-	<regex flags>: Python constants, e.g. re.IGNORECASE
+	<regex flags>: Python constants, e.g. re.IGNORECASE (this is eval()-ed)
 
+The configuration file is handled by Python ConfigParser, so it supports
+flexible format strings. For example...
+
+	[somefile.list]
+	blob=*.(bin|raw)
+	pattern=*somefile*%(blob)s
+
+This would produce a pattern of "*somefile**.(bin|raw)"
