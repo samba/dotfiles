@@ -98,4 +98,6 @@ function exit_handler () {
 	[ $isLoginShell = 'yes' ] && printf "exit: %s@%s\n" "$USER" "$HOSTNAME" >&2
 }
 
+sshtunnel -a
+
 trap exit_handler EXIT

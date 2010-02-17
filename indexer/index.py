@@ -11,48 +11,65 @@ Patterns = {
 
 class SearchHandler:
 	searches = {}
-	indir = None
-	outdir = None
-	def __init__(self, config):
-		cp = ConfigParser.ConfigParser()
-		cp.readfp(open(config['config']))
-		self.searches.update(dict(cp.items('searches')))
-		self.indir = config['indir']
-		self.outdir = config['outdir']
+	config = None
+	options = None
+	def __init__(self, options):
+		self.options = options
+		self.loadcfg(self.options['config'])
 	
+	def loadcfg(self, file):
+		self.config = ConfigParser.ConfigParser()
+		self.config.readfp(open(file, 'r'))
+		# set up the search data structure
+		for i in self.config.sections():
+			# outfile name -> { options }
+			self.searches.update({ i: dict(self.config.items(i)) })
+		return self.config
+
+
 	def go(self):
-		return search(self.indir, self.outdir, self.searches)
+		return self.search(self.options['indir'], self.options['outdir'], self.searches)
 	
 
-def search(indir, outdir, searches):
-	if not indir or not os.path.isdir(indir):
-		return None
-	if not outdir or not os.path.isdir(outdir):
-		return None
-			
-	for i in searches:
-		o = open('%s/%s' % (outdir, i), 'w')
-		e = searches[i].strip().split(';;')
-		searches[i] = e[0]
-		if len(e) > 1: fl = eval(e[1])
-		else: fl = 0
-		p = searches[i].replace('.', '\.').replace('*', '(.*)')
-		sys.stderr.write('%s = "%s" with %s\n' % (i , searches[i], fl))
-		p = re.compile(p, fl)
-		for subdir, dirs, files in os.walk(indir):
+	def searchpath(self, pattern, path):
+		for subdir, dirs, files in os.walk(path):
 			for f in files:
-				m = None
-				s = searches[i].find('/')
-				if s > -1:
-					m = p.match(os.path.join(subdir, f))
+				match = None
+				slash = pattern.pattern.find('/') 
+				if slash > -1:
+					match = pattern.match(os.path.join(subdir, f))
 				else:
-					m = p.match(os.path.basename(f))
+					match = pattern.match(os.path.basename(f))
 
-				if m:
-					r = os.path.relpath('%s/%s' % (subdir, f), outdir)
-					o.write('%s\n' % r)
+				if match:
+					yield '%s/%s' % (subdir, f)
 
-		o.close()
+
+	def search(self, indir, outdir, searches):
+		if not indir or not os.path.isdir(indir): return None
+		if not outdir or not os.path.isdir(outdir): return None
+			
+		# sys.stderr.write(repr(searches))
+
+		for i in searches:
+			# set up the regular expression
+			p = searches[i]['pattern'].replace('.', '\.').replace('*', '(.*)')
+			fl = 0
+			if 'flags' in searches[i]:
+				fl = eval(searches[i]['flags'])
+			sys.stderr.write('%s = "%s" with %s\n' % (i, p, fl))
+			p = re.compile(p, fl)
+
+			# gather resultant paths
+			results = [ os.path.relpath(r, outdir) for r in self.searchpath(p, indir) ]
+			if self.options['sort']: results.sort() # sort - duh.
+
+			# setup the buffer and write the results
+			outfile = open('%s/%s' % (outdir, i), 'w')
+			for f in results: outfile.write('%s\n' % f)
+			outfile.close()
+
+		return None	
 
 
 
@@ -78,7 +95,8 @@ def ArgumentsDictionary(opts, args):
 	d = {
 		'config': None,
 		'indir': None,
-		'outdir': None
+		'outdir': None,
+		'sort': False
 	}
 	for i in opts:
 		if i[0] == '-c':
@@ -87,12 +105,14 @@ def ArgumentsDictionary(opts, args):
 			d['indir'] = i[1]
 		elif i[0] == '-o':
 			d['outdir'] = i[1]
+		elif i[0] == '-s':
+			d['sort'] = True
 
 	return (d, args)
 
 if __name__ == '__main__':
 	Patterns = LoadPatterns(Patterns)
-	o = getopt.getopt(sys.argv[1:], 'c:i:o:')
+	o = getopt.getopt(sys.argv[1:], 'c:i:o:s')
 	d, a = ArgumentsDictionary(*o)
 	sys.exit(int(Search(d, a)))
 	

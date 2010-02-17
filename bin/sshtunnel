@@ -2,34 +2,60 @@
 
 # this script is basically a set of SSH-related commands to run based on the current hostname.
 
-# for i in ${HOME}/.ssh/sock/*; do
-# 	echo $i >&2	
-# done
+for i in ${HOME}/.ssh/sock/*; do
+	b=$(basename $i)
+	[ "$b" = "*" ] && continue
+	echo $b >&2	
+done
+
+usage () {
+	cat <<EOF
+	$0: 
+		-c <host>			establish a background connection
+		-k <host>			kill a background connection
+		-l						list background connections
+		-s						status report for the shell summary
+		-a						automatic connections per \`hostname\`: $(hostname)
+		-t <sock>			test a socket to confirm a valid connection
+		-K <sock>			kill a socket
+
+EOF
+}
 
 
 function main () {
 local OPTIND=1 PSBIN=$(which ps)
-while getopts c:lK:k:sat: O; do
+while getopts c:k:T:K:lsah O; do
 	case $O in
 		c) h=$OPTARG; 
 		# create a tunnel if there isn't one already
 		main -l | grep "\-Nf $h" >/dev/null && return 0;
-		ssh -Nf $h -o ConnectTimeout=5 -o BatchMode=yes -o TCPKeepAlive=yes -o Compression=yes
+		ssh -Nf $h -o ConnectTimeout=5 \
+			-o ServerAliveInterval=10 -o ServerAliveCountMax=3 \
+			-o TCPKeepAlive=yes \
+			-o Compression=yes
 		;;
-		l) $PSBIN -C ssh -o pid,command | grep '\-Nf';;
-		k) kill $(main -l | grep $OPTARG | tr -s ' ' '\t' | cut -f 2);;
+		l) PSOPTS='' $PSBIN -C ssh -o pid,command | grep '\-Nf';;
+		k) v=$(main -l | grep $OPTARG | tr -s ' ' '\t' | awk '{ print $1 }'); 
+			echo $v >&2
+			[ -n "$v" ] && kill $v
+		;;
 		s) tunnel_count=$( main -l | wc -l )
 		echo -en "ssh: \e[32m$tunnel_count\e[0m, \e[33m$(ls ~/.ssh/sock/ -1 | wc -l)\e[0m;";
 		;;
 		a) # auto connect mode
-		h=$(hostname)
-		case $h in
-			fenrir|ragnorak|wssbriesemeister) 
-			main -c gateway
-			;;
-		esac
+			h=$(hostname)
+			conf=$HOME/.dotfiles/conf/sshtunnel
+			d=$(awk -F:	"{ if(\$1 ~ $h){ print \$2; } }" $conf)
+			
+			for i in $d; do
+				[ -z "$i" ] && continue
+				main -c $i
+			done
+
+
 		;;
-		t) # test the tunnel's socket
+		T) # test the tunnel's socket
 			local s=${OPTARG};
 			shift 2; 
 			local OPTIND=1
@@ -40,6 +66,7 @@ while getopts c:lK:k:sat: O; do
 			local OPTIND=1
 			ssh -M $s -O exit
 			;;
+		h) usage; exit 0 ;;
 		*) echo 'Unknown option' $O $OPTARG $OPTIND;;
 	esac
 done
