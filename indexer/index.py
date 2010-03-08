@@ -138,6 +138,9 @@ class SearchOutput(SearchCommon):
 		# Debug('match: %s, %s << %s\n' % (self.name, self.find[1].pattern, (dir, file, m.groupdict())))
 		return { (dir, file): m }
 
+	def shellquote(self, p):
+		return p.replace('\'', '\\\'')
+
 	def pathparse(self, k, v):
 		splitext = os.path.splitext(k[1])
 		relpath = os.path.relpath(os.path.join(k[0], k[1]), self.context[1])
@@ -149,8 +152,8 @@ class SearchOutput(SearchCommon):
 			'_u_key': hashlib.md5(abspath).hexdigest(), # a unique key for the file
 			'_base': splitext[0], # the basename up till its extension
 			'_ext': splitext[1], # the extension
-			'_relpath': relpath,
-			'_abspath': abspath
+			'_relpath': self.shellquote(relpath),
+			'_abspath': self.shellquote(abspath)
 		})
 		return v
 
@@ -161,6 +164,8 @@ class SearchOutput(SearchCommon):
 			if self.pipe[2]: # pipescan
 				# Debug('pipescan: %s << %s (%s,%s)\n' % (self.pipe[2].pattern, y[0], i[0], i[1]))
 				s = self.pipe[2].match(y[0])
+			if y[1]:
+				raise Exception(i, self.name, y[1])
 			r[i].update((s and s.groupdict()) or {})
 			yield (i, [r[i], y])
 	
@@ -196,7 +201,7 @@ class SearchOutput(SearchCommon):
 
 		elif self.context[0] and not self.pipe[3]:
 			for i in res:
-				Debug('output: %s << %s\n%s\n\n' % (self.output, i, res[i]))
+				# Debug('output: %s << %s\n%s\n\n' % (self.output, i, res[i]))
 				o = self.output % res[i]
 				o = o.replace('\\n', '\n').replace('\\r','\r').replace('\\t','\t')
 				self.context[0].write('%s\n' % (o))
@@ -220,13 +225,13 @@ class SearchConfig:
 		for i in self.outputs:
 			r = self.outputs[i].match(dir, file)
 			if r: 
-				Debug('updating: %s << %s\n' % (i, r))
+				# Debug('updating: %s << %s\n' % (i, r))
 				self.outputs[i].results.update(r)
 
 
 	def apply(self):
 		for i in self.outputs:
-			Debug('results: %s << %s\n\n' % (i, id(self.outputs[i].results)))
+			# Debug('results: %s << %s\n\n' % (i, id(self.outputs[i].results)))
 			self.outputs[i].render(self.outputs[i].results)
 
 	def loadconfig(self, f):
