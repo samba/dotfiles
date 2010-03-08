@@ -9,9 +9,11 @@ def Debug(s):
 	sys.stderr.write(s)
 
 # generate file tuples on a directory
-def ScanFiles(path):
+def ScanFiles(path, ignore = None):
 	""" Generator for matching files """
+	ignore = [ os.path.abspath(i) for i in (ignore or []) ]
 	for subdir, dirs, files in os.walk(path, followlinks=True):
+		if os.path.abspath(subdir) in ignore: continue
 		for f in files: yield (subdir, f)
 
 def Parameters():
@@ -46,15 +48,16 @@ def Parameters():
 
 
 def SearchMain(opts, args):
+	# Debug('parameters: %s, %s\n' % (opts, args))
 	for c in opts.config:
 		Debug('ini: %s\n' % (c))
 		c = SearchConfig(c, opts = opts, args = args)
 		for p in opts.inputdir:
-			for d, f in ScanFiles(p):
+			for d, f in ScanFiles(p, [ opts.outputdir ]):
 				r = c.examine(d, f)
 				if r: Debug('ex: %s\n\n' % (repr(r)))
 
-		Debug('\n\nOK, done scanning... rendering now...\n')
+		# Debug('\n\nOK, done scanning... rendering now...\n')
 		c.apply()
 
 
@@ -104,6 +107,7 @@ class SearchCommon:
 class SearchOutput(SearchCommon):
 	name = None
 	config = None
+	opts = None
 	find = None
 	context = None
 	type = None
@@ -111,6 +115,7 @@ class SearchOutput(SearchCommon):
 	output = None
 	def __init__(self, el, c):
 		self.name = el
+		self.opts = c.options
 		self.config = c.config
 		self.find = (
 				self._retrieve(el, 'subject', default = '<basename>'), 
@@ -157,8 +162,8 @@ class SearchOutput(SearchCommon):
 		})
 		return v
 
-	def _calleach(self, r):
-		for i in r:
+	def _calleach(self, r, k):
+		for i in k:
 			s = None
 			y = self._call(s = (self.pipe[3] % r[i]), cwd = self.context[1], shell = True)
 			if self.pipe[2]: # pipescan
@@ -169,9 +174,9 @@ class SearchOutput(SearchCommon):
 			r[i].update((s and s.groupdict()) or {})
 			yield (i, [r[i], y])
 	
-	def _callall(self, r):
+	def _callall(self, r, k):
 		# pm, pp, ps, p = self.pipe
-		paths = [ self.pipe[0][4:] % r[i] for i in r ]
+		paths = [ self.pipe[0][4:] % r[i] for i in k ]
 		if self.pipe[1] == 'stdin':
 			i = '\n'.join(paths)
 		# TODO: consider other means of passing "all" elements to the call	
@@ -179,28 +184,30 @@ class SearchOutput(SearchCommon):
 		# Debug('passing to exec: %s\n<<\n%s\n>>\n' % (self.pipe[3], i))
 		return self._call(s = self.pipe[3], input = i, cwd = self.context[1], shell = True)
 
-	def render(self, res):
-		
-		res = dict([ (k, self.pathparse(k, res[k])) for k in res ])	
+	def render(self, res, opts):
+		res = dict([ (i, self.pathparse(i, res[i])) for i in res ])	
+		k = res.keys()
+		if opts.sort:
+			k.sort(key = lambda i: os.path.join(*i))
 		
 		if self.pipe[3] and self.pipe[0].startswith('all:'):
-			r = self._callall(res)
+			r = self._callall(res, k)
 			if self.context[0]:
 				self.context[0].write(r[0])
 				return self.context[0].close()
 
 		elif self.pipe[3] and self.pipe[0] == 'each':
-			r = dict(self._calleach(res))
+			r = dict(self._calleach(res, k))
 			# Debug('each: %s\n\n' % (repr(r)))
 			if self.context[0]:
-				for i in r:
+				for i in k:
 					o = ((self.output or '') % r[i][0]) or (r[i][1][0]) # output format || pipe output # TODO verify
 					o = o.replace('\\n', '\n').replace('\\r','\r').replace('\\t','\t')
 					self.context[0].write('%s\n' % (o)) 
 				return self.context[0].close()
 
 		elif self.context[0] and not self.pipe[3]:
-			for i in res:
+			for i in k:
 				# Debug('output: %s << %s\n%s\n\n' % (self.output, i, res[i]))
 				o = self.output % res[i]
 				o = o.replace('\\n', '\n').replace('\\r','\r').replace('\\t','\t')
@@ -231,8 +238,7 @@ class SearchConfig:
 
 	def apply(self):
 		for i in self.outputs:
-			# Debug('results: %s << %s\n\n' % (i, id(self.outputs[i].results)))
-			self.outputs[i].render(self.outputs[i].results)
+			self.outputs[i].render(self.outputs[i].results, self.options)
 
 	def loadconfig(self, f):
 		self.config = ConfigParser.ConfigParser()
