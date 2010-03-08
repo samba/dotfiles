@@ -26,3 +26,16 @@ flexible format strings. For example...
 	pattern=*somefile*%(blob)s
 
 This would produce a pattern of "*somefile**.(bin|raw)"
+
+
+================================================
+Notes for continuing development:
+	- (arg) select specific section within INI
+	- set all defaults in INI so calls can be:
+		- index.py -c conf.ini
+	- allow multiple INIs, for multiple jobs
+		... to be processed separately by a single call
+	- generic output type handlers
+		- symlink directory support
+			. (e.g. a directory for symlinks of files matching... )
+	

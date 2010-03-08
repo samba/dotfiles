@@ -1,7 +1,7 @@
 *.gz
 *.zip
 *.sw*
-
+*.pyc
 dotfiles-backup*.tar.gz
 
 vim/rc.d/original.tar.gz
