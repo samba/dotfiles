@@ -5,7 +5,6 @@ endif
 
 
 set number
-hi LineNr term=italic cterm=NONE ctermfg=DarkGreen ctermbg=none 
 
 set modeline
 set foldenable
@@ -14,7 +13,6 @@ set mouse=n mousemodel=popup
 "set mouseshape=
 set pastetoggle=<F5>
 set showmatch tagbsearch incsearch
-set splitbelow splitright
 set tabpagemax=6
 
 

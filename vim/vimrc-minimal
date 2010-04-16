@@ -10,43 +10,47 @@
 filetype plugin indent on
 if has('syntax')
 	syntax on
+  nmap .SS :syn sync fromstart
 endif
 set modeline
 set foldenable
 
 set mouse=nv
 
-set nowrap " no wrapping of lines
-nnoremap .W :set nowrap!<CR>
 
-set expandtab " no real tabs
-nnoremap .T :set expandtab!<CR>
+nmap .n :next<CR>
+nmap .p :prev<CR>
 
+" put new windows below and right by default
+set splitbelow splitright
 
 set tabstop=2 " spaces for tabs
 set shiftwidth=2 " spaces for indentation
+set expandtab " no real tabs
+nmap .T :set expandtab!<CR>
 
+
+set nowrap " no wrapping of lines
+nmap .W :set nowrap!<CR>
 
 " toggles auto-changedir in Ex mode?
-nnoremap .C :set invacd<CR>
+nmap .C :set invacd<CR>
 
 " toggle auto-indent
-nnoremap .I :set invai<CR>
+set autoindent
+nmap .I :set autoindent!<CR>
 
 set number " enable line numbering, and a toggle shortcut
-nnoremap .N :set number!<CR>
+nmap .N :set number!<CR>
 
 " toggles paste mode
-nnoremap .P :set paste!<CR>
+nmap .P :set paste!<CR>
 
 " toggle non-printing characters
-nnoremap .L :set list!<CR>
+nmap .L :set list!<CR>
 
 " toggle readonly
-nnoremap .ro :set invreadonly<CR>
-
-
-
+nmap .ro :set invreadonly<CR>
 
 set incsearch " search while typing
-nnoremap .is :set incsearch!<CR>
+nmap .is :set incsearch!<CR>

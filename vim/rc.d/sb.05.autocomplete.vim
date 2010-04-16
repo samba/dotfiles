@@ -42,12 +42,6 @@ set wildmenu
 set wildignore+=*.o,*.obj,*~,.lo,.so
 set suffixes+=.in,.a
 
-" Menu for omnifunc/autocomplete, etc
-hi Pmenu cterm=none ctermfg=Green ctermbg=none
-hi PmenuSel cterm=underline ctermfg=White ctermbg=none
-hi PmenuSbar cterm=bold ctermfg=none ctermbg=DarkBlue
-hi PmenuThumb cterm=bold ctermfg=none ctermbg=White
-
 set pumheight=12
 "}}}
 

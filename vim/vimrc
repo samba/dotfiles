@@ -9,6 +9,7 @@ runtime! debian.vim
 source ~/.vim/vimrc-minimal
 
 
+
 " Then extend it (with optional hostname overrides).
 " This section fails silently, if no runtime directories are found.
 " Skip this section of ENV{NOAUTO} is set (e.g. `NOAUTO=true vim ...`)
@@ -19,11 +20,25 @@ if len($NOAUTO) < 1
     let s:autopath = [ $HOME . s:autopath_base . 'auto', $HOME . s:autopath_base . hostname() ]
 
     for @d in s:autopath
-        for @x in split(globpath(@d, s:xtpattern), '\n')
+        let s:my_includes = split(globpath(@d, s:xtpattern), '\n')
+        for @x in s:my_includes
             exe 'source '.@x
         endfor
         let &runtimepath = printf("%s,%s", &runtimepath, @d)
     endfor
 endif
+
+" try to load the user's color scheme, and then one for the user-hostname combo
+let s:colorschemes = [ $USER, $USER . "@" . hostname() ]
+for @d in s:colorschemes 
+    " echo 'Loading color scheme: ' .@d
+    let s:schemefiles = split(globpath(&runtimepath, 'colors/'.@d.'.vim'), '\n')
+    if len(s:schemefiles) > 0
+        exe 'colorscheme '.@d
+    endif
+endfor
+
+
+
 " modeline for .vimrc
-" vim: foldmethod=marker foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab
+" vim: foldmethod=indent foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab

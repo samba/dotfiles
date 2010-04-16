@@ -30,11 +30,6 @@ nnoremap  <silent>  <space> :exe 'silent! normal! za'.(foldlevel('.')?'':'l')<cr
 "}}}
 
 
-" The default fold color is too bright and looks too much like the statusline
-hi Folded cterm=bold ctermfg=DarkBlue ctermbg=none
-hi FoldColumn cterm=bold ctermfg=DarkBlue ctermbg=none
-
-set fillchars+=fold:_
 
 "}}}
 

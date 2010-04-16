@@ -30,10 +30,6 @@ noremap <silent> <C-t><C-t> :exe 'tabnext' (g:lasttab)<CR>
 " }}}
 
 set showtabline=1               "stal:  Display the tabbar if there are multiple tabs. Use :tab ball or invoke Vim with -p
-hi TabLine cterm=underline ctermfg=LightBlue ctermbg=none
-hi TabLineSel cterm=bold,underline ctermfg=White ctermbg=none
-hi TabLineFill cterm=underline ctermfg=LightBlue ctermbg=none
-
 
 " A nice, minimalistic tabline
 " set tabline=%!MyTabLine()
