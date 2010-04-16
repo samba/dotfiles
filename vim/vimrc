@@ -5,11 +5,25 @@ scriptencoding utf-8
 " properly set to work with the Vim-related packages available in Debian.
 runtime! debian.vim
 
-" My extensions
-set runtimepath=~/.vim/rc.d,$VIMRUNTIME
-for additive in split(globpath(&runtimepath, 'sb.*.vim'), "\n")
-	exe "source ".additive
-endfor
+" Pull in my minimal configuration...
+source ~/.vim/vimrc-minimal
 
+
+" Then extend it (with optional hostname overrides).
+" This section fails silently, if no runtime directories are found.
+" Skip this section of ENV{NOAUTO} is set (e.g. `NOAUTO=true vim ...`)
+if len($NOAUTO) < 1
+    let s:xtpattern = '*.vim'
+    let s:autopath_base = '/.vim/runtime-' " base
+    " I don't (currently) see any reason to extend this beyond -auto and -(hostname)
+    let s:autopath = [ $HOME . s:autopath_base . 'auto', $HOME . s:autopath_base . hostname() ]
+
+    for @d in s:autopath
+        for @x in split(globpath(@d, s:xtpattern), '\n')
+            exe 'source '.@x
+        endfor
+        let &runtimepath = printf("%s,%s", &runtimepath, @d)
+    endfor
+endif
 " modeline for .vimrc
 " vim: foldmethod=marker foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab

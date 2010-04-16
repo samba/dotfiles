@@ -144,7 +144,7 @@ class SearchOutput(SearchCommon):
 		return { (dir, file): m }
 
 	def shellquote(self, p):
-		return p.replace('\'', '\\\'')
+		return p.replace('\'', '\\\'').replace(' ', '\\ ')
 
 	def pathparse(self, k, v):
 		splitext = os.path.splitext(k[1])
@@ -157,8 +157,10 @@ class SearchOutput(SearchCommon):
 			'_u_key': hashlib.md5(abspath).hexdigest(), # a unique key for the file
 			'_base': splitext[0], # the basename up till its extension
 			'_ext': splitext[1], # the extension
-			'_relpath': self.shellquote(relpath),
-			'_abspath': self.shellquote(abspath)
+			'_relpath': relpath,
+			'_abspath': abspath,
+			'_q_relpath': self.shellquote(relpath),
+			'_q_abspath': self.shellquote(abspath)
 		})
 		return v
 
@@ -176,12 +178,12 @@ class SearchOutput(SearchCommon):
 	
 	def _callall(self, r, k):
 		# pm, pp, ps, p = self.pipe
-		paths = [ self.pipe[0][4:] % r[i] for i in k ]
+		paths = [ (self.pipe[0][4:] % r[i]) for i in k ]
 		if self.pipe[1] == 'stdin':
 			i = '\n'.join(paths)
 		# TODO: consider other means of passing "all" elements to the call	
 		else: i = None
-		# Debug('passing to exec: %s\n<<\n%s\n>>\n' % (self.pipe[3], i))
+		Debug('passing to exec: %s <<\n%s\n>> %s, %s\n' % (self.pipe[3], i, self.context[1], self.name))
 		return self._call(s = self.pipe[3], input = i, cwd = self.context[1], shell = True)
 
 	def render(self, res, opts):

@@ -1,9 +1,52 @@
+" DEPLOY: 
+" wget http://github.com/samba/dotfiles/raw/master/vim/vimrc-minimal -O ~/.vimrc
+
+" This minimal vimrc is intended to be easily deployed to machines where my
+" dotfiles are not already installed, while maintaining a basic feature set
+" for usability.
+
+
+
 filetype plugin indent on
 if has('syntax')
 	syntax on
 endif
-set number
 set modeline
 set foldenable
 
-" to deploy: wget http://github.com/samba/dotfiles/raw/master/vim/vimrc-minimal -O ~/.vimrc
+set mouse=nv
+
+set nowrap " no wrapping of lines
+nnoremap .W :set nowrap!<CR>
+
+set expandtab " no real tabs
+nnoremap .T :set expandtab!<CR>
+
+
+set tabstop=2 " spaces for tabs
+set shiftwidth=2 " spaces for indentation
+
+
+" toggles auto-changedir in Ex mode?
+nnoremap .C :set invacd<CR>
+
+" toggle auto-indent
+nnoremap .I :set invai<CR>
+
+set number " enable line numbering, and a toggle shortcut
+nnoremap .N :set number!<CR>
+
+" toggles paste mode
+nnoremap .P :set paste!<CR>
+
+" toggle non-printing characters
+nnoremap .L :set list!<CR>
+
+" toggle readonly
+nnoremap .ro :set invreadonly<CR>
+
+
+
+
+set incsearch " search while typing
+nnoremap .is :set incsearch!<CR>

@@ -27,6 +27,9 @@ p () {
 	case $1 in
 		waiting) ps -ae | awk '$2 ~ /^D$/ { print }';;
 		watch) shift; PS_FORMAT='pid,user,state,vsz,rsz,%mem,%cpu,command' watch -n 1 ps $@;;
+		mine)
+			ps -au $USER;
+		;;
 		*) ps;;
 	esac
 }
