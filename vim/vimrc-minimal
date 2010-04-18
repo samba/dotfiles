@@ -5,21 +5,29 @@
 " dotfiles are not already installed, while maintaining a basic feature set
 " for usability.
 
-
+" These directories must exist.
+set backupdir=$HOME/.vim/backup " backup files location
+set directory=$HOME/.vim/swap " swap files location
 
 filetype plugin indent on
 if has('syntax')
-	syntax on
+  syntax on
+  " For redrawing the syntax highlighting
   nmap .SS :syn sync fromstart
 endif
+
 set modeline
+
+" File buffer navigation
+nmap .n :next<CR>
+nmap .p :prev<CR>
+
 set foldenable
+nmap <silent> .F :set foldenable!<CR>
+
 
 set mouse=nv
 
-
-nmap .n :next<CR>
-nmap .p :prev<CR>
 
 " put new windows below and right by default
 set splitbelow splitright
@@ -41,7 +49,7 @@ set autoindent
 nmap .I :set autoindent!<CR>
 
 set number " enable line numbering, and a toggle shortcut
-nmap .N :set number!<CR>
+nmap <silent> .N :set number!<CR>
 
 " toggles paste mode
 nmap .P :set paste!<CR>
@@ -54,3 +62,5 @@ nmap .ro :set invreadonly<CR>
 
 set incsearch " search while typing
 nmap .is :set incsearch!<CR>
+
+nmap .b :ls<CR>:b<Space>

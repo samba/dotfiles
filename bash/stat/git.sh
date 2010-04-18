@@ -23,7 +23,7 @@ fi
 
 if [[ "${gitstatus}" =~ ${patterns[3]} ]] || [[ "${gitstatus}" =~ ${patterns[4]} ]]; then
 	# bold red
-	gitprint="${gitprint}\e[01;31mÂ\e[0m"
+	gitprint="${gitprint}\e[01;31m!\e[0m"
 fi
 
 # divergence state

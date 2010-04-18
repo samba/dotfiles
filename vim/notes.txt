@@ -1,5 +1,0 @@
-
-in vim, see ':help runtimepath'
-
-WinManager - multi-window IDE-mode for VIM: http://vim.sourceforge.net/scripts/script.php?script_id=95
-BufferExplorer - dependency of WinManager: http://vim.sourceforge.net/scripts/script.php?script_id=42

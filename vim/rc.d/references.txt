@@ -1,3 +1,0 @@
-http://www.stripey.com/vim/vimrc.html
-http://eseth.org/filez/prefs/vimrc
-

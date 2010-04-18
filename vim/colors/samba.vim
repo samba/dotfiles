@@ -8,6 +8,8 @@ endif
 hi LineNr term=italic cterm=NONE ctermfg=DarkGreen ctermbg=none 
 " rndstr: hi LineNr cterm=none ctermfg=0 ctermbg=4
 
+" show - and = to indicate current window
+" set fillchars+=stl:=,stlnc:_
 
 
 " Omnifunc and other menus: {{{
