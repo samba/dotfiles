@@ -99,7 +99,11 @@ aes () {
 
 # for my laptop
 enable_ibm_hotkey () {
-	echo 'echo enable,0x00ffffff > /proc/acpi/ibm/hotkey' | sudo /bin/sh
+  local ds=/proc/acpi/ibm/hotkey
+#    hk=/sys/devices/platform/thinkpad_acpi/hotkey_recommended_mask
+  local hk=/sys/devices/platform/thinkpad_acpi/hotkey_all_mask
+  hk=$(cat $hk)
+	echo "echo enable,$hk > $ds" | sudo /bin/sh
 }
 
 

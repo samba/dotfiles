@@ -30,7 +30,8 @@ if len($NOAUTO) < 1
 endif
 
 " try to load the user's color scheme, and then one for the user-hostname combo
-let s:colorschemes = [ $USER, $USER . "@" . hostname() ]
+" and resolve the real user if it looks like we're in a sudo session
+let s:colorschemes = [ $USER, $USER . "@" . hostname(), $SUDO_USER ]
 for @d in s:colorschemes 
     " echo 'Loading color scheme: ' .@d
     let s:schemefiles = split(globpath(&runtimepath, 'colors/'.@d.'.vim'), '\n')
@@ -42,4 +43,4 @@ endfor
 
 
 " modeline for .vimrc
-" vim: foldmethod=indent foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab
+" vim: ft=vim foldmethod=indent foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab
