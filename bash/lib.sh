@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# an easy routine (named in english) for detecting whether this is a live login.
+is_login_shell () { 
+	[[ $0 =~ ^- ]] || [[ $- =~ i ]]
+}
+
+get_shell_config () {
+	local ent=$1 scope=${2:auto}
+	ls -1 $MY_BASH/runtime-$scope/$ent 2>/dev/null
+}

@@ -1,3 +1,0 @@
-Process:
-	1. load core modules
-	2. if it's a login/interactive shell, load onlogin modules

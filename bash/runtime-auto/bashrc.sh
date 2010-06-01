@@ -8,9 +8,13 @@
 [ -f /etc/bash_completion ] && . /etc/bash_completion
 [ -f /etc/profile.d/bash-completion.sh ] && . /etc/profile.d/bash-completion.sh
 
+
+x=$(dirname $p)
+
 # pull in my standard configuration elements
 for i in aliases color.sh prompt.sh; do
-  [ -f $p/$i ] && . $p/$i
+
+  [ -f $x/$i ] && . $x/$i
 done
 
 exit_handler () {
