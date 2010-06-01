@@ -5,4 +5,3 @@ Deployment instructions
 This repository is primarily oriented toward configuration and tools for my working environment.
 
 I spend a lot of time in VIM and BASH, writing Python and SQL, among a variety of other things, so this configuration is my ever-evolving attempt to make myself more productive, optimizing the interfaces and control methods (read: keyboard shortcuts) of these programs/languages.
-
