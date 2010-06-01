@@ -7,5 +7,6 @@ is_login_shell () {
 
 get_shell_config () {
 	local ent=$1 scope=${2:auto}
+  # echo "$ent: $scope" >&2
 	ls -1 $MY_BASH/runtime-$scope/$ent 2>/dev/null
 }

@@ -9,15 +9,17 @@ export PATH=${PATH}:${HOME}/.dotfiles/bin/
 
 
 setup_login_shell () {
-	SKIP_DEFAULT=0 DEFAULT=auto
+	SKIP_DEFAULT=0 DEFAULT=auto ENTRYPT=bashrc.sh
 
 	for i in $USER@$HOSTNAME $DEFAULT; do
 		if [ $i = $DEFAULT ] && [ $SKIP_DEFAULT -gt 0 ]; then
 			SKIP_DEFAULT=0
 			continue;
 		fi
-		export p=$(get_shell_config bashrc.sh $i)
-		[ -f $p ] && . $p
+		export p=$(get_shell_config $ENTRYPT "$i")
+		[ -z "$p" ] && continue
+		[ ! -f "$p" ] && continue
+		. "$p"
 	done
 
 }

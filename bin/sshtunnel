@@ -2,12 +2,6 @@
 
 # this script is basically a set of SSH-related commands to run based on the current hostname.
 
-for i in ${HOME}/.ssh/sock/*; do
-	b=$(basename $i)
-	[ "$b" = "*" ] && continue
-	echo $b >&2	
-done
-
 usage () {
 	cat <<EOF
 	$0: 
@@ -46,7 +40,7 @@ while getopts c:k:T:K:lsah O; do
 		a) # auto connect mode
 			h=$(hostname)
 			conf=$HOME/.dotfiles/conf/sshtunnel
-			d=$(awk -F:	"{ if(\$1 ~ $h){ print \$2; } }" $conf)
+			d=$(awk -F:	"{ if(\$1 !~ /^#/ && \$1 ~ $h){ print \$2; } }" $conf)
 			for i in $d; do
 				[ -z "$i" ] && continue
 				main -c $i
