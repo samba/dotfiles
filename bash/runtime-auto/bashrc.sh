@@ -13,7 +13,6 @@ x=$(dirname $p)
 
 # pull in my standard configuration elements
 for i in aliases color.sh prompt.sh; do
-
   [ -f $x/$i ] && . $x/$i
 done
 
@@ -52,7 +51,7 @@ export HISTCONTROL="ignoredups"
 export HISTCONTROL="ignoreboth" 
 
 # store more stuff in the history...
-export HISTSIZE=10000
+export HISTSIZE=225175
 export HISTFILESIZE=10000
 export HISTTIMEFORMAT="[%F-%T] " # puts full date and time in history display.
 

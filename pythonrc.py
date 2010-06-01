@@ -1,5 +1,6 @@
 # ~/.pythonrc
-# enable syntax completion
+
+# enable syntax completion via tab
 try:
     import readline, sys
 except ImportError:
