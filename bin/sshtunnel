@@ -47,7 +47,6 @@ while getopts c:k:T:K:lsah O; do
 			h=$(hostname)
 			conf=$HOME/.dotfiles/conf/sshtunnel
 			d=$(awk -F:	"{ if(\$1 ~ $h){ print \$2; } }" $conf)
-			
 			for i in $d; do
 				[ -z "$i" ] && continue
 				main -c $i
@@ -57,7 +56,7 @@ while getopts c:k:T:K:lsah O; do
 		;;
 		T) # test the tunnel's socket
 			local s=${OPTARG};
-			shift 2; 
+			shift 2;
 			local OPTIND=1
 			ssh -M $s -O check $@ && ssh -M $s $@ 'date'
 		;;
@@ -71,12 +70,6 @@ while getopts c:k:T:K:lsah O; do
 	esac
 done
 }
-
-#if [ $isLoginShell = 'yes' ] && [ -d $HOME/.ssh/sock ]; then
-#    [ -z $STATUS_FUNCS ] && STATUS_FUNCS=$(mktemp)
-#    echo 'tunnel -s' >> $STATUS_FUNCS
-#    tunnel -a
-#fi
 
 main $@
 
