@@ -1,0 +1,89 @@
+vbell off
+# more scrollback buffer
+defscrollback 5000
+# dont show
+startup_message off
+defmonitor off
+activity "%"
+
+# Time a message is displayed if screen is not disturbed by
+# other activity. The dafault is 5 seconds:
+msgwait 15
+
+# Color table:
+# 0 Black             .    leave color unchanged
+# 1 Red               b    blue
+# 2 Green             c    cyan
+# 3 Brown / yellow    d    default color
+# 4 Blue              g    green           b    bold
+# 5 Purple            k    blacK           B    blinking
+# 6 Cyan              m    magenta         d    dim
+# 7 White             r    red             r    reverse
+# 8 unused/illegal    w    white           s    standout
+# 9 transparent       y    yellow          u    underline
+
+# If you prepend the word "always" to the type (e.g., 
+# "alwayslastline"), screen will use the type even if the 
+# terminal supports a hardstatus.
+#hardstatus alwayslastline " %c | %d.%m.%Y |  %w"
+#
+#hardstatus alwayslastline "%{yK}   -=%H=- | $LOGNAME | %{yK}%c |  %{yK}%-Lw%{yK}%50>%{Ky}%n%f* %t%{-}%+Lw%<%{- Wk}"
+#
+#hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+#
+#hardstatus alwayslastline "%-Lw%{= BW}%50>%f* %t%{-}%+Lw%< %{= gk} [%l] %{= yd} ethz%{= yk}%1` %{= yd}<3%{= yk}%2` %{= yd}wrk%{= yk}%3` %{= yd}gmx%{= yk}%4` %{= yd}mood%{= yk}%5` %{= yd}cj%{= yk}%6` # oiaje8ufahifj"
+#
+backtick 1 300 300 $HOME/bin/getmailcount.sh $HOME/.maildir/inbox-ethz/ new
+backtick 2 300 300 $HOME/bin/getmailcount.sh $HOME/.maildir/filter-friends/ new
+#backtick 3 300 300 getmailcount.sh $HOME/.maildir/filter-work/ new
+backtick 3 300 300 $HOME/bin/getmailcount_gmail.sh
+backtick 4 300 300 $HOME/bin/getmailcount.sh $HOME/.maildir/inbox-gmx/ new
+backtick 5 300 300 $HOME/bin/getmailcount.sh $HOME/.maildir/cronjobs/ new
+#backtick 6 300 300 cat /tmp/hdmonhealth.out
+#hardstatus alwayslastline "%-Lw%{= BW}%50>%f* %t%{-}%+Lw%< %{= gk} [%l] %{= yd} ethz%{= yk}%1` %{= yd}<3%{= yk}%2` %{= yd}wrk%{= yk}%3` %{= yd}gmx%{= yk}%4` %{= yd}pb%{= yk}%5` # %{= yd}hd%{= yk}%6`"
+backtick 7 0 0 /pub/bin/traffic.sh
+caption always "%{= Kw}%-Lw%{=u Wk}%50>%f* %t%{-}%+Lw%<"
+#hardstatus alwayslastline "%{Yk} %l - %7` %{yW} %{= yd}ethz%{= yk}%1` %{= yd}<3%{= yk}%2` %{= yd}gma%{= yk}%3` %{= yd}gmx%{= yk}%4` %{= yd}cj%{= yk}%5` %{= Yk} %=%Y%m%d %c "
+hardstatus alwayslastline "%{Yk} %l - %7` %{yW} %{= yd}ethz%{= yk}%1` %{= yd}<3%{= yk}%2` %{= yd}gmx%{= yk}%4` %{= yd}cj%{= yk}%5` %{= Yd} gog%{= Yk}%3` %=%Y%m%d %c "
+
+
+# bindings, press ^a and key
+bind ~ activity "activity in %n (%t) [%w:%s]~"
+bind * activity "activity in %n (%t) [%w:%s]"
+bind z screen -t 'ROOT' su
+bind L screen -t 'LOG' sudo /usr/bin/tail -f /var/log/everything/current
+bind K source $HOME/.screenrc
+bind H screen -t 'HTOP' htop
+
+# shad only
+bind n screen -M -t 'MAILCHECK' $HOME/bin/updatemail.sh
+bind m screen -M -t 'MUTT' $HOME/bin/mutt.sh -y
+bind P screen -t 'PAL' $HOME/bin/pal.sh
+bind [ screen -t 'PAL+' pal --color -f $HOME/.pal/pal.conf -m
+
+
+# function keys select screenwindow
+#bindkey -k k1 select 0 # F1 = screen 0
+#bindkey -k k2 select 1 # F2 = screen 1
+#bindkey -k k3 select 2 # F3 = screen 2
+#bindkey -k k4 select 3 # F4 = screen 3
+#bindkey -k k5 select 4 # F5 = screen 4
+#bindkey -k k6 select 5 # F6 = screen 5
+#bindkey -k k7 select 6 # F7 = screen 6
+#bindkey -k k8 select 7 # F8 = screen 7
+# f12 = next, f11 = prev
+bindkey -k F1 prev
+bindkey -k F2 next
+
+# select an open window direct with ALT+ 0-9 
+bindkey "^[1" select 1
+bindkey "^[2" select 2
+bindkey "^[3" select 3
+bindkey "^[4" select 4 
+bindkey "^[5" select 5 
+bindkey "^[6" select 6 
+bindkey "^[7" select 7 
+bindkey "^[8" select 8 
+bindkey "^[9" select 9 
+bindkey "^[0" select 0 
+

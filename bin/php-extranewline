@@ -1,0 +1,8 @@
+#!/bin/bash
+# finds files whose last line doesnot end with `?>'
+
+for f in $(find . -iname '*.php') ; do
+  if [ "x$(tail -n 1 $f)" != "x?>" ] ; then
+    echo "EXTRANEWLINE: $f"
+  fi
+done

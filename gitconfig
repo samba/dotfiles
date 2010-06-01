@@ -1,0 +1,22 @@
+[user]
+	email = mail@rolandschilter.ch
+	name = Roland Schilter
+  editor = vim
+[core]
+  whitespace = trailing-space,space-before-tab,indent-with-non-tab,cr-at-eol
+	editor = vim
+[merge]
+  tool = vimdiff
+[color]
+	ui = auto
+  diff = auto
+  status = auto
+  branch = auto
+[alias]
+  a = commit -a
+  co = checkout
+  p = push
+  s = status
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+  lp = log -p
+  d = diff

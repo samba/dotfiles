@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ $# -gt 0 ]; then
+  find /lib/modules/$(uname -r) -type f -iname '*.o' -or -iname '*.ko' | grep -i --color=auto $*
+else
+  find /lib/modules/$(uname -r) -type f -iname '*.o' -or -iname '*.ko'
+fi

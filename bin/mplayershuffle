@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# requires app-misc/rl
+#
+temp=$(mktemp mplayershuffle.XXXXXXXXXX)
+lsre -ld $PWD 10 | rl > $temp
+mplayer -quiet -playlist $temp $*
+rm $temp

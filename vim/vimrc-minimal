@@ -1,0 +1,21 @@
+" DEPLOY
+"   wget http://github.com/rndstr/dotfiles/raw/master/vim/vimrc-minimal -O ~/.vimrc
+
+set nocompatible
+filetype on
+filetype indent on
+syntax on
+
+set number
+set tabstop=2 " spaces for tabs
+set shiftwidth=2 " spaces for indentation
+set expandtab " no real tabs
+set nowrap " no wrapping of lines
+set incsearch " search while typing
+
+" toggle linenumber
+nnoremap <C-n> :set invnumber<CR>
+" togglel pasting
+nnoremap <C-p> :set invpaste<CR>
+
+ 

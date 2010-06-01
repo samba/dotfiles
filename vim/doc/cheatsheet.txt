@@ -1,0 +1,169 @@
+*cheatsheet.txt*        Cheatsheet for vim
+
+Author: Roland Schilter
+Last change: 2010-06-01
+
+SELECT                                          *cs-select*
+^v  Blockmode
+V   Line
+v   Char
+gv              Select previous visual area again
+[V] o           Switch cursor to other corner
+[V] ^g          Switch between [V] and [S]
+[B] I/A/c<text><Esc>  Insert / append / change on every line
+
+TEXTOBJECTS                                     *cs-textobjs*
+Can be used after an operator or in Visual mode: <type><what>
+TYPE
+a       Ambient
+i       Inner (less text)
+WHAT
+w       word
+W       WORD
+s       sentence
+p       paragraph
+{       Whole {..} block or text inside it
+(       Whole (..) block or text inside it
+<       Whole <..> block or text inside it
+'       Single-quoted string
+"       Double-quoted string
+t       Whole HTML/XML tag
+
+Examples:
+  ci(   Change text inside (..) block
+  yat   Copy entire closest tag (yit for text only)
+  gUi'  Uppercase text inside string
+  vip   Select paragraph in Visual mode
+
+
+SEARCH                                          *cs-search*
+[I              List lines with word under cursor
+f/F<char>       Move cursor to next/prev char
+t/T<char>       Same but stops one char short  
+*/#             Find next/previous instance of whole word
+n/N             Next/previous search             
+ \c             Force case-insensitive search in pattern
+
+:[range]s/<pat>/<replace>/<flags>
+&               Repeat last substitution on current line
+:&&             Repeat it with flags
+g&              Repeat substition globally
+
+Examples:
+  df;           Delete text from cursor to first ;
+  cT$           Change text from cursor up to the first $ to the left
+  d/^#          Delete everything up to the next comment
+  y/^class/;?function   Copy everything to the first function before first class
+
+RANGE                                           *cs-range*
+<from>,<to>     Patterns, line numbers, etc
+%               Entire file (1,$)
+.               Current line
+
+Examples:
+  :.,/<\body>/s,<br>,<br />,gc          Fix br tags
+
+COMPLETION                                      *cs-completion*
+[I] ^x          Start completion mode
+^f              File name
+^o              Omni (classes, vars, methods, context-based)
+:he ins-completion
+
+CURSOR                                          *cs-cursor*
+-               Previous line
+g;              Prev pos in change list
+g,              Next pos in change list
+gi              Go back to insert mode where you left it
+:he changelist
+
+
+BOOKMARKS                                       *cs-bookmarks*
+:marks    List
+m<char>   Set label
+'<char>   Jump to line
+`<char>   Jump to position
+<action>`<char>
+
+Examples:      
+  c`a   Change text from cursor to mark
+  d`a   Delete
+  =`a   Format
+
+
+``        Jump between last two locations
+m`        Set context mark explicitly
+'. / `.   Last change
+'(        Start of current sentence
+')        End of current sentence
+'{        Start of current paragraph
+'}        End of current paragraph
+
+
+(char a-z buffer local, A-Z global file)
+:he mark-motions
+
+WINDOWS                                         *cs-win*
+:new
+:sp
+
+
+COMMANDS                                        *cs-cmd*
+.       Repeat last change
+@:      Repeat last command
+:he single-repeat
+
+:<range>g/<pat>/<cmd>   Run command on lines in <range> where <pat> matches
+                        g! for negating <pat>
+:he multi-repeat
+
+BUFFERS                                         *cs-buffers*
+:e <file>
+:ls
+:b<num>         Switch to bufer
+:bd[elete]      Unload
+:bw[ipeout]     Unload and delete
+
+RECORDING                                       *cs-record*
+q<char>     Start recording into register
+q           Stop
+@<char>     Play
+@@          Play last recording
+:reg
+:he record
+
+REGISTERS                                       *cs-registers*
+:reg
+"a to "z        Named
+"A to "Z        Append to lowercase
+"_              /dev/null
+<reg><action>   Store <action> (y/d) in <reg>
+
+[I] ^r<reg> Insert contents of <reg>
+
+ACTIONS                                         *cs-actions*
+U               Uppercase selected text
+D               Delete rest of the line
+
+MISC                                            *cs-misc*
+^g / g^g        Where am I?
+<< / >>         Indent
+ZZ              Exit with saving
+ZQ              Exit
+q: / q/         Command history (<Enter> executes, ^c copies)
+:%!sort
+:%!grep
+(or :! in [V])
+
+Examples:
+  vip:!sort     Sort paragraph
+
+TAGS                                            *cs-tags*
+^]              Jump to tag under cursor
+^t              Back where you were
+^w^]            Open new window
+:tag /<pat>     Jump to or list tags matching <pat>
+:tselect /<pat> List only
+:he tags
+
+
+ vim:tw=78:ts=8:ft=help:norl:

@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# Takes a screenshot from your desktops or windows
+#
+# USAGE
+#   screenie.sh [filename] [--area|-a where] [--target|-t dir] [--viewer|-v command]
+#
+#
+#     filename          Without extension
+#     --area where      w|d|t (window, desktop, tvtime)
+#
+# DEPS
+#   kde-base/kdialog
+#   media-gfx/imagemagick
+#   x11-apps/xwd
+#
+# NOTE
+#   tvtime area appends /tvtime to target
+
+
+# DEFAULT SETTINGS
+
+# Where to store the file
+TARGET=~/screens
+
+# d = desktop, w = window, t = tvtime
+AREA='d'
+
+# Whether to ask for a name (if filename is given we always skip this)
+ASKRENAME=1
+
+# Name of the shot without the extension
+FILENAME="screen-$(date +%Y%m%d_%H%M%S)"
+
+# What to execute after screenshot was taken
+VIEWER=
+
+EXT=png
+
+
+filename=
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -a|--area) shift ;  AREA=$1; shift ;;
+    -t|--target) shift ; TARGET=$1; shift ;;
+    -v|--viewer) shift ; VIEWER=$1; shift ;;
+    *) FILENAME=$1; ASKRENAME=0; shift ;;
+  esac
+done
+
+[ "$AREA" = "t" ] && TARGET+=/tvtime
+
+[ ! -e $TARGET ] && mkdir $TARGET
+
+if [ "$AREA" = "t" ]; then
+  tvtime-command SCREENSHOT "$TARGET/$FILENAME.$EXT"
+else
+
+
+  if [ "$AREA" = "d" ]; then
+    import -window root $TARGET/$FILENAME.$EXT
+  else
+    xwd -out /tmp/dummy.xwd
+    convert /tmp/dummy.xwd $TARGET/$FILENAME.$EXT
+    rm -f /tmp/dummy.xwd
+  fi
+  rename=$(kdialog --title "Save as (w/o ext)" --inputbox "New name (cancel for $FILENAME)")
+  [ -n "$rename" ] && mv $TARGET/$FILENAME.$EXT $TARGET/$rename.$EXT
+
+  if [ -n "$VIEWER" ]; then
+    if [ -n "$rename" ]; then 
+      $VIEWER $TARGET/$rename.$EXT
+    else
+      $VIEWER $TARGET/$FILENAME.png
+    fi
+  fi
+
+fi
+

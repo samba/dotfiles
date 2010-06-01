@@ -1,0 +1,5 @@
+*.gz
+vim/rc.d/x-*
+vim/backup/*
+vim/swap/*
+vim/php/doc/*

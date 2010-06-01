@@ -1,0 +1,75 @@
+# no audible bell
+vbell off
+# more scrollback buffer
+defscrollback 1000
+# dont show
+startup_message off
+defmonitor off
+activity "%"
+# autodetach on hangup
+autodetach on
+# utf8 y0
+defutf8 on
+
+# Time a message is displayed if screen is not disturbed by
+# other activity. The dafault is 5 seconds:
+msgwait 5
+
+
+# Color table:
+# 0 Black             .    leave color unchanged
+# 1 Red               b    blue
+# 2 Green             c    cyan
+# 3 Brown / yellow    d    default color
+# 4 Blue              g    green           b    bold
+# 5 Purple            k    blacK           B    blinking
+# 6 Cyan              m    magenta         d    dim
+# 7 White             r    red             r    reverse
+# 8 unused/illegal    w    white           s    standout
+# 9 transparent       y    yellow          u    underline
+
+# If you prepend the word "always" to the type (e.g., 
+# "alwayslastline"), screen will use the type even if the 
+# terminal supports a hardstatus.
+
+# free mem
+#backtick 1 60 60 awk '{if ($1=="MemTotal:") mt = $2; if ($1=="MemFree:") mm = $2; if ($1=="Buffers:") mb = $2; if ($1=="Cached:") mc = $2} END {printf ("RAM %2.0f%"), ((mt-(mm+mb+mc)) * 100 / mt);}' /proc/meminfo
+
+caption always "%{= Kw}%-Lw%{=u kw}%50>%f* %t%{-}%+Lw%<"
+hardstatus alwayslastline "%{wk} %l %=%Y%m%d %c1"
+
+
+# bindings, press ^a and key
+bind ~ activity "activity in %n (%t) [%w:%s]~"
+bind * activity "activity in %n (%t) [%w:%s]"
+bind z screen -t 'ROOT' su
+bind L screen -t 'LOG' sudo /usr/bin/tail -f /var/log/everything/current
+bind K source $HOME/.screenrc
+bind H screen -t 'HTOP' htop
+
+
+# function keys select screenwindow
+#bindkey -k k1 select 0 # F1 = screen 0
+#bindkey -k k2 select 1 # F2 = screen 1
+#bindkey -k k3 select 2 # F3 = screen 2
+#bindkey -k k4 select 3 # F4 = screen 3
+#bindkey -k k5 select 4 # F5 = screen 4
+#bindkey -k k6 select 5 # F6 = screen 5
+#bindkey -k k7 select 6 # F7 = screen 6
+#bindkey -k k8 select 7 # F8 = screen 7
+# F11 = prev, F12 = next
+bindkey -k F1 prev
+bindkey -k F2 next
+
+
+# select an open window direct with ALT+ 0-9 
+bindkey "^[1" select 1
+bindkey "^[2" select 2 
+bindkey "^[3" select 3 
+bindkey "^[4" select 4 
+bindkey "^[5" select 5 
+bindkey "^[6" select 6 
+bindkey "^[7" select 7 
+bindkey "^[8" select 8 
+bindkey "^[9" select 9 
+bindkey "^[0" select 0  

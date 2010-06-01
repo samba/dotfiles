@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+#
+# USAGE
+#   emerge-info <current|progress|status> <emerge.log>
+
+
+
+# from emerge-current.sh by Hellf[i]re
+emerge_current () {
+  tac $log |\
+  grep 'Compiling' |\
+  head |\
+  sed -e 's/.*(//' |\
+  sed -e 's/::.*)//' |\
+  head -n 1 |\
+  cut -d \) -f 1
+}
+# from Jeremy_Z @ forums.gentoo.org http://forums.gentoo.org/viewtopic-t-351806-postdays-0-postorder-asc-start-550.html
+emerge_progress () {
+  tail -n 50 $log |\
+  tac |\
+  grep -v "Starting retry" |\
+  grep -iE '([0-9]* of [0-9]*)' -o -m 1 |\
+  sed -e 's/\(.*\) of \(.*\)/\1 \2/' |\
+  awk '{print 100.0*$1/$2}' 
+}
+# from emerge-status.sh by Hellf[i]re
+emerge_status () {
+  STATUS=`tail -n 15 $log |\
+  grep -iE "Compiling|Cleaning|AUTOCLEAN|completed|search|terminating|rsync" |\
+  cut -d ' ' -f "2-" |\
+  grep -Ev 'Finished\.|Cleaning up\.\.\.' |\
+  tail -n 1`
+
+  #echo "$STATUS"
+
+  if [ "`echo "$STATUS" | grep -i compiling`" != "" ]; then echo Compiling
+  elif [ "`echo "$STATUS" | grep -i cleaning`" != "" ]; then echo Cleaning
+  elif [ "`echo "$STATUS" | grep -i autoclean`" != "" ]; then echo Autoclean
+  elif [ "`echo "$STATUS" | grep -i sync`" != "" ]; then echo Syncing
+  elif [ "`echo "$STATUS" | grep -i search`" != "" ]; then echo Searching
+  elif [ "`echo "$STATUS" | grep -i completed`" != "" ]; then echo Completed
+  elif [ "`echo "$STATUS" | grep -i terminating`" != "" ]; then echo Completed
+  else echo Script Error!
+  fi
+}
+
+wot=""
+log=""
+
+case $# in
+  2) wot=${1:0:1} ; log=$2 ;;
+  1) wot=${1:0:1} ; log="/var/log/emerge.log" ;;
+esac
+
+
+if [ "$wot" = "c" ]; then
+  emerge_current
+elif [ "$wot" = "p" ]; then
+  emerge_progress
+elif [ "$wot" = "s" ]; then
+  emerge_status
+else
+  echo "Usage: $(basename $0) <current|progress|status> <emerge.log>"
+fi
+

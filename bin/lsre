@@ -1,0 +1,152 @@
+#!/bin/bash
+#
+# Copyright (c) 2005 Roland Schilter
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+#
+#
+# list recursive enhanced
+#
+#
+#
+# DESCRIPTION:
+#   Lists several directories, like ls does but with enhanced features.
+#   Such as specifying which depths to list (lower and upper boundary),
+#   optional listing of files, optional printing of full path.
+#
+# USAGE:
+#   lsre.sh
+#     [--exclude-files] [--relative-dir]
+#     [--list <basedir> <fromdepth> <todepth>]*
+#     [--list-depth <basedir> <depth>]*
+#     [--list-all <basedir>]* NOT YET IMPLEMENTED
+#
+#     --exclude-files       exclude files in listing.
+#     --relative-dir        do not print absolute path but only relative to <basedir>
+#     --list                starts at <basedir> and lists all directories recursively 
+#                           but only if they are between given depth.
+#     --list-depth          same as --list <depth> <depth> <basedir>
+#     --list-all            lists all directories recursively. TODO
+#
+# NOTE: --exclude-files and --relative-dir must come before any --list* option.
+#
+# FIXME dunno anymore whether that was itentional but `lsre -l . 10 10` lists _all_ files...?
+
+exclude_files=0
+relative_dir=0
+version="0.1"
+
+
+# $basedir
+# $reldir
+function print_dir {
+  [[ $relative_dir -ne 1 ]] && echo -n "$1"
+  echo "$2"
+}
+
+
+
+#   parses directories in $dir.
+#   if $fromdepth is 0, prints them.
+#   if $todepth is > 0, recursively calls itself on dirs 
+#       (while decreasing $fromdepth and $todepth)
+#
+# $basedir      the path that is specified in options.
+# $reldir       relative path to the current dir ($basedir$absdir is full path to cur dir)
+# $fromdepth
+# $todepth
+function list_dir {
+  local basedir="$1"
+  local reldir="$2"
+  local fromdepth="$3"
+  local todepth="$4"
+
+#  echo "list_dir $1 $2 $3 $4"
+
+  for i in `ls -1 $basedir$reldir`; do
+    # is it directory?
+    if [[ -d $basedir$reldir$i ]]; then
+      [[ $fromdepth -le 0 ]] && print_dir "$basedir" "$reldir$i/"
+      [[ $todepth -gt 0 ]] && list_dir "$basedir" "$reldir$i/" $(($fromdepth-1)) $(($todepth-1))
+    else
+      [[ $exclude_files -eq 0 && -f $basedir$reldir$i ]] && print_dir "$basedir" "$reldir$i"
+    fi
+  done
+}
+
+function print_help {
+cat << HALP
+ USAGE:
+   lsre.sh
+     [--exclude-files] [--relative-dir]
+     [--list <basedir> <fromdepth> <todepth>]*
+     [--list-depth <basedir> <depth>]*
+
+     --exclude-files|-e    Exclude files in listing.
+     --relative-dir|-d     Do not print absolute path but only relative to <basedir>
+     --list|-l             Starts at <basedir> and lists all directories recursively 
+                           but only if they are between given depth.
+     --list-depth|-ld      Same as --list <basedir> <depth> <depth>
+HALP
+}
+
+function print_version {
+  echo "lsre v$version (C) 2005 Roland Schilter"
+}
+
+# $basedir $fromdepth $todepth
+function exec_listing {
+  listed=1
+  # TODO: validate
+  if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+    echo "WARNING: compulsory arguments missing on '$1 $2 $3', you may check: `basename $0` --help" >&2
+  else
+    dir="`echo $1 | sed 's!/$!!'`/"
+    list_dir $dir "" $2 $3
+  fi
+}
+
+
+
+# read options
+listed=0
+until [[ -z "$1" ]]
+do
+  
+  case "$1" in
+    "--exclude-files"|"-e" ) exclude_files=1 ; shift ;;
+    "--relative-dir"|"-d"  ) relative_dir=1 ; shift ;;
+    "--list"|"-l"          ) shift ; exec_listing $1 $2 $3 ; shift 3 ;;
+    "--list-depth"|"-ld"   ) shift ; exec_listing $1 $2 $2 ; shift 2 ;;
+#    "--list-all"|"-la"     ) read_list_all ;;
+    "-v"|"--version"       ) print_version ; exit ;;
+    "-h"|"--help"          ) print_help ; exit ;;
+    
+    * ) echo "ERROR: unknown argument switch found '$1'" ; print_help ; exit 65 ;;
+  esac
+done
+
+if [[ ! $listed -eq 1 ]]; then
+  echo "please specify a listing to perform, for more info: `basename $0` --help"
+  exit 0
+fi
+
