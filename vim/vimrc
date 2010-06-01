@@ -43,4 +43,5 @@ endfor
 
 
 " modeline for .vimrc
-" vim: ft=vim foldmethod=indent foldcolumn=3 foldenable tw=120 shiftwidth=4 softtabstop=4 expandtab
+" vim: ft=vim foldmethod=indent foldcolumn=3 foldenable 
+" vim: tw=120 shiftwidth=4 softtabstop=4 expandtab
