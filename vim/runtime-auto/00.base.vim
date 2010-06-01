@@ -1,3 +1,8 @@
+
+set nowrap
+set listchars+=precedes:<,extends:<
+
+" Enable per-file formatting and the like
 set modeline
 
 " SEARCH
@@ -11,6 +16,7 @@ set cursorline cursorcolumn
 
 " MOUSE
 set mouse=n mousemodel=popup
+
 
 " INDENTATION
 set autoindent smartindent 
