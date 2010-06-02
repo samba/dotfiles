@@ -13,7 +13,9 @@ cleanup_login_shell () {
 			continue;
 		fi
 		export p=$(get_shell_config logout.sh $i)
-		[ -f $p ] && . $p
+    [ -z "$p" ] && continue
+    [ ! -f "$p" ] && continue
+    . "$p"
 	done
 }
 
