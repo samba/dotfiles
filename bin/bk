@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# a tool to maintain a set of bookmarks to directories
+# NOTE!!! Because this runs as a separate executable, IT CANNOT CHANGE $PWD OF THE PARENT SHELL
+# To work around that, I've added an alias for it.
+
+
+export BKDIR=$HOME/.bookmark.d
+mkdir -p $BKDIR
+
+main () {
+  local mode=print force=
+  while getopts :adglf Opt; do
+    case $Opt in
+      a) mode=add;;
+      d) mode=del;;
+      g) mode=go;;
+      l) mode=list;;
+      f) force='-f';;
+    esac
+  done
+  shift $(( OPTIND - 1 ));
+
+  case $mode in
+    print) readlink -f $BKDIR/$1;;
+    del) rm -v $BKDIR/$1;;
+    add) ln -snv $force $2 $BKDIR/$1;;
+    list) cd $BKDIR; stat --printf='%N\n' *;   cd $OLDPWD;;
+  esac
+
+}
+
+
+
+
+main $@
