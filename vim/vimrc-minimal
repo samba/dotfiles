@@ -67,4 +67,4 @@ nmap .b :ls<CR>:b<Space>
 
 
 " toggle synchronous scrolling of windows
-nmap .SB :set scrollbind!
+nmap .SB :set scrollbind!<CR>

@@ -2,6 +2,21 @@ Deployment instructions
 	git clone git://github.com/samba/dotfiles.git ~/.dotfiles
 	make -C ~/.dotfiles install
 
-This repository is primarily oriented toward configuration and tools for my working environment.
+***
+If you like this project, please FORK IT! (Use the 'Fork' button at the top of the project page.)
+This lets us keep track of changes, and occasionally merge eachother's work. 
+If you have questions, please contact 'samba' on Freenode (IRC), or send me a message on GitHub.
+***
 
-I spend a lot of time in VIM and BASH, writing Python and SQL, among a variety of other things, so this configuration is my ever-evolving attempt to make myself more productive, optimizing the interfaces and control methods (read: keyboard shortcuts) of these programs/languages.
+
+This is a repository of configuration for Linux working environments, especially:
+ - BASH
+ - VIM
+ - GNU Screen
+
+Various tools are also provided for convenience in /bin.
+
+The goal is to provide configuration for a friendly, productive working environment.
+
+
+
