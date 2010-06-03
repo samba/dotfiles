@@ -9,9 +9,10 @@ export BKDIR=$HOME/.bookmark.d
 mkdir -p $BKDIR
 
 main () {
-  local mode=print force=
-  while getopts :adlf Opt; do
+  local mode=print force= rel=1
+  while getopts :aAdlf Opt; do
     case $Opt in
+      A) rel=0;;
       a) mode=add;;
       d) mode=del;;
       l) mode=list;;
@@ -23,7 +24,10 @@ main () {
   case $mode in
     print) readlink -f $BKDIR/$1;;
     del) rm -v $BKDIR/$1;;
-    add) ln -snv $force $(readlink -f $2) $BKDIR/$1;;
+    add) 
+      dest=$2; [ $rel -lt 1 ] && dest=$(readlink -f $dest)
+      ln -snv $force $dest $BKDIR/$1
+      ;;
     list) 
       links=${1:-*}
       cd $BKDIR; 
