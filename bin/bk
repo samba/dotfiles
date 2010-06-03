@@ -24,7 +24,11 @@ main () {
     print) readlink -f $BKDIR/$1;;
     del) rm -v $BKDIR/$1;;
     add) ln -snv $force $(readlink -f $2) $BKDIR/$1;;
-    list) cd $BKDIR; stat --printf='%N\n' * | tr -d "'\`" | sed 's/->/\t/' | column -t ;   cd $OLDPWD;;
+    list) 
+      links=${1:-*}
+      cd $BKDIR; 
+      stat --printf='%N\n' $links | tr -d "'\`" | sed 's/->/\t/' | column -t ;   
+      cd $OLDPWD;;
   esac
 
 }
