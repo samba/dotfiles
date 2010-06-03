@@ -6,7 +6,7 @@ MY_SCREENFILES = screenrc
 MY_PYTHONFILES = pythonrc.py
 
 DEST_FILES = ~/.bashrc ~/.bash_aliases ~/.bash_logout \
-						 ~/.gnome2/nautilus-scripts ~/.screenrc ~/.vimrc ~/.pythonrc.py
+	~/.gnome2/nautilus-scripts ~/.screenrc ~/.vimrc ~/.pythonrc.py
 BACKUP_OUTFILE := dotfiles-backup-$(shell date +%Y%m%d-%H%M%S).tar.gz
 
 

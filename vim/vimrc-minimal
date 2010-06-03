@@ -9,6 +9,8 @@
 set backupdir=$HOME/.vim/backup " backup files location
 set directory=$HOME/.vim/swap " swap files location
 
+set tags=./tags,$HOME/.vim/tags " you probably want to add more to these later.
+
 filetype plugin indent on
 if has('syntax')
   syntax on
@@ -16,55 +18,67 @@ if has('syntax')
   nmap .SS :syn sync fromstart
 endif
 
+" Enable per-file formatting and the like
 set modeline
+
+set mouse=nv
 
 " File buffer navigation
 nmap .n :next<CR>
 nmap .p :prev<CR>
 
+" Easy buffer selection
+nmap .b :ls<CR>:b<Space>
+
+" toggle readonly
+nmap .ro :set invreadonly<CR>
+
+" Code folding
 set foldenable
 nmap <silent> .F :set foldenable!<CR>
 
+set number " enable line numbering, and a toggle shortcut
+nmap <silent> .N :set number!<CR>
 
-set mouse=nv
+
+
+
+" Spelling options (and a shortcut to disable it)
+set spell
+set spelllang=en
+nmap .sp :set spell!<CR>
+
+
+" toggle synchronous scrolling of windows
+nmap .SB :set scrollbind!<CR>
+
+" toggle non-printing characters
+nmap .L :set list!<CR>
+
+" toggles paste mode
+nmap .P :set paste!<CR>
+
 
 
 " put new windows below and right by default
 set splitbelow splitright
 
-set tabstop=2 " spaces for tabs
-set shiftwidth=2 " spaces for indentation
-set expandtab " no real tabs
-nmap .T :set expandtab!<CR>
-
 
 set nowrap " no wrapping of lines
 nmap .W :set nowrap!<CR>
 
+
 " toggles auto-changedir in Ex mode?
 nmap .C :set invacd<CR>
 
+
+
 " toggle auto-indent
-set autoindent
+set autoindent smartindent
+set tabstop=2 shiftwidth=2 expandtab " spaces for tabs, indentation, and avoid real tabs
 nmap .I :set autoindent!<CR>
-
-set number " enable line numbering, and a toggle shortcut
-nmap <silent> .N :set number!<CR>
-
-" toggles paste mode
-nmap .P :set paste!<CR>
-
-" toggle non-printing characters
-nmap .L :set list!<CR>
-
-" toggle readonly
-nmap .ro :set invreadonly<CR>
-
-set incsearch " search while typing
-nmap .is :set incsearch!<CR>
-
-nmap .b :ls<CR>:b<Space>
+nmap .T :set expandtab!<CR>
 
 
-" toggle synchronous scrolling of windows
-nmap .SB :set scrollbind!<CR>
+
+
