@@ -10,11 +10,10 @@ mkdir -p $BKDIR
 
 main () {
   local mode=print force=
-  while getopts :adglf Opt; do
+  while getopts :adlf Opt; do
     case $Opt in
       a) mode=add;;
       d) mode=del;;
-      g) mode=go;;
       l) mode=list;;
       f) force='-f';;
     esac
