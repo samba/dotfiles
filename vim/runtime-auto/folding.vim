@@ -5,8 +5,6 @@ set foldenable
 " method=syntax isn't entirely reliable, as some syntax files don't include folding
 set foldmethod=indent	 " useful options: indent, marker, syntax, expr (determined by 'foldexpr')
 set foldcolumn=2                "fdc:   creates a small left-hand gutter for displaying fold info
-au FileType help set foldcolumn=0 "no foldcolumn for help files
-
 
 " Spacebar toggles a fold, zi toggles all folding, zM closes all folds
 nnoremap  <silent>  <space> :exe 'silent! normal! za'.(foldlevel('.')?'':'l')<cr>

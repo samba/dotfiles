@@ -20,6 +20,10 @@ inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
   \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>
 
 
+inoremap <Nul> <C-x><C-o>
+
+
+
 
 
 " Default completion shortcuts...
@@ -45,5 +49,12 @@ inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
 " Omnifunc completion (uses supplied omnifunc if available.)
 "imap <C-O>c <C-X><C-O>
 
+
+
+
+
+" Load syntax-completion by default
+set omnifunc=syntaxcomplete#Complete
+" Per-file omnifunc settings are in filetypes.vim
 
 
