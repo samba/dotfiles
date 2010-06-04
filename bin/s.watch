@@ -2,7 +2,7 @@
 
 # a simple alternative to the watch command
 
-function main () {
+main () {
 	OPTIND=1 freq=5 clear=y date=y
 	while getopts ':f:cd' Option; do
 		case $Option in
