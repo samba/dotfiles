@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # http://www.termsys.demon.co.uk/vtansi.htm
-function main (){
-v=
-s=
+main (){
+local v= s=
 for i in $@ end; do
 	if [ ! -z $v ]; then
 		[ $i = 'bg' ] && v=$(( v + 10 ));

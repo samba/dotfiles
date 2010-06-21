@@ -1,5 +1,11 @@
 #!/usr/bin/awk -f
 
+# USAGE (alternatives):
+#   sshconfig -v key=*Forward ~/.ssh/config
+#   sshconfig -v host=*.amazon.com ~/.ssh/config
+
+
+
 function wildcard_translate (s) {
 #	gsub(/\./, "\\.", s)
 	gsub(/\*/, "(.*)", s)
