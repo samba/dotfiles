@@ -15,7 +15,7 @@ filetype plugin indent on
 if has('syntax')
   syntax on
   " For redrawing the syntax highlighting
-  nmap .SS :syn sync fromstart
+  nmap .SS :syn sync fromstart<CR>
 endif
 
 " Enable per-file formatting and the like

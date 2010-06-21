@@ -22,8 +22,10 @@ au FileType help set foldcolumn=0 nonumber "no foldcolumn for help files
 " Makefiles should permit tabs.
 au FileType make setlocal noexpandtab
 
-
-
+" Configuration files should permit hex colors
+au FileType conf
+    \  syn match confColor  "#\x\{2,6}" transparent |
+    \  hi def link confColor  String
 
 
 " We want consistent spacing in Python, and not tabs.

@@ -89,4 +89,3 @@ au InsertLeave * match ExtraWhiteSpace /\s\+$/
 " hi Special cterm=bold ctermfg=1
 " hi Identifier cterm=none ctermfg=6
 
-

@@ -28,12 +28,12 @@ bind ^S
 bind s
 
 # for launching some of the stuff i use most
-bind b screen -t 'btg' btgncli -a
 bind v screen vim
 bind i screen irssi
-bind t screen -t 'ps/top' bash -c "which htop > /dev/null && htop || top"
+bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '#|root:' sudo -i
 
+# set C-a <space> to show the window list
 bind ' ' windowlist -m
 
 
@@ -59,6 +59,7 @@ multiuser on # so I can attach from multiple points.
 #backtick 	111	60	60	sh -c "cat /proc/cpuinfo | grep -E '^processor' | wc -l"
 # mem consumption %
 #backtick	112	2	2	sh -c "free -b | grep -E '^Mem:' | tr -s ' ' \"\t\" | cut -f 2,3 | while read a b; do  echo \"scale=2; (\$b / \$a)*100;\" | bc | sed 's/.00/%/'; done"
+# backtick 150 5 5 bw-total max 5
 # }}}
 
 
@@ -81,12 +82,12 @@ caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%
 # stat line at the  very bottom of the terminal 
 #hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
 hardstatus off
- 
+
 # configure the window list, via C-A "
 #windowlist title "%{= .y}Num%{-} %{= .b}Flags%{-} %{= .g}Title%{-}%{-} %= Hardstatus"
 #windowlist string "%{= .y}%3n%{-} %{= .b}%f%{-} %{= .g}%t%{-} %= %h"
 
-
+# colorful, informational window list
 windowlist title  "%{+ y}Flag%{-} %{+ y}Num%{-} %{+ g}Title%{-} %= %{+ b}Hardstatus%{-}"
 windowlist string "%{+ y}%f%04=%{-} %{+ y}%3n%{-} %{+ g}%t%{-} %= %?[%u]%? %{+ b}%h%{-}"
 
@@ -101,9 +102,6 @@ nonblock on
 bufferfile screen.buf
 
 # altscreen on
-vbell off
-
-
 startup_message off
 defutf8 on
 
@@ -111,6 +109,9 @@ activity "Activity in %t (%n)"
 # activity "%c activity -> %n%f %t"
 bell "%c bell -> %n%f %t^G"
 vbell_msg "Bell on %t (%n)"
+vbellwait 0
+vbell off
+
 
 
 # vim: foldmethod=marker foldenable

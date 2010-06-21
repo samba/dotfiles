@@ -12,7 +12,8 @@ endfunc
 map t :tabs<CR>
 map t<Left> :tabprev<CR>
 map t<Right> :tabnext<CR>
-map tn :tabnew<CR>
+" NOTE: I like my tabs to open without spawning new buffers
+map tn :tab split<CR>
 map tE :Texplore<CR>
 map tX :tabclose<CR>
 map tO :tabonly<CR>
