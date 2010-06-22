@@ -6,49 +6,6 @@ function squash () {
 }
 
 
-function aes.compress () {
-    OPTIND=1 Outfile=''
-    while getopts ':f:' Opt; do
-	case $Opt in
-	    f) Outfile=${OPTARG};;
-	esac
-    done
-    shift $((OPTIND +1 ))
-
-    count=$#
-    [ $count -eq 1 ] && [ -d $1 ] && count=2
-
-    case $count in
-	0) echo "Specify an input file." >&2; return 1;;
-	1) [ -z "$Outfile" ] && Outfile="$1.aes";;
-	*) [ -z "$Outfile" ] && Outfile=$(basename $(pwd)).$(date +%s).tar.gz.aes;;
-    esac
-
-    echo "$Outfile: $@" >&2
-
-    case $count in
-	0) echo "No files given." >&2;;
-	1) gzip -c "$1" | aespipe -T -e AES256 -H rmd160 > "$Outfile";;
-	*) tar -cz $@ | aespipe -T -e AES256 -H rmd160 > $Outfile;;
-    esac
-}
-
-
-function archive () {
-	local d=$(date +%F\ %H.%M.%S) dir= base= ext=
-	for i; do
-		if [ -f "$i" ]; then
-			dir=$(dirname "$i") base=$(basename "$i") ext=${i##*.}
-			cat "$i" | gzip > "$i.$d.gz"
-		elif [ -d "$i" ]; then
-			dir=$(dirname "$i") base=$(basename "$i")
-			tar -czvf "$dir/$base.$d.tar.gz" "$i"
-		else
-			echo "Can't archive this: $i" >&2
-		fi
-	done
-}
-
 
 function tar.show () {
 	local file="$1" list=$(mktemp) showHeading=y; shift;
@@ -108,11 +65,6 @@ function tar.find () {
 		return 1
 	}
 	tar -tf "$file" | grep $@
-}
-
-
-function cbz () {
-	find $@ -mindepth 1 -maxdepth 1 -type d -exec zip -rm {}.cbz {} \;
 }
 
 

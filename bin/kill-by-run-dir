@@ -1,3 +1,17 @@
 #!/bin/sh
 
-sudo kill $(sudo lsof +D /mnt/safedesk.ext2/ | sed 1d | awk '{ print $2 }' | sort -u)
+main () {
+  local dir= sig=TERM pid=
+  while getopts :d:s: Opt; do
+    case $Opt in
+      d) dir=$OPTARG;;
+      s) sig=$OPTARG;;
+    esac
+  done
+
+  # send all processes using the specified directory a signal (usually SIGTERM)
+  pid=$(sudo lsof +D $dir | sed 1d | awk '{ print $2 }' | sort -u)
+  [ -z "$pid" ] || kill -$sig $pid
+}
+
+main $@

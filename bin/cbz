@@ -1,4 +1,12 @@
 #!/bin/sh
 
-find ./ -mindepth 1 -maxdepth 1 -type d | while read i; do zip -rm "$(basename "$i").cbz" "$i"; done
+# convert all child directories of $PWD to CBZ (comic book) archives
+
+dir=./
+[ $# -gt 0 ] && dir=$@
+
+
+find $dir -mindepth 1 -maxdepth 1 -type d -exec zip -rm {}.cbz {} \;
+
+#	| while read i; do zip -rm "$(basename "$i").cbz" "$i"; done
 

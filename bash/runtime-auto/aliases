@@ -106,17 +106,16 @@ enable_ibm_hotkey () {
 }
 
 
-function vimless () {
+vimless () {
 	$VIMRUNTIME $@
 }
 
+# This is a wrapper to my 'bk' function, allowing us to change directory through it.
+g () {
+  [ $# -eq 1 ] && cd $(bk $@) || bk $@
+}
 
-# VIM-ness - some friendly shortcuts
-alias :q='exit'		
-alias :s='history -a'	# save the shell history
-alias :m='pushd'	# store a path
-alias :d='popd'		# pop a path
-alias :marks='dirs -v'	# show all paths
+
 
 
 # vim: foldenable foldmethod=marker

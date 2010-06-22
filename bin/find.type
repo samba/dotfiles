@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function main () {
+main () {
 	local fs=$(mktemp) a=$(mktemp)
 	until [ $# -eq 0 ]; do
 		if [ -d "$1" ]; then
