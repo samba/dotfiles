@@ -31,7 +31,7 @@ hi CursorColumn cterm=bold ctermbg=none
 " The default fold color is too bright and looks too much like the statusline
 hi Folded ctermfg=LightRed ctermbg=NONE cterm=NONE
 hi FoldColumn ctermfg=LightRed ctermbg=NONE cterm=NONE
-set fillchars+=fold:¬
+set fillchars+=fold:~
 
 
 " TABS - i keep it consistent with my window and status colors
