@@ -8,15 +8,35 @@
 export BKDIR=$HOME/.bookmark.d
 mkdir -p $BKDIR
 
+bk_usage () {
+  cat <<EOF
+  $0:        A directory "bookmark" manager
+      -a     add a bookmark
+      -A     store absolute paths
+      -d     delete a bookmark
+      -l     list saved bookmarks
+      -f     forceful mode (overwrite existing bookmarks of the same name)
+      -h     this help text.
+  
+  examples:
+    $0 -a -A alias ./path/to/dir
+      stores a bookmark, but resolves it to an absolute path first.
+    $0 -d alias
+      deletes the specified bookmark
+
+EOF
+}
+
 main () {
   local mode=print force= rel=1
-  while getopts :aAdlf Opt; do
+  while getopts :aAdlfh Opt; do
     case $Opt in
       A) rel=0;;
       a) mode=add;;
       d) mode=del;;
       l) mode=list;;
       f) force='-f';;
+      h) bk_usage; exit 0;;
     esac
   done
   shift $(( OPTIND - 1 ));
