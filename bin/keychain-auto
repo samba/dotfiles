@@ -1,0 +1,3 @@
+#!/bin/sh
+
+keychain $(cat ~/.ssh/agent_keys)

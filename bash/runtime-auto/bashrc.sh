@@ -12,7 +12,7 @@
 x=$(dirname $p)
 
 # pull in my standard configuration elements
-for i in aliases color.sh prompt.sh; do
+for i in aliases color.sh prompt.sh misc.sh; do
   [ -f $x/$i ] && . $x/$i
 done
 
@@ -68,6 +68,7 @@ shopt -s histreedit
 
 # my favorite editor.
 export EDITOR="/usr/bin/vim"
+# this *should* make $VIMRUNTIME available in the shell, but it hangs on some boxes. (based on vim support?)
 # export VIMRUNTIME=`vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015' `
 
 # make less more friendly for non-text input files, see lesspipe(1)

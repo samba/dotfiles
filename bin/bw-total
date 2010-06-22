@@ -1,0 +1,11 @@
+#!/bin/sh
+
+type=${1:-avg}
+num=${2:-1}
+iface=${3:-eth0,eth1,eth2,eth3}
+
+
+bwm-ng -T $type -o plain -I $iface -c $num -N | grep 'total:' | tail -n 1 | grep -oE '[0-9.]+ [KMBG]+/s' | tail -n 1
+# output, by line: upload, download, total
+
+
