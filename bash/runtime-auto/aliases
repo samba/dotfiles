@@ -112,7 +112,7 @@ vimless () {
 
 # This is a wrapper to my 'bk' function, allowing us to change directory through it.
 g () {
-  [ $# -eq 1 ] && cd $(bk $@) || bk $@
+  [ $# -eq 1 ] && cd $(bk $@) || cd $(bk -m)
 }
 
 

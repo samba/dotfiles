@@ -17,6 +17,7 @@ bk_usage () {
       -d     delete a bookmark
       -l     list saved bookmarks
       -f     forceful mode (overwrite existing bookmarks of the same name)
+      -m     menu mode (prints the selected dir to stdout)
       -h     this help text.
   
   examples:
@@ -30,12 +31,13 @@ EOF
 
 main () {
   local mode=print force= rel=1
-  while getopts :aAdlfh Opt; do
+  while getopts :aAdlfmh Opt; do
     case $Opt in
       A) rel=0;;
       a) mode=add;;
       d) mode=del;;
       l) mode=list;;
+      m) mode=menu;;
       f) force='-f';;
       h) bk_usage; exit 0;;
     esac
@@ -49,16 +51,24 @@ main () {
       dest=$2; [ $rel -lt 1 ] && dest=$(readlink -f $dest)
       ln -snv $force $dest $BKDIR/$1
       ;;
-    list) 
-      links=${1:-*}
-      cd $BKDIR; 
-      stat --printf='%N\n' $links | tr -d "'\`" | sed 's/->/\t/' | column -t ;   
-      cd $OLDPWD;;
+    list) list_bookmarks ${1:-'*'} ;;
+    menu) 
+      list_bookmarks ${1:-'*'} | column -t | cat -n >&2
+      echo -en "\tSelect by number: " >&2
+      read N
+      list_bookmarks ${1:-'*'} | sed "${N}!d;" | cut -f 2
+    ;;
   esac
 
 }
 
-
+list_bookmarks () {
+  local links='*'
+  cd $BKDIR;
+  [ $# -gt 0 ] && links="${@}"
+  stat --printf='%N\n' $links | tr -d "'\`" | sed 's/->/\t/; s/ \t /\t/;' ;
+  cd $OLDPWD;
+}
 
 
 main $@
