@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+use strict;
+
+#my $passWord=$ARGV[0];
+#my $salt = "pretty saulty";
+my $salt = join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
+print crypt(<STDIN>, $salt) . "\n";
+
+
+# vim: set ft=perl
