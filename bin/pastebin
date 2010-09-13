@@ -54,8 +54,8 @@ EOF
 }
 
 
-
-while getopts ':e:f:t:i:d:ph' Opt; do
+verbose='-s';
+while getopts ':e:f:t:i:d:phv' Opt; do
 	case $Opt in
 		e) retain="$OPTARG";;
 		f) format="$OPTARG";;
@@ -64,6 +64,7 @@ while getopts ':e:f:t:i:d:ph' Opt; do
 		d) domain="$OPTARG";;
 		p) private=1;;
 		h) usage; exit 0;;
+    v) verbose=-vvvv;;
 	esac
 done
 
@@ -82,12 +83,12 @@ fi
 
 t=$(mktemp /tmp/pastebin.XXXXX)
 
-curl -i -s \
+curl -0 -i $verbose \
 	--data-urlencode paste_code@"$input" \
 	-d paste_subdomain=$domain \
 	-d paste_private=$private \
 	-d paste_expire_date=$retain \
-	-d paste_name=$title \
+	-d paste_name="$title" \
 	-d paste_format=$format \
 	$def_pastebin_url 2>&1 >$t
 

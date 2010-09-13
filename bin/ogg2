@@ -4,9 +4,9 @@ main () {
   local input= format= output= menc_opts=
   while getopts :i:f:o: Opt; do
     case $Opt in
-      i) input=$OPTARG;;
+      i) input="$OPTARG";;
       f) format=$OPTARG;;
-      o) output=$OPTARG;;
+      o) output="$OPTARG";;
     esac
   done
 
@@ -24,7 +24,7 @@ main () {
 
   [ -z "$menc_opts" ] && return 157
   
-  mencoder $input -o $output $menc_opts
+  mencoder "$input" -o "$output" $menc_opts
 
 }
 
