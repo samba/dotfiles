@@ -2,9 +2,7 @@
 # Dotfiles index handler kit
 # Sam Briesemeister (c) 2011
 
-import sys, os, pwd, socket, re
-from optparse import OptionParser
-import fileinput
+import sys, os, pwd, socket, re, fileinput
 
 dotfiles_path = os.getenv('DOTFILES', '%s/.dotfiles' % (os.getenv('HOME')))
 dotfiles_conf = os.getenv('DOTFILES_CONF', '%s/conf/dotfiles.conf' % (dotfiles_path))

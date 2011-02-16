@@ -13,14 +13,12 @@ export TAG="${TAG}:generic"
 
 x=$(dirname $CURRENT)
 
-# pull in my standard configuration elements
-for i in aliases color.sh prompt.sh misc.sh; do
-  [ -f $x/$i ] && . $x/$i
-done
-
 exit_handler () {
 	is_login_shell && printf "exit: %s@%s\n" "$USER" "$HOSTNAME" >&2
 }
+
+trap exit_handler EXIT
+
 
 
 
@@ -78,8 +76,5 @@ export EDITOR="/usr/bin/vim"
 
 
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
-
-
-trap exit_handler EXIT
 
 

@@ -8,7 +8,7 @@ export PATH=${PATH}:${DOTFILES}/bin/
 . $DOTFILES/bash/lib.sh
 
 # NOTE: we're rescanning *every time* right now until this stabilizes
-dotfiles -s >/dev/null
+# dotfiles -s >/dev/null
 
 
 setup_login_shell () {
@@ -18,8 +18,11 @@ setup_login_shell () {
     echo '# loading' $CURRENT >&2
     . $CURRENT
   done
+
+  . $DOTFILES/bash/aliases
+
 }
 
 # load the enhancements for all login shells
-is_login_shell && setup_login_shell
+is_login_shell && time setup_login_shell
 
