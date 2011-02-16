@@ -2,29 +2,27 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-export MY_BASH=$HOME/.dotfiles/bash/
-export PATH=${PATH}:${HOME}/.dotfiles/bin/
+export DOTFILES=${HOME}/.dotfiles/
+export PATH=${PATH}:${DOTFILES}/bin/
 
-. $MY_BASH/lib.sh
+. $DOTFILES/bash/lib.sh
+
+# NOTE: we're rescanning *every time* right now until this stabilizes
+# dotfiles -s >/dev/null
 
 
 setup_login_shell () {
-	SKIP_DEFAULT=0 DEFAULT=auto ENTRYPT=bashrc.sh
+  # all files named 'bashrc.sh' or '*.auto.sh'
+  for i in `dotfiles -q '(bashrc|(.*)\.auto)\.sh$'`; do
+    export CURRENT=${DOTFILES}/$i
+    echo '# loading' $CURRENT >&2
+    . $CURRENT
+  done
 
-	for i in $USER@$HOSTNAME $DEFAULT; do
-		if [ $i = $DEFAULT ] && [ $SKIP_DEFAULT -gt 0 ]; then
-			SKIP_DEFAULT=0
-			continue;
-		fi
-		export p=$(get_shell_config $ENTRYPT "$i")
-		[ -z "$p" ] && continue
-		[ ! -f "$p" ] && continue
-		. "$p"
-	done
+  . $DOTFILES/bash/aliases
 
 }
 
 # load the enhancements for all login shells
-is_login_shell && setup_login_shell
-
+is_login_shell && time setup_login_shell
 

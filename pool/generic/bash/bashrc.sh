@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export TAG="${TAG}:generic"
+
 [ -f /etc/bashrc ] && . /etc/bashrc
 
 # enable programmable completion features (you don't need to enable
@@ -9,16 +11,14 @@
 [ -f /etc/profile.d/bash-completion.sh ] && . /etc/profile.d/bash-completion.sh
 
 
-x=$(dirname $p)
-
-# pull in my standard configuration elements
-for i in aliases color.sh prompt.sh misc.sh; do
-  [ -f $x/$i ] && . $x/$i
-done
+x=$(dirname $CURRENT)
 
 exit_handler () {
 	is_login_shell && printf "exit: %s@%s\n" "$USER" "$HOSTNAME" >&2
 }
+
+trap exit_handler EXIT
+
 
 
 
@@ -76,8 +76,5 @@ export EDITOR="/usr/bin/vim"
 
 
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
-
-
-trap exit_handler EXIT
 
 

@@ -1,0 +1,9 @@
+#!/bin/bash
+# Aliases alias ;) for dotfiles
+
+for i in `dotfiles -q aliases`; do
+  . $DOTFILES/$i
+done
+
+
+# vim: set ft=bash

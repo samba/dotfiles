@@ -65,12 +65,12 @@ s () {
 		printf "me:\t%s\n" "$(who -T -m)"
 		who -T | sed 's/^/\t/; 1{ s/^/who:/ };'
 	fi
-		
+
 	jobs -l | sed 's/^/\t/; 1{ s/^/jobs:/ };'
 	dirs -l -v | sed 's/^/\t/; 1{ s/^/dirs:/ };'
 
 	# run all the scripts in the stat directory
-  for i in ${MY_BASH}/stat/*.sh; do
+  for i in `dotfiles -q '(.*)/stat/(.*)\.sh' -w`; do
 		# basename $i >&2
 		[ -x $i ] && $i $@
 	done
@@ -93,16 +93,6 @@ aes () {
 		yes) aespipe -H rmd160 -e aes256;;
 		no) aespipe -d -H rmd160 -e aes256;;
 	esac
-}
-
-
-# for my laptop
-enable_ibm_hotkey () {
-  local ds=/proc/acpi/ibm/hotkey
-#    hk=/sys/devices/platform/thinkpad_acpi/hotkey_recommended_mask
-  local hk=/sys/devices/platform/thinkpad_acpi/hotkey_all_mask
-  hk=$(cat $hk)
-	echo "echo enable,$hk > $ds" | sudo /bin/sh
 }
 
 
