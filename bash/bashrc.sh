@@ -3,6 +3,7 @@
 # for examples
 
 export MY_BASH=$HOME/.dotfiles/bash/
+export DOTFILES=${HOME}/.dotfiles/
 export PATH=${PATH}:${HOME}/.dotfiles/bin/
 
 . $MY_BASH/lib.sh
