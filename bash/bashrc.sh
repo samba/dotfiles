@@ -12,6 +12,7 @@ dotfiles -s >/dev/null
 
 
 setup_login_shell () {
+  # all files named 'bashrc.sh' or '*.auto.sh'
   for i in `dotfiles -q '(bashrc|(.*)\.auto)\.sh$'`; do
     export CURRENT=${DOTFILES}/$i
     echo '# loading' $CURRENT >&2

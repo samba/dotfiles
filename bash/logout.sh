@@ -3,7 +3,9 @@
 . ${DOTFILES}/bash/lib.sh
 
 cleanup_login_shell () {
-  : # do nothing
+  for i in `dotfiles -q logout.sh`; do
+    . $DOTFILES/$i
+  done
 }
 
 is_login_shell && cleanup_login_shell

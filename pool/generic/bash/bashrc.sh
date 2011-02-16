@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export TAG="${TAG}:generic"
+
 [ -f /etc/bashrc ] && . /etc/bashrc
 
 # enable programmable completion features (you don't need to enable
