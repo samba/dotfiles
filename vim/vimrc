@@ -19,12 +19,18 @@ endfunction
 
 
 function! LoadScripts(p, s)
+    if empty(a:s)
+        return 0
+    endif
     for @i in a:s
         exe 'source ' . p . @i
     endfor
 endfunction
 
 function! LoadColors(p, s)
+    if empty(a:s)
+        return 0
+    endif
     for @i in a:s
         exe 'colorscheme ' . p . @i
     endfor
