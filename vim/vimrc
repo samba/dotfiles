@@ -8,39 +8,32 @@ runtime! debian.vim
 " Pull in my minimal configuration...
 source ~/.vim/vimrc-minimal
 
-
-
-" Then extend it (with optional hostname overrides).
-" This section fails silently, if no runtime directories are found.
-" Skip this section of ENV{NOAUTO} is set (e.g. `NOAUTO=true vim ...`)
-if len($NOAUTO) < 1
-    let s:xtpattern = '*.vim'
-    let s:autopath_base = '/.vim/runtime-' " base
-    " I don't (currently) see any reason to extend this beyond -auto and -(hostname)
-    let s:autopath = [ $HOME . s:autopath_base . 'auto', $HOME . s:autopath_base . hostname() ]
-
-    for @d in s:autopath
-        let s:my_includes = split(globpath(@d, s:xtpattern), '\n')
-        for @x in s:my_includes
-            " echo 'loading: '.@x
-            exe 'source '.@x
-        endfor
-        let &runtimepath = printf("%s,%s", &runtimepath, @d)
-    endfor
-endif
-
-" try to load the user's color scheme, and then one for the user-hostname combo
-" and resolve the real user if it looks like we're in a sudo session
-let s:colorschemes = [ $USER, $USER . "@" . hostname(), $SUDO_USER ]
-for @d in s:colorschemes 
-    " echo 'Loading color scheme: ' .@d
-    let s:schemefiles = split(globpath(&runtimepath, 'colors/'.@d.'.vim'), '\n')
-    if len(s:schemefiles) > 0
-        exe 'colorscheme '.@d
+function! GetDotfiles(pattern)
+    let command = 'dotfiles -q "' . a:pattern .  '" -w'
+    let output = system(command)
+    if !v:shell_error
+        return 0
     endif
-endfor
+    return split(output, '\n')
+endfunction
 
 
+function! LoadScripts(p, s)
+    for @i in a:s
+        exe 'source ' . p . @i
+    endfor
+endfunction
+
+function! LoadColors(p, s)
+    for @i in a:s
+        exe 'colorscheme ' . p . @i
+    endfor
+endfunction
+
+
+" all non-color schemes
+call LoadScripts($DOTFILES, GetDotfiles('(.*)(?<!colors)/([^/]*)\.vim'))
+call LoadColors($DOTFILES, GetDotfiles('(.*)(colors)/([^/]*)\.vim'))
 
 " modeline for .vimrc
 " vim: ft=vim foldmethod=indent foldcolumn=3 foldenable 
