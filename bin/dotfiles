@@ -51,15 +51,13 @@ def DropExcludeTags(t):
 			continue
 	return t
 
-def ListDotfiles(b, t):
-	for i in t:
-		p = os.path.join(b, i)
+def ListDotfiles(base, tags):
+	for t in tags:
+		p = os.path.join(base, t)
 		if not os.path.isdir(p): continue
-		l = os.listdir(p)
-		for f in l:
-			q = os.path.join(p, f)
-			if os.path.isfile(q):
-				yield ss(q.replace(dotfiles_path, '')) # drop double slashes
+		for subdir, dirs, files in os.walk(p):
+			for f in files:
+				yield ss(os.path.join(subdir, f)).replace(dotfiles_path, '')
 
 
 def ss(s): # drop double slashes
@@ -71,7 +69,7 @@ def CachedDotfiles(cache, base, config, user):
 		g = fileinput.input(cache)
 	else:	# collect by filesystem scan, write to cache
 		c = open(cache, 'wb')
-		g = list(ListDotfiles(base, CollectTags(config, user)))
+		g = ListDotfiles(base, CollectTags(config, user))
 	for i in g:
 		i = i.strip()
 		if not i: continue # skip empty
@@ -100,7 +98,7 @@ def Main(p):
 		return 0
 	if p['mode'] == 'query':
 		s = CachedDotfiles(ss(p['cache']), ss(p['base']), ss(p['config']), u)
-		l = MatchDotfiles(s, re.compile(p['query']), p['wholepath'])
+		l = MatchDotfiles(s, re.compile(p['query'] or '(.*)'), p['wholepath'])
 		print '\n'.join(list(l))
 		return 0
 	if p['mode'] == 'rescan':
@@ -143,7 +141,7 @@ def Parameters(a):
 	argd = { 'user': None, 'host': None, 'mode': None, 'query': '(.*)', 'config': dotfiles_conf , 'base': dotfiles_pool, 'cache': dotfiles_cache, 'wholepath': False }
 	next = None
 	for i in a:
-		if next:
+		if next and not i.startswith('-'):
 			argd[next] = ss(i)
 			next = None
 		elif i == '-f':
