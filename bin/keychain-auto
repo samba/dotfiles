@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if which keychain >/dev/null 2>/dev/null; then
-  keychain $(cat ~/.ssh/agent_keys)
-else
-  echo "Keychain not present" >&2
-  exit 2
-fi

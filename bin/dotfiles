@@ -1,0 +1,175 @@
+#!/usr/bin/python
+# Dotfiles index handler kit
+# Sam Briesemeister (c) 2011
+
+import sys, os, pwd, socket, re
+from optparse import OptionParser
+import fileinput
+
+dotfiles_path = os.getenv('DOTFILES', '%s/.dotfiles' % (os.getenv('HOME')))
+dotfiles_conf = os.getenv('DOTFILES_CONF', '%s/conf/dotfiles.conf' % (dotfiles_path))
+dotfiles_pool = os.getenv('DOTFILES_POOL', '%s/pool/' % (dotfiles_path))
+dotfiles_cache = os.getenv('DOTFILES_CACHE', '%s/.cache' % (dotfiles_pool))
+
+def ActiveProfiles(u = None, h = None):
+	u = u or pwd.getpwuid(os.getuid())[0] # current username
+	h = h or socket.gethostbyaddr(socket.gethostname())
+	p = '%s@%s'
+	if isinstance(h, tuple):
+		yield p % (u, h[0]) # basic user@hostname
+		for i in h[1]:
+			yield p % (u, i) # user@host for all known names for this host
+	else:
+		yield p % (u, h)
+
+def TagSelect(u, l):
+	r = re.compile(l.pop(0)) # first field is the match pattern
+	return r.match(u) and l
+
+
+def PollTags(f, u): # test each tag set by each user
+	u = list(u)
+	for l in fileinput.input(f):
+		if l.startswith('#'): continue # drop comment lines
+		for i in u:
+			t = TagSelect(i, re.split('\s+', l))
+			if t: yield filter(None, t) # we only want valid tag sets - not empty
+
+def CollectTags(f, u):
+	tags = []
+	for i in PollTags(f, u):
+		tags.extend(i)
+	return DropExcludeTags(set(tags))
+
+def DropExcludeTags(t):
+	ex = [ i for i in t if i.startswith('!') ]
+	for i in ex:
+		try:
+			t.remove(i)
+			t.remove(i[1:])
+		except KeyError, e:
+			continue
+	return t
+
+def ListDotfiles(b, t):
+	for i in t:
+		p = os.path.join(b, i)
+		if not os.path.isdir(p): continue
+		l = os.listdir(p)
+		for f in l:
+			q = os.path.join(p, f)
+			if os.path.isfile(q):
+				yield ss(q.replace(dotfiles_path, '')) # drop double slashes
+
+
+def ss(s): # drop double slashes
+	return re.sub('/+', '/', s)
+
+def CachedDotfiles(cache, base, config, user):
+	if os.path.isfile(cache): # list from cache
+		c = None
+		g = fileinput.input(cache)
+	else:	# collect by filesystem scan, write to cache
+		c = open(cache, 'wb')
+		g = list(ListDotfiles(base, CollectTags(config, user)))
+	for i in g:
+		i = i.strip()
+		if not i: continue # skip empty
+		if c: c.write('%s\n' % i) # write if the cache buffer is opened
+		yield i
+	if c: c.close()
+
+
+def MatchDotfiles(l, r, w):
+	l = map(lambda y: y.replace(dotfiles_path, ''), list(l))
+	if w:
+		f = lambda y: r.match(y)
+	else:
+		f = lambda y: r.match(os.path.basename(y))
+	return filter(f, l)
+
+
+def Main(p):
+	if p is None: return 0
+	u = ActiveProfiles(p['user'] or None, p['host'] or None)
+	if p['mode'] == 'profile':
+		print '\n'.join(u)
+		return 0
+	if p['mode'] == 'list':
+		print '\n'.join(list(CollectTags(ss(p['config']), u)))
+		return 0
+	if p['mode'] == 'query':
+		s = CachedDotfiles(ss(p['cache']), ss(p['base']), ss(p['config']), u)
+		l = MatchDotfiles(s, re.compile(p['query']), p['wholepath'])
+		print '\n'.join(list(l))
+		return 0
+	if p['mode'] == 'rescan':
+		c = ss(p['cache'])
+		print '#', c
+		if os.path.isfile(c): os.remove(c)
+		s = CachedDotfiles(c, ss(p['base']), ss(p['config']), u)
+		s = list(s)
+		print '\n'.join(s)
+		return 0
+
+
+
+def Usage(): # NOTE: the tabs in this block look awkward in *my* vim config - what matters is how they print the result. test aggressively.
+	return """
+Usage:
+	-h, --help		(this message)
+
+Cache Initialization:
+	-p			list current user names
+	-l			list tags selected by current user name
+	-U <user>		specify alternate username
+	-H <host>		specify alternate hostname
+	-f <file>		specify alternate tag matrix
+	-s			rescan filesystem by current tag configuration (removes cache)
+
+Cache Querying:
+	-q <exp>		list files matching <exp> (python regexp) against basename, as selected by tags
+				if <exp> is not given, lists all files
+	-w			match <exp> against the entire path, not just the script's filename
+
+Environment:
+	$DOTFILES		base path for all dotfiles operations	(default $HOME/.dotfiles/)
+	$DOTFILES_POOL		base path for tag directories, cache	(default $DOTFILES/pool/)
+	$DOTFIELS_CONF		path to configuration file		(default $DOTFILES/conf/dotfiles.conf)
+	"""
+
+
+def Parameters(a):
+	argd = { 'user': None, 'host': None, 'mode': None, 'query': '(.*)', 'config': dotfiles_conf , 'base': dotfiles_pool, 'cache': dotfiles_cache, 'wholepath': False }
+	next = None
+	for i in a:
+		if next:
+			argd[next] = ss(i)
+			next = None
+		elif i == '-f':
+			next = 'config'
+		elif i == '-p':
+			argd['mode'] = 'profile'
+		elif i == '-l':
+			argd['mode'] = 'list'
+		elif i == '-s':
+			argd['mode'] = 'rescan'
+		elif i == '-q':
+			argd['mode'] = 'query'
+			next = 'query'
+		elif i == '-U':
+			next = 'user'
+		elif i == '-H':
+			next = 'host'
+		elif i == '-w':
+			argd['wholepath'] = True
+		elif i in ('-h', '--help'):
+			print Usage()
+			return None
+	return argd
+
+if __name__ == '__main__':
+  sys.exit(Main(Parameters(sys.argv)))
+
+
+# vim: ft=python
