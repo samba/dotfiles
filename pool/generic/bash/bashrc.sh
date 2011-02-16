@@ -9,7 +9,7 @@
 [ -f /etc/profile.d/bash-completion.sh ] && . /etc/profile.d/bash-completion.sh
 
 
-x=$(dirname $p)
+x=$(dirname $CURRENT)
 
 # pull in my standard configuration elements
 for i in aliases color.sh prompt.sh misc.sh; do

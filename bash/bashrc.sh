@@ -12,13 +12,13 @@ dotfiles -s >/dev/null
 
 
 setup_login_shell () {
-  dotfiles -q '(*.)\.sh$' | while read i; do
-    echo '#' ${DOTFILES}/$i >&2
-    . ${DOTFILES}/$i
+  for i in `dotfiles -q '(bashrc|(.*)\.auto)\.sh$'`; do
+    export CURRENT=${DOTFILES}/$i
+    echo '# loading' $CURRENT >&2
+    . $CURRENT
   done
 }
 
 # load the enhancements for all login shells
 is_login_shell && setup_login_shell
-
 
