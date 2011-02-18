@@ -168,4 +168,4 @@ if __name__ == '__main__':
   sys.exit(Main(Parameters(sys.argv)))
 
 
-# vim: ft=python
+# vim: ft=python:noet
