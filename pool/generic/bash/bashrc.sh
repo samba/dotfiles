@@ -4,13 +4,6 @@ export TAG="${TAG}:generic"
 
 [ -f /etc/bashrc ] && . /etc/bashrc
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-[ -f /etc/bash_completion ] && . /etc/bash_completion
-[ -f /etc/profile.d/bash-completion.sh ] && . /etc/profile.d/bash-completion.sh
-
-
 x=$(dirname $CURRENT)
 
 exit_handler () {
@@ -18,8 +11,6 @@ exit_handler () {
 }
 
 trap exit_handler EXIT
-
-
 
 
 # set the mail location, notification options
@@ -48,7 +39,7 @@ PROMPT_COMMAND=" history -a; ${PROMPT_COMMAND} "
 export HISTCONTROL="ignoredups"
 
 # ... and ignore same sucessive entries, as well as commands starting with a space.
-export HISTCONTROL="ignoreboth" 
+export HISTCONTROL="ignoreboth"
 
 # store more stuff in the history...
 export HISTSIZE=225175

@@ -10,17 +10,31 @@ export PATH=${PATH}:${DOTFILES}/bin/
 # NOTE: we're rescanning *every time* right now until this stabilizes
 # dotfiles -s >/dev/null
 
+# Dotfiles loader
+dotfiles_loader (){
+  wholepath=$1; shift;
+  for pattern in $@; do
+    for i in `dotfiles -q "$pattern" $wholepath`; do
+      export CURRENT=${DOTFILES}/$i
+      echo '# loading' $CURRENT
+      . $CURRENT
+    done
+  done
+
+}
+
+# user-friendly shortcut
+df () {
+  dotfiles_loader '' "^$1\.df\.sh$"
+}
+
 
 setup_login_shell () {
   # all files named 'bashrc.sh' or '*.auto.sh'
-  for i in `dotfiles -q '(bashrc|(.*)\.auto)\.sh$'`; do
-    export CURRENT=${DOTFILES}/$i
-    echo '# loading' $CURRENT >&2
-    . $CURRENT
-  done
+  dotfiles_loader '' 'aliases|(bashrc|(.*)\.auto)\.sh$'
 
-  . $DOTFILES/bash/aliases
-
+  # background loading of all .bg.sh
+  dotfiles_loader '' '(.*)\.bg\.sh$'
 }
 
 # load the enhancements for all login shells
