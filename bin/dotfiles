@@ -2,12 +2,19 @@
 # Dotfiles index handler kit
 # Sam Briesemeister (c) 2011
 
-import sys, os, pwd, socket, re, fileinput
+import sys, os, pwd, socket, re, fileinput, platform
 
 dotfiles_path = os.getenv('DOTFILES', '%s/.dotfiles' % (os.getenv('HOME')))
 dotfiles_conf = os.getenv('DOTFILES_CONF', '%s/conf/dotfiles.conf' % (dotfiles_path))
 dotfiles_pool = os.getenv('DOTFILES_POOL', '%s/pool/' % (dotfiles_path))
 dotfiles_cache = os.getenv('DOTFILES_CACHE', '%s/.cache' % (dotfiles_pool))
+
+# expandable tags which must be prefixed with `%' in the config
+expandables = { 
+		'system' : platform.system,
+		'dist'   : lambda: platform.dist()[0]
+}
+
 
 def ActiveProfiles(u = None, h = None):
 	u = u or pwd.getpwuid(os.getuid())[0] # current username
@@ -37,7 +44,7 @@ def CollectTags(f, u):
 	tags = []
 	for i in PollTags(f, u):
 		tags.extend(i)
-	return DropExcludeTags(set(tags))
+	return SubstituteExpandableTags(DropExcludeTags(set(tags)))
 
 def DropExcludeTags(t):
 	ex = [ i for i in t if i.startswith('!') ]
@@ -48,6 +55,12 @@ def DropExcludeTags(t):
 		except KeyError, e:
 			continue
 	return t
+
+def SubstituteExpandableTags(t):
+	return [ SanitizeTag(expandables[x[1:]]()) if x.startswith('%') else x for x in t ]
+
+def SanitizeTag(t):
+	return re.sub("[^a-z0-9-]", "", str(t).lower())
 
 def ListDotfiles(base, tags):
 	for t in tags:
@@ -168,4 +181,4 @@ if __name__ == '__main__':
   sys.exit(Main(Parameters(sys.argv)))
 
 
-# vim: ft=python
+# vim: ft=python:noet
