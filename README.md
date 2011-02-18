@@ -6,12 +6,12 @@ The goal is to simplify managing user configuration across multiple hosts.
 
 Examples:
 
-  (.*)@yourhost             yourconfig
-  (.*)@myhost               myconfig
-  (.*)@(.*)\.work\.com      office    %dist workstation
-  (.*)@(.*)\.home\.net      home      %dist
-  user@(.*)                 personalized
-  otheruser@(.*)\.work\.com testing !workstation
+	(.*)@yourhost             yourconfig
+	(.*)@myhost               myconfig
+	(.*)@(.*)\.work\.com      office    %dist workstation
+	(.*)@(.*)\.home\.net      home      %dist
+	user@(.*)                 personalized
+	otheruser@(.*)\.work\.com testing !workstation
 
 
 This project's primary focus is bash and vim. It should be easily extensible into other tools though.
@@ -23,12 +23,13 @@ If you have questions, please contact 'samba' on Freenode (IRC), or send me a me
 
 Deployment instructions
 -----------------------
+
 	git clone git://github.com/samba/dotfiles.git ~/.dotfiles
-  cd ~/.dotfiles
-  git branch ${USER}
-  git checkout ${USER}
-  ** copy conf/dotfiles.conf.sample to conf/dotfiles.conf, customize
-  make install
+	cd ~/.dotfiles
+	git branch ${USER}
+	git checkout ${USER}
+	** copy conf/dotfiles.conf.sample to conf/dotfiles.conf, customize
+	make install
 
 
 
