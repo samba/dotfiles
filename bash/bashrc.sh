@@ -24,7 +24,7 @@ dotfiles_loader (){
 }
 
 # user-friendly shortcut
-df () {
+ldf () {
   dotfiles_loader '' "^$1\.df\.sh$"
 }
 
