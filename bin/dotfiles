@@ -67,7 +67,7 @@ def CachedDotfiles(cache, base, config, user):
 		g = fileinput.input(cache)
 	else:	# collect by filesystem scan, write to cache
 		c = open(cache, 'wb')
-		g = ListDotfiles(base, CollectTags(config, user))
+		g = sorted(ListDotfiles(base, CollectTags(config, user)))
 	for i in g:
 		i = i.strip()
 		if not i: continue # skip empty
