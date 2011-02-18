@@ -1,0 +1,42 @@
+# This is a sample configuration file for the dotfiles framework. Rename
+# it to dotfiles.conf for actual use.
+
+# Tab-separated index, mapping <user@host.network> to various tags
+# Whitespace is interpreted as a field separator, so don't use spaces in your tag names.
+# Tags can be negated with a leading exclamation mark `!'. First field is interpreted as 
+# a regular expression against the current user@host environment.
+#
+#
+# Examples:
+#
+# // tag every box with `generic'
+# .*@.*                         generic
+#
+# // some servers
+# .*@(xantorini|shad)           server
+# .*@xantorini                  debian debian-server
+# .*@shad                       gentoo
+#
+# // tag all my homeboxes accordingly
+# .*@.*\.home                   home awesome
+#
+# // if logged in as myself, add private tag everywhere
+# samba@.*                      private
+#
+# // but remove the private tag on my work box
+# samba@.*\.work                !private awesome
+#
+# // host starting with lame cannot be awesome
+# .*@lame                       !awesome
+#
+#
+# Actual user@host -> tags
+#
+# samba@box.home        -> generic home awesome private
+# samba@box.work        -> generic awesome
+# samba@lamebox.home    -> generic home private
+# root@shad             -> generic server gentoo
+
+
+# <user@host>                   tags
+
