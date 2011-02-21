@@ -12,7 +12,7 @@ dotfiles_cache = os.getenv('DOTFILES_CACHE', '%s/.cache' % (dotfiles_pool))
 # expandable tags which must be prefixed with `%' in the config
 expandable_tags = { 
 		'system' : platform.system,
-		'dist'   : lambda: platform.dist()[0]
+		'dist'   : lambda: platform.linux_distribution(full_distribution_name=False)[0]
 }
 
 
