@@ -58,14 +58,16 @@ def DropExcludeTags(t):
 
 def SubstituteExpandableTags(t):
 	pat = re.compile('(?<=%)[a-z0-9]+')
-	for x in t:
+	xs = [ x for x in t if x.find('%') >= 0 ]
+
+	for x in xs:
 		m = pat.search(x)
 		if m is None: continue
 		name = m.group(0)
 		if not isinstance(expandable_tags[name], str):
 			expandable_tags[name] = SanitizeTag(expandable_tags[name]())
 		t.discard(x)
-		t.add(x.replace('%' + name, expandable_tags[name]))
+		if len(expandable_tags[name]): t.add(x.replace('%' + name, expandable_tags[name]))
 	return t
 
 def SanitizeTag(t):
