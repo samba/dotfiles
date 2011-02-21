@@ -9,10 +9,13 @@ dotfiles_conf = os.getenv('DOTFILES_CONF', '%s/conf/dotfiles.conf' % (dotfiles_p
 dotfiles_pool = os.getenv('DOTFILES_POOL', '%s/pool/' % (dotfiles_path))
 dotfiles_cache = os.getenv('DOTFILES_CACHE', '%s/.cache' % (dotfiles_pool))
 
-# expandable tags which must be prefixed with `%' in the config
+# expandable tags (prefixed `%') which are replaced in normal tags
 expandable_tags = { 
 		'system' : platform.system,
-		'dist'   : lambda: platform.linux_distribution(full_distribution_name=False)[0]
+		'dist'   : lambda: platform.linux_distribution(full_distribution_name=False)[0],
+		'domain' : lambda: '.'.join(socket.gethostbyaddr(socket.gethostname())[0].split('.')[1:]),
+		'hostname' : socket.gethostname,
+		'user' : lambda: pwd.getpwuid(os.getuid())[0]
 }
 
 
