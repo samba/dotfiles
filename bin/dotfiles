@@ -10,7 +10,7 @@ dotfiles_pool = os.getenv('DOTFILES_POOL', '%s/pool/' % (dotfiles_path))
 dotfiles_cache = os.getenv('DOTFILES_CACHE', '%s/.cache' % (dotfiles_pool))
 
 # expandable tags which must be prefixed with `%' in the config
-expandables = { 
+expandable_tags = { 
 		'system' : platform.system,
 		'dist'   : lambda: platform.dist()[0]
 }
@@ -57,7 +57,16 @@ def DropExcludeTags(t):
 	return t
 
 def SubstituteExpandableTags(t):
-	return [ SanitizeTag(expandables[x[1:]]()) if x.startswith('%') else x for x in t ]
+	pat = re.compile('(?<=%)[a-z0-9]+')
+	for x in t:
+		m = pat.search(x)
+		if m is None: continue
+		name = m.group(0)
+		if not isinstance(expandable_tags[name], str):
+			expandable_tags[name] = SanitizeTag(expandable_tags[name]())
+		t.discard(x)
+		t.add(x.replace('%' + name, expandable_tags[name]))
+	return t
 
 def SanitizeTag(t):
 	return re.sub("[^a-z0-9-]", "", str(t).lower())
