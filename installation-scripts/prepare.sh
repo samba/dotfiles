@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir -p ${HOME}/.dotfiles/bin
+
 cache_userdata () {
   
   git_user="`git config --global --get user.name`"

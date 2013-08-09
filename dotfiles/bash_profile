@@ -17,6 +17,10 @@ export APPENGINE=/Applications/GoogleAppEngineLauncher.app/Contents/Resources/Go
 # MySQL and Git execs in $PATH
 export PATH=/usr/local/git/bin:/usr/local/mysql/bin:$PATH
 
+# Allow user-specific search path
+export PATH=/usr/local/bin:${HOME}/.dotfiles/bin:$PATH
+
+
 # Startup script for Python
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
 
