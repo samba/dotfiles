@@ -1,0 +1,62 @@
+[user]
+	name = YOUR NAME 
+	email = you@example.com
+[github]
+	user =  YOURGITHUBNAME
+	token = 123456
+	email = you@example.com 
+
+[apply]
+	whitespace = nowarn
+
+[merge]
+	tool = vimdiff 
+
+
+[core]
+	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[color]
+	ui = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+
+[color "status"]
+	added = green 
+	changed = yellow
+  untracked = red
+  updated = magenta
+  branch = green 
+
+
+[alias]
+  st = status -sb
+  current = !(git status -sb >/dev/null && echo 'clean: \\c' || echo 'dirty: \\c') && echo `git log -1 '--pretty=format:%H %ai'`
+  ci = commit -a
+  br = branch
+  pr = pull --rebase
+  co = checkout
+  cb = checkout -b
+  df = diff --stat
+  lp = log -p
+  dc = !git diff --cached --diff-filter=AMCR
+  di = !git diff --diff-filter=AMCR
+  dl = !git diff --color | less -R
+  onelog = log --graph --oneline 
+  hist = log --graph --oneline --format=format:'%C(yellow)%h%C(reset) %s %C(green)%an%C(reset) %C(yellow)%d%C(reset) %C(dim magenta)%ai%C(reset)'
+  showfiles = show --format=format:'%C(yellow)%H%C(reset)%nCommit: %C(green)%cn%C(reset) <%C(dim white)%ce%C(reset)> %C(dim magenta)%ci%C(reset)%nAuthor: %C(dim green)%an%C(reset) <%C(dim white)%ae%C(reset)> %C(dim magenta)%ai%C(reset)%nSubject: %s%n' --name-only
+  last = cat-file commit HEAD
+  new = !gitk --all --not ORIG_HEAD
+
+[push]
+	default = matching

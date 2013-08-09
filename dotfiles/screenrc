@@ -1,0 +1,95 @@
+# screen runtime configuration
+# see also: 
+#   http://www.delhage.se/.screenrc 
+#   http://companionway.net/files/utils/sample.screenrc
+ 
+# Load system default. (This doesn't fly on Mac OS X.)
+# source /etc/screenrc
+
+
+# use C-\  instead of C-a for screen control char
+# escape \034\034 
+
+# use C-[ instead of C-a - this also matches the ESC key in many systems.
+# escape ^[x
+
+# Simulate F1 to bypass gnome-terminal and the like from picking it up... use C-a F1
+#bind k1 stuff k1
+
+# Stop screen from catching C-S and C-Q, XON and XOFF
+defflow off
+
+# Evil evil keybindings. Do Not Want!
+bind ^\
+bind \\
+bind ^h
+bind h
+bind ^Q
+bind q
+bind ^S
+bind s
+
+# for launching some of the stuff i use most
+bind v screen vim --servername vim
+bind i screen irssi
+bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
+bind R screen -t '# |root:' sudo -i
+
+# set C-a <space> to show the window list
+bind ' ' windowlist -m
+
+
+
+
+
+# detach on hangup. 
+autodetach on
+
+# each window should be a login shell...
+# deflogin on # this one fails on Mac OS X
+shell -${SHELL} # this may cause problems with key interpretation, e.g. backspace
+
+# terminal sharing 
+multiuser on # so I can attach from multiple points.
+
+# Use a default name of "shell" but try to read command title when possible.
+shelltitle '$ |shell'
+
+# stat line at the bottom of each screen 
+caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%{-}%? %?%u%? %= %?%?%{+ .b}[%h]%?%{-} %{+ .y}%l%{-} %{+ .g}%0c:%s%{-}"
+
+# stat line at the  very bottom of the terminal 
+#hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
+hardstatus off
+
+# configure the window list, via C-A "
+windowlist title "%{= .y}Num%{-} %{= .b}Flags%{-} %{= .g}Title%{-}%{-} %= Hardstatus"
+windowlist string "%{+ y}%3n%{-} %{+ b}%f%{-} %{+ g}%t%{-} %= %{+b}%h%{-}"
+
+# Colorful, informational window list
+# These cause some issues on Mac OS X... (usually stops responding) 
+# windowlist title  "%{+ y}Flag%{-} %{+ y}Num%{-} %{+ g}Title%{-} %= %{+ b}Hardstatus%{-}"
+# windowlist string "%{+ y}%f%04=%{-} %{+ y}%3n%{-} %{+ g}%t%{-} %= %?[%u]%? %{+ b}%h%{-}"
+
+
+
+# If a window goes unresponsive, don't block the whole session waiting for it.
+nonblock on
+
+
+# Filename for the paste buffer
+bufferfile screen.buf
+
+# altscreen on
+startup_message off
+defutf8 on
+
+activity "Activity in #%n %t (%f) at %c"
+bell "Bell in #%n %t (%f) at %c^G"
+vbell_msg "Bell on #%n %t (%f)"
+vbellwait 0
+vbell off
+
+
+
+# vim: foldmethod=marker foldenable

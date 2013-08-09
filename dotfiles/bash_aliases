@@ -1,0 +1,21 @@
+#!/bin/sh
+export LS_OPTIONS="-G"
+export LSCOLORS='gxfxcxdxbxegedabagacad'
+
+which dircolors 2>/dev/null && eval "`dircolors -b`"
+
+alias ls='ls $LS_OPTIONS'
+alias la='ls $LS_OPTIONS -alh'
+alias ll='ls $LS_OPTIONS -l'
+alias l='ls $LS_OPTIONS -CF'
+
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+alias j='jobs -l'
+alias d='dirs -l -v'
+
+export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
+
