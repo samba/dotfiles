@@ -57,6 +57,7 @@
   showfiles = show --format=format:'%C(yellow)%H%C(reset)%nCommit: %C(green)%cn%C(reset) <%C(dim white)%ce%C(reset)> %C(dim magenta)%ci%C(reset)%nAuthor: %C(dim green)%an%C(reset) <%C(dim white)%ae%C(reset)> %C(dim magenta)%ai%C(reset)%nSubject: %s%n' --name-only
   last = cat-file commit HEAD
   new = !gitk --all --not ORIG_HEAD
+  prepare = !git fetch --all && git status -sb && git diff --stat
 
 [push]
 	default = matching
