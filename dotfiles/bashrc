@@ -10,7 +10,13 @@ export HISTSIZE=20000
 export HISTTIMEFORMAT='%F %T '
 
 # Update history file on every command
-export PROMPT_COMMAND="history -a; ${PROMPT_COMMAND:-:}"
+case $PROMPT_COMMAND in
+  *history*) # It already had a history directive... add a no-op marker.
+    export PROMPT_COMMAND=":; ${PROMPT_COMMAND}";;
+  *) # No history reference found... add it.
+    export PROMPT_COMMAND="history -a; ${PROMPT_COMMAND:-:}";;
+esac
+
 
 shopt -s checkwinsize
 shopt -s cdspell
@@ -18,15 +24,26 @@ shopt -s hostcomplete
 shopt -s histappend
 shopt -s cmdhist
 shopt -s histreedit
+shopt -s checkhash
+
 # shopt -s mailwarn
+
+export PROMPT_NAME="$0"
+
+
+# Mark the end of the prompt for SCREEN
+__mark_prompt_ending () {
+    printf '%bk%s%b%b' \\033 "${@}" \\033 \\0134
+}
 
 
 case $TERM in
   screen*) 
-    # Mark the end of the prompt for SCREEN
-    export PROMPT_COMMAND="${PROMPT_COMMAND:-:}; printf \"\033k\033\134\""
+    # On remote hosts (i.e. SSH connections) use hostname for prompt name
+    [ -z "$SSH_TTY" ] || export PROMPT_NAME="${HOSTNAME%%.*}" 
     printf -v title "%s" '\[\e]0;\u@\h: \W\a\]' # sets hardstatus  with username, host, etc.
-    [ -z "$SSH_TTY" ] && printf '%bk%s%b%b' \\033 "${HOSTNAME%%.*}" \\033 \\0134
+    export PROMPT_COMMAND="${PROMPT_COMMAND:-:}; __mark_prompt_ending \${PROMPT_NAME};"
+    export color_prompt=on;
     ;;
   linux|xterm*|gnome*|*color*)
     export color_prompt=on;
@@ -39,23 +56,28 @@ esac
 # Disable color for non-interactive shells.
 [ -z "$PS1" ] && export color_prompt=off;
 
-case ${color_prompt} in
-  on)
 
-    color_now=36 # cyan
-    color_user=32 # green
-    color_host=33 # yellow
-    color_dir=34 # blue
-    color_chroot=31 # red
-    color_shell=32 # none
+# Prompt configuration wrapped in method with local vars to prevent littering shell namespace.
+__generate_color_prompt () {
+
+    local color_now=36 # cyan
+    local color_user=32 # green
+    local color_host=33 # yellow
+    local color_dir=34 # blue
+    local color_chroot=31 # red
+    local color_shell=32 # none
+    local color_error=33 # yellow
+    local color_pass=32 # green
 
     # username: red, if root or UID=0
     if [ $USER = 'root' ] || [ $UID -eq 0 ]; then 
-      color_user=31; 
-      color_shell=31;
+      local color_user=31; # red
+      local color_shell=31; # red
     fi
    
-    printf -v bell '\a'
+    local bell now user host workdir chroot shell jobs;
+      
+    printf -v bell '\[\a\]'
     printf -v now '\[\e[00;%dm\]\\t\[\e[0m\]' $color_now
     printf -v user '\[\e[01;%dm\]\u\[\e[0m\]' $color_user
     printf -v host '\[\e[01;%dm\]\h\[\e[0m\]' $color_host
@@ -64,15 +86,25 @@ case ${color_prompt} in
     printf -v shell '\[\e[00;%dm\]\\$\[\e[0m\] ' $color_shell # trailing space
     printf -v jobs '\j' # no formatting
 
+    #local errstat="\$(printf '%.*s' \$? \$?)"
+
+    # Append the return value of the last command to the prompt (red if error)
+    local errstat="\[\e[00;\$((\$? ? $color_error : $color_pass ))m\]\$?\[\e[0m\] " # trailing space
+  
 
     # Throw it all together
-    printf -v PS1 '%c%s%s%s %s@%s %s %s %s' "$bell" "$title" "$chroot" "$now" "$user" "$host" "$workdir" "$jobs" "$shell"
+    printf -v PS1 '%s%s%s%s %s@%s %s %s %s%s' "$bell" "$title" "$chroot" "$now" "$user" "$host" "$workdir" "$jobs" "$errstat" "$shell"
 
-    PS2='\[\e[00;33m\]>\[\e[0m\] '
-    PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
-    PS4='\[\e[01;31m\]+\[\e[0m\]'
+    export PS1;
+    export PS2='\[\e[00;33m\]>\[\e[0m\] '
+    export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
+    export PS4='\[\e[01;31m\]+\[\e[0m\]'
 
-    ;;
+}
+
+
+case ${color_prompt} in
+  on) __generate_color_prompt;;
 esac
 
 seldir () {
