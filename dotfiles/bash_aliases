@@ -19,3 +19,13 @@ alias d='dirs -l -v'
 
 export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
 
+
+MVIMCMD=`which mvim`;
+export MVIM_SERVER="VIM$$"
+
+# When MacVim is available, calls to `tvim` will share a VIM server and 
+# open files in tabs, so new instances don't need to be spawned.
+[ -x "${MVIMCMD}" ] && alias tvim='mvim --servername ${MVIM_SERVER} --remote-tab-silent'
+
+# Shortcut for encrypted VIM sessions
+alias xvim='vim -x'
