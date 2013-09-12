@@ -28,7 +28,7 @@ shopt -s checkhash
 
 # shopt -s mailwarn
 
-export PROMPT_NAME="$0"
+export PROMPT_NAME="$0";
 
 
 # Mark the end of the prompt for SCREEN
@@ -40,9 +40,9 @@ __mark_prompt_ending () {
 case $TERM in
   screen*) 
     # On remote hosts (i.e. SSH connections) use hostname for prompt name
-    [ -z "$SSH_TTY" ] || export PROMPT_NAME="${HOSTNAME%%.*}" 
+    [ -z "$SSH_TTY" ] || export PROMPT_NAME="${HOSTNAME%%.*}" ;
     printf -v title "%s" '\[\e]0;\u@\h: \W\a\]' # sets hardstatus  with username, host, etc.
-    export PROMPT_COMMAND="${PROMPT_COMMAND:-:}; __mark_prompt_ending \${PROMPT_NAME};"
+    export PROMPT_COMMAND="${PROMPT_COMMAND:-:}; __mark_prompt_ending \${PROMPT_NAME:-shell};"
     export color_prompt=on;
     ;;
   linux|xterm*|gnome*|*color*)
@@ -120,3 +120,29 @@ crypto () {
     decrypt) openssl aes-256-cbc -d -in "${2}" -out "${2%.aes}";;
   esac
 }
+
+MD5_UTIL=`which md5sum md5`
+
+case $MD5_UTIL in
+  *md5) alias md5sum="md5 -r" # BSD (OS X) reverse option for compatibility with Linux
+   ;;
+esac
+
+git_filechecksums () {
+  for filename; do
+    git log --format='%h' "${filename}" | while read commit; do
+      checksum=`git show ${commit}:${filename} | md5sum | cut -c 1-32`
+      printf '%s %s %s\n' "${commit}" "${checksum}" "${filename}"
+    done
+  done
+}
+
+git_md5tree () {
+  for treeish; do
+    git ls-tree "${treeish}" | while read perms filetype object filename; do
+      checksum=`git cat-file ${filetype} ${object} | md5sum | cut -c 1-32`
+      printf '%s %s:%s\n' "${checksum}" "${treeish}" "${filename}"
+    done
+  done
+}
+
