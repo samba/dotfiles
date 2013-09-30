@@ -2,7 +2,11 @@
 # Configuration for login shells 
 
 # Setup Amazon EC2 Command-Line Tools
-export JAVA_HOME=`/usr/libexec/java_home`
+
+if [ -x /usr/libexec/java_home ]; then
+  export JAVA_HOME=`/usr/libexec/java_home`
+fi
+
 export EC2_HOME=/usr/local/opt/ec2-api-tools/
 export AWS_ELB_HOME=/usr/local/opt/elb-api-tools/
 export EC2_KEY_PATH="${HOME}/.ssh/keys/ec2.x509/"
@@ -25,13 +29,14 @@ export PATH=/usr/local/bin:${HOME}/.dotfiles/bin:$PATH
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
 
 # git autocomplete
-. /usr/local/git/contrib/completion/git-completion.bash
+[ -f /usr/local/git/contrib/completion/git-completion.bash ] && . /usr/local/git/contrib/completion/git-completion.bash
 
+# Other completeion available on the host...
+[ -f /etc/bash_completion ] && . /etc/bash_completion
 
 # Import interactive shell configuration
 [ -f ~/.bashrc ] && source ~/.bashrc
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
-
 
 
 
