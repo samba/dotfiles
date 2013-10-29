@@ -33,6 +33,15 @@ export PYTHONSTARTUP=${HOME}/.pythonrc.py
 # git autocomplete
 [ -f /usr/local/git/contrib/completion/git-completion.bash ] && . /usr/local/git/contrib/completion/git-completion.bash
 
+# git prompt methods
+export GIT_PS1_SHOWUPSTREAM=auto
+export GIT_PS1_SHOWDIRTYSTATE=true
+export GIT_PS1_SHOWSTASHSTATE=true
+export GIT_PS1_SHOWUNTRACKEDFILES=true
+[ -f /usr/local/git/contrib/completion/git-prompt.sh ] && . /usr/local/git/contrib/completion/git-prompt.sh
+
+type __git_ps1 > /dev/null && export GIT_PROMPT='$(__git_ps1 " (%s)")'
+
 # Other completeion available on the host...
 [ -f /etc/bash_completion ] && . /etc/bash_completion
 

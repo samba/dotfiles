@@ -28,6 +28,8 @@ shopt -s checkhash
 
 # shopt -s mailwarn
 
+
+
 export PROMPT_NAME="$0";
 
 
@@ -89,23 +91,30 @@ __generate_color_prompt () {
     #local errstat="\$(printf '%.*s' \$? \$?)"
 
     # Append the return value of the last command to the prompt (red if error)
-    local errstat="\[\e[00;\$((\$? ? $color_error : $color_pass ))m\]\$?\[\e[0m\] " # trailing space
+    local errstat="\[\e[00;\$((\$? ? $color_error : $color_pass ))m\]\$?\[\e[0m\]" # no trailing space
   
 
     # Throw it all together
-    printf -v PS1 '%s%s%s%s %s@%s %s %s %s%s' "$bell" "$title" "$chroot" "$now" "$user" "$host" "$workdir" "$jobs" "$errstat" "$shell"
+    printf -v PS1 '%s%s%s%s %s@%s %s%s %s %s %s' "$bell" "$title" "$chroot" "$now" "$user" "$host" "$workdir" "${GIT_PROMPT}" "$jobs" "$errstat"  "$shell"
 
     export PS1;
     export PS2='\[\e[00;33m\]>\[\e[0m\] '
     export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
     export PS4='\[\e[01;31m\]+\[\e[0m\]'
+    export GIT_PS1_SHOWCOLORHINTS=true
 
 }
+
+
 
 
 case ${color_prompt} in
   on) 
     __generate_color_prompt;
+    ;;
+  *)
+    printf -v PS1 '\t \h@\h \W%s \$' "${GIT_PROMPT}";
+    export PS1;
     ;;
 esac
 
