@@ -40,5 +40,6 @@ export PYTHONSTARTUP=${HOME}/.pythonrc.py
 [ -f ~/.bashrc ] && source ~/.bashrc
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
-
+export PAGER=less
+export LESS='-iMSx4 -FXR'
 
