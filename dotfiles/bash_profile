@@ -13,6 +13,8 @@ export EC2_KEY_PATH="${HOME}/.ssh/keys/ec2.x509/"
 export EC2_PRIVATE_KEY=`ls ${EC2_KEY_PATH}/pk-*.pem 2>/dev/null`
 export EC2_CERT=`ls ${EC2_KEY_PATH}/cert-*.pem 2>/dev/null`
 export EC2_URL=https://us-east-1.ec2.amazonaws.com
+export AWS_DEFAULT_REGION=us-east-1
+
 export PATH=$PATH:$EC2_HOME/bin:$AWS_ELB_HOME/bin
 
 # Reference to the full (and truly mind-boggling) path for Google AppEngine on Mac OS X
