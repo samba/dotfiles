@@ -470,30 +470,12 @@ function! WriteModeline (line)
 endfunction
 
 
-function! SetupAutoModeline()
-  let l:writing = b:auto_write_modeline
-  if(l:writing == 1)
-    call WriteModeline(line("$"))
-  endif
-endfunction
-
 nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
 
 
-autocmd BufReadPre * let b:auto_write_modeline=0
+" Automatically load httplog format
+autocmd BufRead   *access.log*  setf httplog
 
-autocmd FileType python let b:auto_write_modeline=1
-autocmd FileType ruby let b:auto_write_modeline=1
-autocmd FileType make let b:auto_write_modeline=1
-autocmd FileType php let b:auto_write_modeline=1
-autocmd FileType sql let b:auto_write_modeline=1
-autocmd FileType javascript let b:auto_write_modeline=1
-
-" Disable modeline comments in JSON
-autocmd BufWrite *.json let b:auto_write_modeline=0
-
-" Automatically write modeline (if enabled)
-autocmd BufWrite * call SetupAutoModeline()
 
 
 " }@
