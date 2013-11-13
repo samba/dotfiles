@@ -32,7 +32,6 @@ shopt -s checkhash
 
 export PROMPT_NAME="$0";
 
-
 # Mark the end of the prompt for SCREEN
 __mark_prompt_ending () {
     printf '%bk%s%b%b' \\033 "${@}" \\033 \\0134

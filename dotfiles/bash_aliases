@@ -38,3 +38,6 @@ export MVIM_SERVER="VIM$$"
 
 # Shortcut for encrypted VIM sessions
 alias xvim='vim -x'
+
+alias pdb='python -m pdb'
+
