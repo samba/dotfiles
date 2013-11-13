@@ -12,6 +12,7 @@ dotfiles/bash_aliases ${HOME}/.bash_aliases
 dotfiles/bash_profile ${HOME}/.bash_profile
 dotfiles/bashrc       ${HOME}/.bashrc
 dotfiles/screenrc     ${HOME}/.screenrc
+dotfiles/vim/plugin/openssl.vim  ${HOME}/.vim/plugin/openssl.vim
 EOF
 }
 
