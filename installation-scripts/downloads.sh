@@ -32,6 +32,7 @@ queue_downloads () {
   download https://git-osx-installer.googlecode.com/files/git-1.8.2.2-intel-universal-snow-leopard.dmg &
   download https://macvim.googlecode.com/files/MacVim-snapshot-66-Lion.tbz &
   download https://iterm2.googlecode.com/files/iTerm2-1_0_0_20130319.zip iTerm2.zip &
+  download http://c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.2.dmg Sublime\ Text\ 2.dmg &
 
   setup_git_osx_keychain
 
