@@ -120,7 +120,8 @@ set listchars+=precedes:<,extends:<
 " Window features (statusline, splits, etc) @{
 
 set ruler
-set rulerformat=%30(%Y\ %B\ %=\ %l,%c%V\ %P%)
+set rulerformat=%30(%n\ %Y\ %B\ %=\ %l,%c%V\ %P%)
+" set statusline=[%n]\ %f\ -\ %m
 
 
 " put new windows below and right by default
@@ -133,6 +134,7 @@ set splitbelow splitright
 set number " enable line numbering, and a toggle shortcut
 nmap <silent> <Leader>Number :set number!<CR>
 nmap <silent> <Leader>n :set number!<CR>
+
 
 
 " }@
