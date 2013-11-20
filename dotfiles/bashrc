@@ -156,3 +156,7 @@ git_md5tree () {
   done
 }
 
+git_search_history () {
+  git grep "${@}" $(git rev-list --all)
+}
+
