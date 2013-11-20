@@ -6,6 +6,8 @@
 # Load system default. (This doesn't fly on Mac OS X.)
 # source /etc/screenrc
 
+scrollback 50000
+
 
 # use C-\  instead of C-a for screen control char
 # escape \034\034 
@@ -89,7 +91,6 @@ bell "Bell in #%n %t (%f) at %c^G"
 vbell_msg "Bell on #%n %t (%f)"
 vbellwait 0
 vbell off
-
 
 
 # vim: foldmethod=marker foldenable
