@@ -54,7 +54,8 @@
   dl = !git diff --color | less -R
   onelog = log --graph --oneline 
   hist = log --graph --oneline --format=format:'%C(yellow)%h%C(reset) %s %C(green)%an%C(reset) %C(yellow)%d%C(reset) %C(dim magenta)%ai%C(reset)'
-  showfiles = show --format=format:'%C(yellow)%H%C(reset)%nCommit: %C(green)%cn%C(reset) <%C(dim white)%ce%C(reset)> %C(dim magenta)%ci%C(reset)%nAuthor: %C(dim green)%an%C(reset) <%C(dim white)%ae%C(reset)> %C(dim magenta)%ai%C(reset)%nSubject: %s%n' --name-only
+  showfiles = show --stat
+;  showfiles = show --format=format:'%C(yellow)%H%C(reset)%nCommit: %C(green)%cn%C(reset) <%C(dim white)%ce%C(reset)> %C(dim magenta)%ci%C(reset)%nAuthor: %C(dim green)%an%C(reset) <%C(dim white)%ae%C(reset)> %C(dim magenta)%ai%C(reset)%nSubject: %s%n' --name-only
   last = cat-file commit HEAD
   new = !gitk --all --not ORIG_HEAD
   prepare = !git fetch --all && git status -sb && git diff --stat
