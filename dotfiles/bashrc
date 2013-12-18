@@ -1,6 +1,8 @@
 #!/bin/sh
 # Configuration for interactive shells
 
+export BASH_RC_HAS_RUN=TRUE
+
 export EDITOR=`which vim nano | head -n 1`
 
 # Configure history backlog
@@ -9,13 +11,16 @@ export HISTIGNORE=history:jobs:fg:bg
 export HISTSIZE=20000
 export HISTTIMEFORMAT='%F %T '
 
+export PAGER=less
+export LESS='-iMSx4 -FXR'
+
+
 # Update history file on every command
-case $PROMPT_COMMAND in
-  *history*) # It already had a history directive... add a no-op marker.
-    export PROMPT_COMMAND=":; ${PROMPT_COMMAND}";;
-  *) # No history reference found... add it.
-    export PROMPT_COMMAND="history -a; ${PROMPT_COMMAND:-:}";;
-esac
+if [ -n "${PROMPT_COMMAND%%*history*}" ]; then
+  # No history reference found... add it.
+  export PROMPT_COMMAND="history -a; ${PROMPT_COMMAND}"
+fi
+
 
 
 shopt -s checkwinsize
@@ -29,21 +34,48 @@ shopt -s checkhash
 # shopt -s mailwarn
 
 
+# git prompt methods
+export GIT_PROMPT="" # start empty
+export GIT_PS1_SHOWUPSTREAM=auto
+export GIT_PS1_SHOWDIRTYSTATE=true
+export GIT_PS1_SHOWSTASHSTATE=true
+export GIT_PS1_SHOWUNTRACKEDFILES=true
+if [ -f /usr/local/git/contrib/completion/git-prompt.sh ]; then
+  . /usr/local/git/contrib/completion/git-prompt.sh
+  type __git_ps1 > /dev/null && export GIT_PROMPT='$(__git_ps1 " (%s)")'
+fi
 
-export PROMPT_NAME="$0";
+# git autocomplete
+[ -f /usr/local/git/contrib/completion/git-completion.bash ] && . /usr/local/git/contrib/completion/git-completion.bash
+
+
+# Other completeion available on the host...
+[ -f /etc/bash_completion ] && . /etc/bash_completion
+[ -f ~/.bash_aliases ] && source ~/.bash_aliases
+
 
 # Mark the end of the prompt for SCREEN
 __mark_prompt_ending () {
     printf '%bk%s%b%b' \\033 "${@}" \\033 \\0134
 }
 
+export PROMPT_NAME="${HOSTNAME%%.*}" # default SCREEN terminal name
+printf -v title "" # default hardstatus 
+
+abbrev_cwd () {
+  echo "${PWD}" | sed -E "s@${HOME}@~@; s@([^/])[^/]*/@\\1/@g;"
+}
+
 
 case $TERM in
   screen*) 
     # On remote hosts (i.e. SSH connections) use hostname for prompt name
-    [ -z "$SSH_TTY" ] || export PROMPT_NAME="${HOSTNAME%%.*}" ;
-    printf -v title "%s" '\[\e]0;\u@\h: \W\a\]' # sets hardstatus  with username, host, etc.
-    export PROMPT_COMMAND="${PROMPT_COMMAND:-:}; __mark_prompt_ending \${PROMPT_NAME:-shell};"
+    [ -z "$SSH_TTY" ] || export PROMPT_NAME="${HOSTNAME%%.*}"; # this is redundant...
+    printf -v title "%s" '\[\e]0;\u@\h: `abbrev_cwd`\a\]' # sets hardstatus  with username, host, etc.
+
+    [ -n "${PROMPT_COMMAND}" -a -z "${PROMPT_COMMAND##*;}" ] && semi=";"
+    export PROMPT_COMMAND="${PROMPT_COMMAND}${semi} __mark_prompt_ending \${PROMPT_NAME:-shell}"
+
     export color_prompt=on;
     ;;
   linux|xterm*|gnome*|*color*)

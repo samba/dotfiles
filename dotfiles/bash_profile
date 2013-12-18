@@ -26,29 +26,12 @@ export PATH=/usr/local/git/bin:/usr/local/mysql/bin:$PATH
 # Allow user-specific search path
 export PATH=/usr/local/bin:${HOME}/.dotfiles/bin:$PATH
 
-
 # Startup script for Python
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
 
-# git autocomplete
-[ -f /usr/local/git/contrib/completion/git-completion.bash ] && . /usr/local/git/contrib/completion/git-completion.bash
-
-# git prompt methods
-export GIT_PS1_SHOWUPSTREAM=auto
-export GIT_PS1_SHOWDIRTYSTATE=true
-export GIT_PS1_SHOWSTASHSTATE=true
-export GIT_PS1_SHOWUNTRACKEDFILES=true
-[ -f /usr/local/git/contrib/completion/git-prompt.sh ] && . /usr/local/git/contrib/completion/git-prompt.sh
-
-type __git_ps1 > /dev/null && export GIT_PROMPT='$(__git_ps1 " (%s)")'
-
-# Other completeion available on the host...
-[ -f /etc/bash_completion ] && . /etc/bash_completion
-
 # Import interactive shell configuration
-[ -f ~/.bashrc ] && source ~/.bashrc
-[ -f ~/.bash_aliases ] && source ~/.bash_aliases
+case $- in
+  *i*) [ -f ~/.bashrc ] && source ~/.bashrc;;
+esac
 
-export PAGER=less
-export LESS='-iMSx4 -FXR'
 
