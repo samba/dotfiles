@@ -6,7 +6,7 @@
 # Load system default. (This doesn't fly on Mac OS X.)
 # source /etc/screenrc
 
-scrollback 50000
+defscrollback 50000
 
 
 # use C-\  instead of C-a for screen control char
