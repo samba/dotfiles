@@ -1,15 +1,22 @@
-# Workspace Configuration for Analytics Pros
+# Workspace Configuration
 
-These are the "dotfiles" and other setup scripts for Analytics Pros developers and engineering staff.
+These are the "dotfiles", utility scripts, and other configuration I rely on in my development environment.
 
-We use Mac OSX, predominantly, but will be gradually updating these configurations for compatibility with Linux systems as well.
+These were originally crafted for use on Mac OSX, predominantly, 
+but will eventually updated for compatibility with Linux systems as well.
 
 The `install.sh` script is your start point...
 
 * Sets up the dotfiles (vim, shell, screen configuration)
-* Downloads tools we use regularly (MacVim, GitHub, etc.)
+* Downloads tools I use regularly (Chrome, Sublime Text, GitHub, etc.)
 
 ```shell
-install.sh dotfiles
-install.sh downloads
+sh install.sh dotfiles
+sh install.sh downloads
+```
+
+A shortcut also exists;
+
+```shell
+sh install.sh all
 ```
