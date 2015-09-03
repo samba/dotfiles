@@ -1,14 +1,28 @@
 # ~/.pythonrc
 
-import sys
 
-# enable syntax completion via tab
+import atexit
+import datetime
+import getpass
+import hashlib
+import math
+import os
+import random
+import re
+import socket
+import sys
+import time
+import uuid
+
 try:
+    # NOTE: on Mac OS X 10.10, readline must be installed/updated. There seems to
+    # be a bug that breaks text wrapping using the history UP/DOWN methods.
     import readline
 except ImportError:
     print "Module readline not available."
     readline = None
 else:
+    # Enable syntax completion via tab
     import rlcompleter
     readline.parse_and_bind("tab: complete")
     readline.parse_and_bind("bind ^I rl_complete") # for Mac OS X
@@ -18,18 +32,7 @@ try:
 except:
     pass
 
-import re
-import sys
-import os
-import math
-import random
-import uuid
-import hashlib
-import datetime
-import time
-import getpass
-import socket
-import atexit
+
 
 HISTORY_PATH = os.path.expanduser('~/.python_history')
 
@@ -42,10 +45,10 @@ def save_history(path = HISTORY_PATH):
 if readline and os.path.exists(HISTORY_PATH):
     readline.read_history_file(HISTORY_PATH)
 
+
+
 def concat(*props):
     return ';'.join([ str(i) for i in props ])
-
-
 
 
 class Prompt(object):
