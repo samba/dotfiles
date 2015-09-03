@@ -196,3 +196,29 @@ git_search_history () {
   git grep "${@}" $(git rev-list --all)
 }
 
+find_sublime_project () {
+  searchpath="${1:-`pwd`}"
+  find ${searchpath} -name '*.sublime-project' | head -n 1
+}
+
+load_sublime_path () {
+  find_sublime_project "$@" | while read proj; do
+    subl -n --project "$proj"
+    return 0
+  done
+  if [ $# -eq 0 ]; then
+    subl -n "`pwd`"
+  else
+    if [ -d "$1" ]; then
+      subl -n "$1"
+    else 
+      subl -a "$1"
+    fi
+  fi
+}
+
+sublime () {
+  load_sublime_path "$@"
+}
+
+
