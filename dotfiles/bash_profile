@@ -1,5 +1,5 @@
 #!/bin/sh
-# Configuration for login shells 
+# Configuration for login shells
 
 # Setup Amazon EC2 Command-Line Tools
 
@@ -28,10 +28,13 @@ export PATH=/usr/local/bin:${HOME}/.dotfiles/bin:$PATH
 
 # Startup script for Python
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
+export PYTHON_USERCUSTOM=`python -c "import site; print site.getusersitepackages()"`
+
 
 # Import interactive shell configuration
 case $- in
   *i*) [ -f ~/.bashrc ] && source ~/.bashrc;;
 esac
+
 
 

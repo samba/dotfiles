@@ -21,11 +21,15 @@ if [ -n "${PROMPT_COMMAND%%*history*}" ]; then
   export PROMPT_COMMAND="history -a; ${PROMPT_COMMAND}"
 fi
 
+if [ -n "${PYTHON_USERCUSTOM}" ]; then
+  mkdir -p "${PYTHON_USERCUSTOM}"
+  touch "${PYTHON_USERCUSTOM}/usercustomize.py"
+fi
 
 
 shopt -s checkwinsize
 shopt -s cdspell
-shopt -s hostcomplete 
+shopt -s hostcomplete
 shopt -s histappend
 shopt -s cmdhist
 shopt -s histreedit
@@ -60,7 +64,7 @@ __mark_prompt_ending () {
 }
 
 export PROMPT_NAME="${HOSTNAME%%.*}" # default SCREEN terminal name
-printf -v title "" # default hardstatus 
+printf -v title "" # default hardstatus
 
 abbrev_cwd () {
   echo "${PWD}" | sed -E "s@${HOME}@~@; s@([^/])[^/]*/@\\1/@g;"
@@ -68,7 +72,7 @@ abbrev_cwd () {
 
 
 case $TERM in
-  screen*) 
+  screen*)
     # On remote hosts (i.e. SSH connections) use hostname for prompt name
     [ -z "$SSH_TTY" ] || export PROMPT_NAME="${HOSTNAME%%.*}"; # this is redundant...
     printf -v title "%s" '\[\e]0;\u@\h: `abbrev_cwd`\a\]' # sets hardstatus  with username, host, etc.
@@ -103,13 +107,13 @@ __generate_color_prompt () {
     local color_pass=32 # green
 
     # username: red, if root or UID=0
-    if [ $USER = 'root' ] || [ $UID -eq 0 ]; then 
+    if [ $USER = 'root' ] || [ $UID -eq 0 ]; then
       local color_user=31; # red
       local color_shell=31; # red
     fi
-   
+
     local bell now user host workdir chroot shell jobs;
-      
+
     printf -v bell '\[\a\]'
     printf -v now '\[\e[00;%dm\]\\t\[\e[0m\]' $color_now
     printf -v user '\[\e[01;%dm\]\\u\[\e[0m\]' $color_user
@@ -123,7 +127,7 @@ __generate_color_prompt () {
 
     # Append the return value of the last command to the prompt (red if error)
     local errstat="\[\e[00;\$((\$? ? $color_error : $color_pass ))m\]\$?\[\e[0m\]" # no trailing space
-  
+
 
     # Throw it all together
     printf -v PS1 '%s%s%s%s %s@%s %s%s %s %s %s' "$bell" "$title" "$chroot" "$now" "$user" "$host" "$workdir" "${GIT_PROMPT}" "$jobs" "$errstat"  "$shell"
@@ -140,7 +144,7 @@ __generate_color_prompt () {
 
 
 case ${color_prompt} in
-  on) 
+  on)
     __generate_color_prompt;
     ;;
   *)

@@ -4,6 +4,8 @@
 DATE=`date +%Y%m%d_%H%M%S`
 ARCHIVE_OUT=/tmp/workspace-archive-${DATE}.tar.gz
 
+PYTHON_USERCUSTOM=`python -s -c "import site; print site.getusersitepackages()"`
+
 filelist () {
 cat <<EOF
 dotfiles/gitconfig    ${HOME}/.gitconfig
@@ -14,12 +16,14 @@ dotfiles/bashrc       ${HOME}/.bashrc
 dotfiles/screenrc     ${HOME}/.screenrc
 dotfiles/vim/plugin/openssl.vim  ${HOME}/.vim/plugin/openssl.vim
 dotfiles/pythonrc.py  ${HOME}/.pythonrc.py
+dotfiles/usercustomize.py ${PYTHON_USERCUSTOM}/usercustomize.py
 EOF
 }
 
 makedirs () {
   mkdir -p ${HOME}/.vim/{backup,swap,autoload,syntax,doc,plugin}
   mkdir -p ${HOME}/Projects
+  mkdir -p ${PYTHON_USERCUSTOM}
 }
 
 
@@ -36,6 +40,7 @@ setup_dotfiles () {
   echo "# Copying configuration files; archiving original in ${ARCHIVE_OUT}" >&2
   filelist | awk '{print $2}' | xargs tar -czvf ${ARCHIVE_OUT}
   filelist | while read origin dest; do
+    mkdir -p "`dirname "${dest}"`"
     [ -f "${origin}" ] && cp -v "${origin}" "${dest}"
   done
 

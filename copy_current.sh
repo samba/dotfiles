@@ -4,6 +4,6 @@
 . ./installation-scripts/dotfiles.sh
 
 filelist | while read dest orig; do
-  [ -f "${orig}" ] && cp -v ${orig} ./${dest}
+  [ -f "${orig}" ] && cp -v ${orig} ./${dest} || echo "Missing ${orig}" >&2
 done
 
