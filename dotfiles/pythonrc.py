@@ -36,7 +36,7 @@ except:
     pass
 
 
-
+INTERACTIVE_MODE = locals().get('interactive', -1)
 HISTORY_PATH = os.path.expanduser('~/.python_history')
 
 @atexit.register
@@ -171,15 +171,15 @@ class Prompt(object):
         basetext = self.colorize(spec.format(**props))
         return basetext
 
-
-print str(Prompt('You are in <cyan>python <red>{pyversion}<reset>.\n')) + Prompt.CTRL_RESET
+if INTERACTIVE_MODE is -1:
+    print str(Prompt('You are in <cyan>python <red>{pyversion}<reset>.\n')) + Prompt.CTRL_RESET
 
 def status():
     print Prompt("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>\n")
 
-
-sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <cyan>{time} <lightblue>{pathbase}<reset>> ")
-sys.ps2 = Prompt('<yellow>..<reset>> ')
+if INTERACTIVE_MODE in (0, 1, 2):
+    sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <cyan>{time} <lightblue>{pathbase}<reset>> ")
+    sys.ps2 = Prompt('<yellow>..<reset>> ')
 
 #sys.ps1 = '\001\033[96m\002py> \001\033[0m\002'
 #sys.ps2 = '\001\033[96m\002..> \001\033[0m\002'
