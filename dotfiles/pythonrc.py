@@ -59,6 +59,11 @@ class Prompt(object):
     RE_PARSER_COLOR = re.compile(r'<([a-zA-Z]+)>')
     RE_PARSER_ATTRIB = re.compile('\{([a-zA-Z\_\-]+)\}')
 
+    TERMINALS_SUPPORTED = [ 'xterm', 'xterm-color',
+                            'xterm-256color', 'linux',
+                            'screen', 'screen-256color', 'screen-bce' ]
+
+
     CODE_BOLD = 1
     CODE_DIM = 2
     CODE_UNDERLINE = 4
@@ -101,10 +106,17 @@ class Prompt(object):
         "reset": (CTRL_RESET)
     }
 
+    @classmethod
+    def term_supported(cls):
+        return os.environ.get('TERM') in cls.TERMINALS_SUPPORTED
+
 
     @classmethod
     def colorize(cls, text):
-        return cls.RE_PARSER_COLOR.sub(lambda m: cls.KEYWORDS.get(m.group(1), ''), text)
+        resolver = lambda m: cls.KEYWORDS.get(m.group(1), '')
+        if not cls.term_supported():
+            resolver = lambda m: ''
+        return cls.RE_PARSER_COLOR.sub(resolver, text)
 
 
     @property
@@ -124,6 +136,11 @@ class Prompt(object):
             return '~'
         else:
             return (rel or '~')
+
+    @property
+    def pathbase(self):
+        return os.path.basename(self.path)
+
 
     @property
     def time(self):
@@ -149,17 +166,17 @@ class Prompt(object):
         spec = self.__format_spec__
         props = dict(self.__format_props__)
         basetext = self.colorize(spec.format(**props))
-        return basetext + self.CTRL_RESET
+        return '\x01%s\x03' % basetext
 
 
-print Prompt.colorize('You are in <cyan>python.<reset>\n') + Prompt.CTRL_RESET
+print str(Prompt('You are in <cyan>python <red>{pyversion}<reset>.\n')) + Prompt.CTRL_RESET
 
 def status():
-    print Prompt("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>")
+    print Prompt("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>\n")
 
 
-sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <yellow>{time} <green>{user}<reset> > ")
-sys.ps2 = '<yellow>..><reset> '
+sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <cyan>{time} <lightblue>{pathbase}<reset>> ")
+sys.ps2 = Prompt('<yellow>..<reset>> ')
 
 #sys.ps1 = '\001\033[96m\002py> \001\033[0m\002'
 #sys.ps2 = '\001\033[96m\002..> \001\033[0m\002'
