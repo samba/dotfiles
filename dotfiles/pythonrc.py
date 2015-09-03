@@ -7,6 +7,7 @@ try:
     import readline
 except ImportError:
     print "Module readline not available."
+    readline = None
 else:
     import rlcompleter
     readline.parse_and_bind("tab: complete")
@@ -28,8 +29,18 @@ import datetime
 import time
 import getpass
 import socket
+import atexit
+
+HISTORY_PATH = os.path.expanduser('~/.python_history')
+
+@atexit.register
+def save_history(path = HISTORY_PATH):
+    if readline:
+        readline.write_history_file(path)
 
 
+if readline and os.path.exists(HISTORY_PATH):
+    readline.read_history_file(HISTORY_PATH)
 
 def concat(*props):
     return ';'.join([ str(i) for i in props ])
