@@ -55,7 +55,7 @@ class Prompt(object):
     CODE_RESET_ALL = 0
     CODE_RESET_OFFSET = 20
     CODE_BACKGROUND_OFFSET = 10
-    
+
     COLOR_DEFAULT = 39
     COLOR_BLACK = 30
     COLOR_RED = 31
@@ -87,7 +87,7 @@ class Prompt(object):
         "reset": (CTRL_RESET)
     }
 
-    
+
     @classmethod
     def colorize(cls, text):
         return cls.RE_PARSER_COLOR.sub(lambda m: cls.KEYWORDS.get(m.group(1), ''), text)
@@ -114,18 +114,28 @@ class Prompt(object):
     @property
     def time(self):
         return datetime.datetime.now().time().strftime('%H:%M:%S')
-   
+
     @property
     def pyversion(self):
         info = sys.version_info
         return '%d.%d' % info[0:2]
 
     def __init__(self, prompt_format):
-        self.prompt_format = prompt_format
-   
+        self.__format_spec__ = prompt_format
+
+    @property
+    def __format_props__(self):
+        for n in dir(self):
+            if (not (n.startswith('_'))) and (n[0].lower() == n[0]):
+                temp = getattr(self, n)
+                if isinstance(temp, basestring):
+                    yield n, temp
+
     def __str__(self):
-        basetext = self.RE_PARSER_ATTRIB.sub(lambda m: getattr(self, m.group(1), ''), self.prompt_format)
-        return  self.colorize(basetext) + self.CTRL_RESET
+        spec = self.__format_spec__
+        props = dict(self.__format_props__)
+        basetext = self.colorize(spec.format(**props))
+        return basetext + self.CTRL_RESET
 
 
 print Prompt.colorize('You are in <cyan>python.<reset>\n') + Prompt.CTRL_RESET
