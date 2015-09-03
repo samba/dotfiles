@@ -24,8 +24,11 @@ except ImportError:
 else:
     # Enable syntax completion via tab
     import rlcompleter
-    readline.parse_and_bind("tab: complete")
-    readline.parse_and_bind("bind ^I rl_complete") # for Mac OS X
+    if 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete") # for Mac OS X
+    else:
+        readline.parse_and_bind("tab: complete")
+
 
 try:
     import pprint
@@ -166,7 +169,7 @@ class Prompt(object):
         spec = self.__format_spec__
         props = dict(self.__format_props__)
         basetext = self.colorize(spec.format(**props))
-        return '\x01%s\x03' % basetext
+        return basetext
 
 
 print str(Prompt('You are in <cyan>python <red>{pyversion}<reset>.\n')) + Prompt.CTRL_RESET
