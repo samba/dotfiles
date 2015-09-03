@@ -56,6 +56,8 @@ nmap <Leader>ro :set invreadonly<CR>
 
 
 noremap <Leader>tex :tabe %:h<CR>
+noremap <Leader>tn :tabnext<CR>
+noremap <Leader>tp :tabprev<CR>
 
 " Skip to next blank line
 nmap <Leader>k /^\s*$<CR>
