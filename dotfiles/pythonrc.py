@@ -83,6 +83,7 @@ class Prompt(object):
         "blue": (CTRL_BASE % (COLOR_BLUE)),
         "lightblue": (CTRL_BASE % (COLOR_BLUE_LIGHT)),
         "boldlightblue": (CTRL_BASE % (concat(COLOR_BLUE_LIGHT, CODE_BOLD))),
+        "bold": (CTRL_BASE % (CODE_BOLD)),
         "reset": (CTRL_RESET)
     }
 
@@ -129,7 +130,11 @@ class Prompt(object):
 
 print Prompt.colorize('You are in <cyan>python.<reset>\n') + Prompt.CTRL_RESET
 
-sys.ps1 = Prompt("<cyan>python<reset><red>{pyversion} <yellow>{time} <green>{user}<reset>@<yellow>{host} <boldlightblue>{path}<reset> > ")
+def status():
+    print Prompt("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>")
+
+
+sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <yellow>{time} <green>{user}<reset> > ")
 sys.ps2 = '<yellow>..><reset> '
 
 #sys.ps1 = '\001\033[96m\002py> \001\033[0m\002'
