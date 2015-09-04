@@ -14,6 +14,7 @@ import sys
 import time
 import uuid
 
+
 try:
     # NOTE: on Mac OS X 10.10, readline must be installed/updated. There seems to
     # be a bug that breaks text wrapping using the history UP/DOWN methods.
@@ -36,18 +37,19 @@ except:
     pass
 
 
-INTERACTIVE_MODE = locals().get('interactive', -1)
 HISTORY_PATH = os.path.expanduser('~/.python_history')
 
 @atexit.register
 def save_history(path = HISTORY_PATH):
-    if readline:
-        readline.set_history_length(int(os.environ.get('PYTHON_HISTLEN', 1000)))
-        readline.write_history_file(path)
+    import readline
+    readline.write_history_file(path)
 
 
-if readline and os.path.exists(HISTORY_PATH):
-    readline.read_history_file(HISTORY_PATH)
+if readline:
+    readline.set_history_length(int(os.environ.get('PYTHON_HISTLEN', 1000)))
+    if os.path.exists(HISTORY_PATH):
+        readline.read_history_file(HISTORY_PATH)
+
 
 
 
@@ -111,6 +113,15 @@ class Prompt(object):
         "reset": (CTRL_RESET)
     }
 
+
+    @classmethod
+    def interactive(cls):
+        return globals().get('RUN_INTERACTIVE', -1)
+
+    @classmethod
+    def _print(cls, text):
+            print str(cls(text)) + cls.CTRL_RESET
+
     @classmethod
     def term_supported(cls):
         return os.environ.get('TERM') in cls.TERMINALS_SUPPORTED
@@ -173,15 +184,19 @@ class Prompt(object):
         basetext = self.colorize(spec.format(**props))
         return basetext
 
-if INTERACTIVE_MODE is -1:
-    print str(Prompt('You are in <cyan>python <red>{pyversion}<reset>.\n')) + Prompt.CTRL_RESET
+
 
 def status():
-    print Prompt("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>\n")
+    Prompt._print("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>\n")
 
-if INTERACTIVE_MODE in (0, 1, 2):
-    sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <cyan>{time} <lightblue>{pathbase}<reset>> ")
-    sys.ps2 = Prompt('<yellow>..<reset>> ')
+if Prompt.interactive() is -1:
+    Prompt._print('You are in <cyan>python <red>{pyversion}<reset>\n')
+
+
+
+
+sys.ps1 = Prompt("<cyan>py<reset><red>{pyversion} <cyan>{time} <lightblue>{pathbase}<reset>> ")
+sys.ps2 = Prompt('<yellow>..<reset>> ')
 
 #sys.ps1 = '\001\033[96m\002py> \001\033[0m\002'
 #sys.ps2 = '\001\033[96m\002..> \001\033[0m\002'

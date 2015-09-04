@@ -23,7 +23,6 @@ fi
 
 if [ -n "${PYTHON_USERCUSTOM}" ]; then
   mkdir -p "${PYTHON_USERCUSTOM}"
-  touch "${PYTHON_USERCUSTOM}/usercustomize.py"
 fi
 
 
@@ -211,7 +210,7 @@ load_sublime_path () {
   else
     if [ -d "$1" ]; then
       subl -n "$1"
-    else 
+    else
       subl -a "$1"
     fi
   fi

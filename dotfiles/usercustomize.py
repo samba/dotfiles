@@ -1,33 +1,53 @@
 #!/usr/bin/env python
 
-import os, sys
+# NOTE this code is wrapped in a class (closure) to minimize pollution
+#  of global namespace after it executes.
+
+
+import os
+import sys
 import __main__ as main
 
-from ctypes import cast, c_int, c_char_p, POINTER, pythonapi
-
-__startup__ = os.environ.get('PYTHONSTARTUP', None)
-
-
-def _is_interactive(startup_file):
-    startup_valid = (startup_file and os.path.isfile(startup_file))
-    interactive_flag = sys.flags.interactive 
-    terminal = os.isatty(sys.stdout.fileno()),
-
-    if not terminal:
-        return 0
-
-    elif interactive_flag: # -i was invoked.
-        return (startup_valid) and 1
-
-    elif not hasattr(main, '__file__'): # called as "-c <command>" (or with no args).
-        return startup_valid and 2 
-
-    else:
-        return 0 
+class _UserCustom(object):
+    __startup__ = os.environ.get('PYTHONSTARTUP', None)
 
 
-if __startup__:
-    __startup__ = os.path.expanduser(__startup__)
-    _interactive_mode = _is_interactive(__startup__)
-    if _interactive_mode: 
-        execfile(__startup__, {'interactive': _interactive_mode})
+
+    @classmethod
+    def interactive(cls):
+        filepath = getattr(main, '__file__', None)
+
+        if sys.flags.interactive: # invoked with -i
+            return 1 if (not filepath) else 2
+
+        # NOTE: other cases here removed;
+        # In practice we really only want our shell features applied
+        # when python is loaded as a REPL (`python`, no args), or
+        # when python is loaded wit interactive mode "-i".
+        # We do not need to infer other states from the TTY status of
+        # sys.stdout, or really any other components.
+
+        else:
+            return 0
+
+    @classmethod
+    def valid_startup(cls):
+        result = os.path.expanduser(cls.__startup__)
+        return result if (os.path.isfile(result)) else None
+
+    @classmethod
+    def _import(cls):
+        _path = cls.valid_startup()
+        _interactive = cls.interactive()
+        # print >>sys.stderr, "Interactive mode %r" % _interactive
+        if _path and (_interactive in (1,2)):
+            execfile(_path, { 'RUN_INTERACTIVE': _interactive })
+
+
+
+
+# OK, run.
+_UserCustom._import()
+
+
+
