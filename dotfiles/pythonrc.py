@@ -16,41 +16,50 @@ import uuid
 
 
 try:
-    # NOTE: on Mac OS X 10.10, readline must be installed/updated. There seems to
-    # be a bug that breaks text wrapping using the history UP/DOWN methods.
+    # NOTE: on Mac OS X 10.10, readline must be installed/updated.
+    # Version readline==6.2.4.1 seems to be known-good.
+    # In some earlier version there seems to be a bug that breaks
+    # text wrapping using the history UP/DOWN methods.
     import readline
 except ImportError:
-    print "Module readline not available."
+    print "Module 'readline' not available."
     readline = None
-else:
-    # Enable syntax completion via tab
-    import rlcompleter
-    if 'libedit' in readline.__doc__:
-        readline.parse_and_bind("bind ^I rl_complete") # for Mac OS X
-    else:
-        readline.parse_and_bind("tab: complete")
-
 
 try:
     import pprint
 except:
     pass
 
-
-HISTORY_PATH = os.path.expanduser('~/.python_history')
-
-@atexit.register
-def save_history(path = HISTORY_PATH):
-    import readline
-    readline.write_history_file(path)
+__pyversion__ = sys.version_info[0:2]
 
 
-if readline:
-    readline.set_history_length(int(os.environ.get('PYTHON_HISTLEN', 1000)))
-    if os.path.exists(HISTORY_PATH):
-        readline.read_history_file(HISTORY_PATH)
+
+def enable_history(path = None):
+    if path is None:
+        path = os.path.expanduser('~/.python-history')
+
+    hist_length = int(os.environ.get('PYTHON_HISTLEN', 1000))
+
+    @atexit.register
+    def save_history():
+        import readline
+        readline.write_history_file(path)
+
+    if readline:
+        readline.set_history_length(hist_length)
+        if os.path.exists(path):
+            readline.read_history_file(path)
 
 
+
+def enable_completion():
+    if readline:
+        # Enable syntax completion via tab
+        import rlcompleter
+        if 'libedit' in readline.__doc__:
+            readline.parse_and_bind("bind ^I rl_complete") # for Mac OS X
+        else:
+            readline.parse_and_bind("tab: complete")
 
 
 
@@ -188,6 +197,13 @@ class Prompt(object):
 
 def status():
     Prompt._print("<green>{user}<reset>@<yellow>{host} <bold><lightblue>{path}<reset>\n")
+
+if __pyversion__ < (3, 4):
+    # Evidently Python 3.4 enables tab completion and history automatically.
+    # https://docs.python.org/3/whatsnew/3.4.html#other-improvements
+    enable_history()
+    enable_completion()
+
 
 if Prompt.interactive() is -1:
     Prompt._print('You are in <cyan>python <red>{pyversion}<reset>\n')
