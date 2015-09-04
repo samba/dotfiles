@@ -42,11 +42,13 @@ HISTORY_PATH = os.path.expanduser('~/.python_history')
 @atexit.register
 def save_history(path = HISTORY_PATH):
     if readline:
+        readline.set_history_length(int(os.environ.get('PYTHON_HISTLEN', 1000)))
         readline.write_history_file(path)
 
 
 if readline and os.path.exists(HISTORY_PATH):
     readline.read_history_file(HISTORY_PATH)
+
 
 
 
