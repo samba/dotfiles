@@ -17,15 +17,17 @@ class _UserCustom(object):
     def interactive(cls):
         filepath = getattr(main, '__file__', None)
 
-        if sys.flags.interactive: # invoked with -i
+        # Somehow it was being loaded "interactively" by AppEngine and other SDKs
+        # and throwing errors, so now we'll validate that it's loading via terminal.
+        terminal = os.isatty(sys.stdin.fileno()) and os.isatty(sys.stdout.fileno())
+
+        if terminal and sys.flags.interactive: # invoked with -i
             return 1 if (not filepath) else 2
 
         # NOTE: other cases here removed;
         # In practice we really only want our shell features applied
         # when python is loaded as a REPL (`python`, no args), or
         # when python is loaded wit interactive mode "-i".
-        # We do not need to infer other states from the TTY status of
-        # sys.stdout, or really any other components.
 
         else:
             return 0
