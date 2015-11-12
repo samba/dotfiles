@@ -17,6 +17,7 @@ dotfiles/screenrc     ${HOME}/.screenrc
 dotfiles/vim/plugin/openssl.vim  ${HOME}/.vim/plugin/openssl.vim
 dotfiles/pythonrc.py  ${HOME}/.pythonrc.py
 dotfiles/usercustomize.py ${PYTHON_USERCUSTOM}/usercustomize.py
+dotfiles/psqlrc       ${HOME}/.psqlrc  
 EOF
 }
 

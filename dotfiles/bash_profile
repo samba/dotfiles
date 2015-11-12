@@ -27,11 +27,12 @@ export PATH=/usr/local/bin:${HOME}/.dotfiles/bin:$PATH
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
 export PYTHON_USERCUSTOM=`python -c "import site; print site.getusersitepackages()"`
 
+# Add Postgres path
+export PATH="`find /Applications/Postgres.app/ -type d -name bin`:${PATH}"
+
 
 # Import interactive shell configuration
 case $- in
   *i*) [ -f ~/.bashrc ] && source ~/.bashrc;;
 esac
-
-
 
