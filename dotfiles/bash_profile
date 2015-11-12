@@ -33,8 +33,13 @@ export PATH="`find /Applications/Postgres.app/ -type d -name bin`:${PATH}"
 # Automatically find the Sublime Text path...
 export PATH="${PATH}:`find /Applications/Sublime\ Text.app/ -type d -name bin`"
 
+# And finally...
+export PATH="$HOME/.dotfiles/bin:${PATH}"
+
 # Import interactive shell configuration
 case $- in
   *i*) [ -f ~/.bashrc ] && source ~/.bashrc;;
 esac
+
+
 

@@ -1,0 +1,110 @@
+#!/bin/sh
+
+# SSH Tunnel (port-forwarding) manager
+# Derived from my previous work on "sshtunnel" (in BASH for Linux).
+# This one aims to provide compatibility with BSD/OS X as well, relying on fewer
+# bashisms, eventually compliant with POSIX shell...
+#
+# In effect this provides a loose wrapper around SSH's own master socket
+# handling, and relies on the hostname aliasing in SSH config, to be read later
+# from running process list `ps`.
+#
+# CONFIGURATION
+# This requires that the user provide in their ~/.ssh/config
+#  - Host blocks identifying interesting hosts, providing LocalForward specifications
+#  - ControlMaster and ControlPath
+#
+# EXAMPLE ~/.ssh/config
+#  Host *
+#     ControlMaster auto
+#     ControlPath  ~/.ssh/sock/%r_%h_%p.sock
+#     Compression  yes
+#
+#  Host remote-service
+#     Hostname svc123.example.com
+#     LocalForward  6543  10.0.0.15:3456
+
+
+# Ensure that we have a sensible socket directory.
+mkdir -p ~/.ssh/sock
+chmod 0700 ~/.ssh/sock
+
+print_help () {
+cat <<EOF
+Usage: ${0} [flag] [hostname]
+
+	${0} -l (no hostname) lists all active connections
+	${0} -c [hostname] establishes a background connection to host
+	${0} -t [hostname] tests the background connection for this host
+	${0} -k [hostname] kills the background connection
+EOF
+}
+
+start_tunnel () {
+	ssh -Nf $1 \
+	 	-o ControlPersist=yes \
+		-o ConnectTimeout=5 \
+		-o ServerAliveInterval=10 \
+		-o ServerAliveCountMax=3 \
+		-o TCPKeepAlive=yes \
+		-o Compression=yes
+
+}
+
+kill_tunnel () {
+	ssh -O exit $1
+}
+
+
+test_tunnel () {
+	host=$1; shift 1;
+	ssh -O check $host "$@" || return $?  # verify master process is running
+	ssh -O forward $host "$@" || return $? # request forwardings (redundant)
+
+	# Then attempt a remote command...
+	ssh $host "sh -c \"echo $host \`date +%Y-%m-%dT%H:%M:%S%Z\`  \`hostname\`\""
+}
+
+list_tunnels_active () {
+	# Read processes called in the manner of start_tunnel above.
+	pgrep -lf ssh | grep -oE '\-Nf ([^ ]+)' | while read skip host; do
+		test_tunnel $host
+	done
+}
+
+
+main () {
+
+	modeflag=0
+	hostspec=0
+	# set -x
+
+	while getopts "t:k:c:lh-" opt; do
+		case $opt in
+			t|k|c)
+				modeflag=$opt
+				hostspec=$OPTARG
+			;;
+			l)
+				modeflag=$opt
+			;;
+			h) print_help;;
+			-) break;;
+		esac
+	done
+
+	shift $((OPTIND-1))
+
+
+
+	case $modeflag in
+		l) list_tunnels_active;;
+		c) start_tunnel $hostspec "$@";;
+		t) test_tunnel $hostspec "$@";;
+		k) kill_tunnel $hostspec "$@";;
+	esac
+
+	# set +x
+}
+
+main "$@"

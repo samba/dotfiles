@@ -18,10 +18,12 @@ dotfiles/vim/plugin/openssl.vim  ${HOME}/.vim/plugin/openssl.vim
 dotfiles/pythonrc.py  ${HOME}/.pythonrc.py
 dotfiles/usercustomize.py ${PYTHON_USERCUSTOM}/usercustomize.py
 dotfiles/psqlrc       ${HOME}/.psqlrc  
+utils/sshtunnel       ${HOME}/.dotfiles/bin/sshtunnel
 EOF
 }
 
 makedirs () {
+  mkdir -p ${HOME}/.dotfiles/bin
   mkdir -p ${HOME}/.vim/{backup,swap,autoload,syntax,doc,plugin}
   mkdir -p ${HOME}/Projects
   mkdir -p ${PYTHON_USERCUSTOM}
@@ -45,5 +47,6 @@ setup_dotfiles () {
     [ -f "${origin}" ] && cp -v "${origin}" "${dest}"
   done
 
+  find ${HOME}/.dotfiles/bin/ -type f -print0 | xargs -0 chmod 0700 
 }
 
