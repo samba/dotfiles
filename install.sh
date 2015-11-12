@@ -5,9 +5,9 @@
 
 # import backup utils/etc
 # provides userdata cache and restore methods
-. installation-scripts/prepare.sh
-. installation-scripts/downloads.sh
-. installation-scripts/dotfiles.sh
+. setup-scripts/prepare.sh
+. setup-scripts/downloads.sh
+. setup-scripts/dotfiles.sh
 
 DOWNLOADING=0
 
@@ -37,7 +37,7 @@ fi
 
 
 restore_userdata < /tmp/workspace-setup.conf
-      
+
 [ ${DOWNLOADING} -eq 1 ] && echo "# Waiting for downloads to finish..." >&2
 wait;
 
