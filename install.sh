@@ -8,6 +8,8 @@
 . setup-scripts/prepare.sh
 . setup-scripts/downloads.sh
 . setup-scripts/dotfiles.sh
+. setup-scripts/python.sh
+
 
 DOWNLOADING=0
 
@@ -26,6 +28,7 @@ for mode; do
       DOWNLOADING=1;
       queue_downloads;
       setup_dotfiles;
+      install_python_environment;
       ;;
   esac
 done
