@@ -20,3 +20,30 @@ A shortcut also exists;
 ```shell
 sh install.sh all
 ```
+
+## Other tools
+
+- iTerm
+- PostgreSQL
+- VirtualBox
+- Cyberduck
+- GitHub for Mac
+- Sublime Text
+- Hipchat
+- Cinch
+- Dash
+- Docker
+- Google Chrome
+
+## From AppStore
+
+- PG Commander
+- Slack
+- Evernote
+- Skitch
+- Pocket
+- Kindle
+- Pixelmator
+- Caffeine
+- Xcode
+- The Unarchiver
