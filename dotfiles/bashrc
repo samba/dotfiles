@@ -166,13 +166,6 @@ crypto () {
   esac
 }
 
-MD5_UTIL=`which md5sum md5`
-
-case $MD5_UTIL in
-  *md5) alias md5sum="md5 -r" # BSD (OS X) reverse option for compatibility with Linux
-   ;;
-esac
-
 git_filechecksums () {
   for filename; do
     git log --format='%h' "${filename}" | while read commit; do

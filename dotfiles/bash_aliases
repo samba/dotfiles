@@ -41,3 +41,12 @@ alias xvim='vim -x'
 
 alias pdb='python -m pdb'
 
+
+case `which md5sum md5` in
+  *md5) alias md5sum="md5 -r";; # BSD/OS X compatibility with Linux environs
+esac
+
+[ -z "`which pidof`" -a -n "`which pgrep`"  ] && alias pidof="pgrep"
+
+
+
