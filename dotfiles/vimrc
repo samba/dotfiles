@@ -12,6 +12,9 @@ set tags=./tags,$HOME/.vim/tags " you probably want to add more to these later.
 " }@
 
 
+execute pathogen#infect()
+
+
 colorscheme desert 
 
 
@@ -481,6 +484,10 @@ nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
 autocmd BufRead   *access.log*  setf httplog
 
 
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript']
+
+
 
 " }@
 
@@ -496,3 +503,4 @@ endif
 
 
 " .vimrc modeline
+" ...

@@ -9,13 +9,10 @@ PYTHON_USERCUSTOM=`python -s -c "import site; print site.getusersitepackages()"`
 filelist () {
 cat <<EOF
 dotfiles/gitconfig    ${HOME}/.gitconfig
-dotfiles/vimrc        ${HOME}/.vimrc
 dotfiles/bash_aliases ${HOME}/.bash_aliases
 dotfiles/bash_profile ${HOME}/.bash_profile
 dotfiles/bashrc       ${HOME}/.bashrc
 dotfiles/screenrc     ${HOME}/.screenrc
-dotfiles/vim/plugin/openssl.vim  ${HOME}/.vim/plugin/openssl.vim
-dotfiles/vim/ftdetect/markdown.vim  ${HOME}/.vim/ftdetect/markdown.vim
 dotfiles/pythonrc.py  ${HOME}/.pythonrc.py
 dotfiles/usercustomize.py ${PYTHON_USERCUSTOM}/usercustomize.py
 dotfiles/psqlrc       ${HOME}/.psqlrc  
@@ -25,7 +22,6 @@ EOF
 
 makedirs () {
   mkdir -p ${HOME}/.dotfiles/bin
-  mkdir -p ${HOME}/.vim/{backup,swap,autoload,syntax,doc,plugin,ftdetect}
   mkdir -p ${HOME}/Projects
   mkdir -p ${PYTHON_USERCUSTOM}
 }

@@ -9,7 +9,7 @@
 . setup-scripts/downloads.sh
 . setup-scripts/dotfiles.sh
 . setup-scripts/python.sh
-
+. setup-scripts/vim.sh
 
 DOWNLOADING=0
 
@@ -22,6 +22,7 @@ main () {
         ;;
       dotfiles)
         setup_dotfiles;
+        setup_vim;
         ;;
       
       environ)
