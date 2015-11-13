@@ -1,0 +1,67 @@
+#!/usr/bin/awk -f
+
+# USAGE (alternatives):
+#   sshconfig -v key=*Forward ~/.ssh/config
+#   sshconfig -v host=*.amazon.com ~/.ssh/config
+
+
+
+function wildcard_translate (s) {
+#	gsub(/\./, "\\.", s)
+	gsub(/\*/, "(.*)", s)
+	return ("^" s "$")
+}
+
+BEGIN { 
+	true = 1; 
+	false = -1; 
+	m = false;
+	if(host) host_p = wildcard_translate(host)
+	if(key) key_p = wildcard_translate(key)
+	if(verbose) print "# host:", host
+	if(verbose) print "# key:", key
+
+
+	if(ARGC < 2){
+		print "This script queries your ssh config file." 
+		print "Arguments:" 
+		print "\t-v key=*\t\t(wildcard pattern, e.g. User, Local*)" 
+		print "\t-v host=*\t\t(wildcard pattern, e.g. www.*.com)"
+		print "\t <file>\t\t\t(the file you want to parse, ~/.ssh/config)" 
+		exit 1
+	}	
+
+
+}
+
+function match_host(line, host) {
+	for (i in line) {
+		p = wildcard_translate(line[i])
+
+		if(verbose) print "# comparing:", host, "~", p, "(", i, ")"
+		if(match(host, p)) return i
+
+		if(verbose) print "# comparing:", line[i], "~", host_p, "(", i, ")"
+		if(match(line[i], host_p)) return i
+	}
+	return false
+}
+
+# this runs for every line...
+{
+	if( /^Host/ && ! /^Hostname/ ){ 
+		delete line
+		for (x = NF; x > 1; x--){
+			if(verbose) print "# loading host:", $x
+			line[NF - x] = $x
+		}
+		m = match_host(line, host)
+		if(verbose) print "# match: ", m
+	}else{
+		
+		if(NF > 0 && $1 !~ /^#/ && m != false && $1 ~ key) { printf("%s: %s\n", line[m], $0);	}
+	}
+
+
+
+}

@@ -17,6 +17,7 @@ dotfiles/pythonrc.py  ${HOME}/.pythonrc.py
 dotfiles/usercustomize.py ${PYTHON_USERCUSTOM}/usercustomize.py
 dotfiles/psqlrc       ${HOME}/.psqlrc  
 utils/sshtunnel       ${HOME}/.dotfiles/bin/sshtunnel
+utils/sshconfig       ${HOME}/.dotfiles/bin/sshconfig
 EOF
 }
 
