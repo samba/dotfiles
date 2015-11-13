@@ -13,31 +13,42 @@
 
 DOWNLOADING=0
 
+main () {
+  for MODE in "$@"; do
+    case $MODE in
+      downloads)
+        DOWNLOADING=1;
+        queue_downloads;
+        ;;
+      dotfiles)
+        setup_dotfiles;
+        ;;
+      
+      environ)
+        install_python_environment;
+        ;;
+      all)
+        main downloads;
+        main environ;
+        main dotfiles;
+        ;;
+    esac
+
+  done
+
+  # If no option is given
+  if [ $# -lt 1 ]; then
+    setup_dotfiles;
+  fi
+
+
+
+}
+
+
 cache_userdata > /tmp/workspace-setup.conf
 
-for mode; do
-  case $mode in
-    downloads)
-      DOWNLOADING=1;
-      queue_downloads;
-      ;;
-    dotfiles)
-      setup_dotfiles;
-      ;;
-    all)
-      DOWNLOADING=1;
-      queue_downloads;
-      setup_dotfiles;
-      install_python_environment;
-      ;;
-  esac
-done
-
-# If no option is given
-if [ $# -lt 1 ]; then
-  setup_dotfiles;
-fi
-
+main "$@"
 
 restore_userdata < /tmp/workspace-setup.conf
 
