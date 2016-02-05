@@ -28,10 +28,10 @@ export PYTHONSTARTUP=${HOME}/.pythonrc.py
 export PYTHON_USERCUSTOM=`python -c "import site; print site.getusersitepackages()"`
 
 # Add Postgres path
-export PATH="`find /Applications/Postgres.app/ -type d -name bin`:${PATH}"
+[ -d "/Applications/Postgres.app" ] && export PATH="`find /Applications/Postgres.app/ -type d -name bin`:${PATH}"
 
 # Automatically find the Sublime Text path...
-export PATH="${PATH}:`find /Applications/Sublime\ Text.app/ -type d -name bin`"
+[ -d "/Applications/Sublime Text.app" ] && export PATH="${PATH}:`find /Applications/Sublime\ Text.app/ -type d -name bin`"
 
 # And finally...
 export PATH="$HOME/.dotfiles/bin:${PATH}"
