@@ -12,6 +12,6 @@
 
 \x auto
 
-\pset null '(null)'
+\pset null '{NULL}'
 
 \unset QUIET
