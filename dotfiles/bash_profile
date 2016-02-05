@@ -36,6 +36,9 @@ export PATH="${PATH}:`find /Applications/Sublime\ Text.app/ -type d -name bin`"
 # And finally...
 export PATH="$HOME/.dotfiles/bin:${PATH}"
 
+which docker-machine && [ -x `which docker-machine` ] && eval "$(docker-machine env default)"
+
+
 # Import interactive shell configuration
 case $- in
   *i*) [ -f ~/.bashrc ] && source ~/.bashrc;;

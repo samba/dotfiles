@@ -214,3 +214,7 @@ sublime () {
 }
 
 
+docker_cleanup () {
+  sudo -E docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo -E docker rm
+}
+
