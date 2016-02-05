@@ -10,6 +10,7 @@
 . setup-scripts/dotfiles.sh
 . setup-scripts/python.sh
 . setup-scripts/vim.sh
+. setup-scripts/sshkeygen.sh
 
 DOWNLOADING=0
 
@@ -27,6 +28,7 @@ main () {
       
       environ)
         install_python_environment;
+        setup_sshkeys;
         ;;
       all)
         main downloads;

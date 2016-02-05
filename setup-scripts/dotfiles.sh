@@ -33,11 +33,6 @@ setup_dotfiles () {
   echo "# Preparing directories" >&2
   makedirs;
 
-  if [ ! -f "${HOME}/.ssh/id_rsa" ]; then
-    echo "# Preparing SSH key files (enter passphrase; empty is OK)" >&2
-    ssh-keygen -b 2048 -f "${HOME}/.ssh/id_rsa"
-  fi
-
   echo "# Copying configuration files; archiving original in ${ARCHIVE_OUT}" >&2
   filelist | awk '{print $2}' | xargs tar -czvf ${ARCHIVE_OUT}
   filelist | while read origin dest; do
