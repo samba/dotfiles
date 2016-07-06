@@ -54,6 +54,7 @@ fi
 
 # Other completeion available on the host...
 [ -f /etc/bash_completion ] && . /etc/bash_completion
+[ -f ~/.bashrc_completion ] && . ~/.bashrc_completion
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 

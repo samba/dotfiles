@@ -21,6 +21,19 @@ utils/sshconfig       ${HOME}/.dotfiles/bin/sshconfig
 EOF
 }
 
+completion_scripts () {
+  # On Mac it seems Git completion is not available, unless perhaps installed by some other kit.
+  uname | grep -q 'Darwin' && echo https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+}
+
+setup_bash_completion () {
+  completion_scripts | while read url; do
+    targetname="${HOME}/.$(basename "$url")"
+    curl "${url}" -o "$targetname"
+    echo "[ -f \"${targetname}\" ] && source ${targetname}"
+  done
+}
+
 makedirs () {
   mkdir -p ${HOME}/.dotfiles/bin
   mkdir -p ${HOME}/Projects
@@ -41,5 +54,7 @@ setup_dotfiles () {
   done
 
   find ${HOME}/.dotfiles/bin/ -type f -print0 | xargs -0 chmod 0700 
+
+  setup_bash_completion > ${HOME}/.bashrc_completion
 }
 
