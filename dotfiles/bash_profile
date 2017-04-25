@@ -36,7 +36,7 @@ export PYTHON_USERCUSTOM=`python -c "import site; print site.getusersitepackages
 # And finally...
 export PATH="$HOME/.dotfiles/bin:${PATH}"
 
-which docker-machine && [ -x `which docker-machine` ] && eval "$(docker-machine env default)"
+which docker-machine && [ -x `which docker-machine` ] && eval "$(docker-machine env $(docker-machine ls | grep default | awk '{print $1}'))"
 
 
 # Import interactive shell configuration
