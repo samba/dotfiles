@@ -1,19 +1,69 @@
 #!/bin/sh
 
-# Sets up a wide array of my development environment on a Mac...
+# Setup script (i.e. provisioning environment) for my development kit on Mac. 
+# Includes:
+# - Homebrew, Node, and PIP (Python) package managers
+# - Kubernetes and Docker (via Minikube and Docker Machine, using Xhyve)
+# - Cloud SDKs and utilities for AWS and Google Cloud
+# - Development utilities in Node.js and Python (2); also Python 3 base
+# - Local database services & utilites for PostgreSQL, MySQL, and MongoDB
+# - SSH keys if missing
+# - Some BASH completion kit
 
 export PATH="/usr/local/bin/:${PATH}"
 
-fail(){
-  err=$1; shift 1;
-  echo "$@" >&2
-  exit $err
-}
+export DIR_COMPLETION=${HOME}/.bash_completion.d
+export DIR_ENVIRON=${HOME}/.env.d
+
+mkdir -p ${DIR_COMPLETION} ${DIR_ENVIRON}
+
+
 
 requires(){ # simple wrapper to check presence of executables.
   which $@ >/dev/null
 }
 
+color(){
+  for i; do
+    case "$i" in
+      default) printf "\e[0m\e[39m";;
+      green) printf "\e[32m";;
+      red) printf "\e[31m";;
+      yellow) printf "\e[33m";;
+      end) printf "\e[0m\n";;
+      *) printf "%s " "$i";
+    esac
+  done
+}
+
+status(){
+  state=$1; shift 1;
+  case "$state" in
+    OK) color green "$@" end;;
+    ERROR) color red "$@" end;;
+    WARN) color yellow "$@" end;;
+    INFO) color default "$@" end;;
+  esac
+}
+
+
+fail(){
+  err=$1; shift 1;
+  status ERROR "$@" >&2
+  exit $err
+}
+
+warn () {
+  status ERROR "$@" >&2
+}
+
+info () {
+  status INFO "$@" >&2
+}
+
+good () {
+  status OK "$@" >&2
+}
 
 setup_homebrew () {
   requires xcodebuild || return $?
@@ -22,8 +72,11 @@ setup_homebrew () {
   sudo xcodebuild -checkFirstLaunchStatus
   [ $? -eq 69 ] || sudo xcodebuild -license
 
+  sudo xcode-select --install
+
   requires brew && return 0  # already installed
 
+  info "Installing Homebrew"
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 }
@@ -32,39 +85,52 @@ setup_containerkit (){
   requires brew || return $?
   sudo mkdir -p /etc/{kubernetes,docker}
 
+  # If they're already installed, clear exisitng links.
+  brew unlink docker-machine docker-machine-completion
 
   brew install \
     docker docker-completion \
     docker-compose docker-compose-completion \
-    docker-machine docker-machine-completion \
+    docker-machine \
     xhyve docker-machine-driver-xhyve \
-    docker-machine-nfs docker-clean \
-    kubernetes-cli compose2kube
+    docker-machine-nfs docker-clean
 
+  brew install kubernetes-cli compose2kube
   brew install Caskroom/cask/minikube
+
+  brew link docker-machine
+
 
   # Start virtual machines if not present.
   docker-machine status docker-default | grep -v Running && docker-machine create -d xhyve docker-default
+  
+  
+  minikube config get vm-driver | grep 'could not be found' && minikube config set vm-driver xhyve
   minikube status | grep -v Running && minikube start --vm-driver xhyve
 
   docker_env=`mktemp /tmp/dockerenv.sh.XXXXX`
   kubernetes_env=`mktemp /tmp/kubernetesenv.sh.XXXXX`
 
 
-  echo 'eval $(docker-machine env docker-default)' > ${docker_env}
-  echo 'eval $(minikube docker-env)' > ${kubernetes_env}
+  echo 'eval $(docker-machine env docker-default)' > ${DIR_ENVIRON}/docker.env.sh
+  echo 'eval $(minikube docker-env)' > ${DIR_ENVIRON}/minikube.env.sh
 
-  sudo mv ${docker_env} /etc/docker/env.sh
-  sudo mv ${kubernetes_env} /etc/kubernetes/env.sh
+  minikube completion bash > ${DIR_COMPLETION}/minikube.completion.sh
+  
 
+  good "Completed Kubernetes and Docker setup."
 }
+
 
 setup_hashicorp (){
   requires brew || return $?
+  brew unlink vagrant-completion
   brew install \
     Caskroom/cask/vagrant{,-manager} \
     vagrant-completion \
     terraform
+  brew link vagrant-completion
+  good "Completed setup of Vagrant and Terraform"
 }
 
 setup_nodedev () {
@@ -79,6 +145,7 @@ setup_nodedev () {
     mocha \
     node-sass \
     google-closure-compiler-js
+  good "Completed setup of Node.JS development environment."
 }
 
 
@@ -86,6 +153,7 @@ setup_python_base () {
   requires easy_install || $?
   sudo easy_install pip
   sudo pip install --upgrade --ignore-installed six python-dateutil
+  good "Completed setup of Python base environment."
 }
 
 setup_pythondev () {
@@ -96,9 +164,9 @@ setup_pythondev () {
     virtualenv vex \
     coverage nose unittest2 \
     pep8 pyflakes flake8 \
-    vboxapi \
     Jinja2 Pillow \
     lesscpy
+  good "Completed setup of Python development environment."
 }
 
 setup_cloud_services (){
@@ -109,6 +177,7 @@ setup_cloud_services (){
   sudo -H pip install \
     google-api-python-client \
     awscli awslogs
+  good "Completed setup of Cloud development environment."
 }
 
 setup_system_libs () {
@@ -131,6 +200,7 @@ setup_database (){
   mkdir -p ~/Library/LaunchAgents
   cp `brew --prefix mysql`/*mysql*.plist ~/Library/LaunchAgents/
   launchctl load -w ~/Library/LaunchAgents/*mysql*.plist
+  good "Completed setup of Database development environment."
 }
 
 
@@ -152,21 +222,61 @@ setup_userkit () {
 
 setup_remoteauth () {
   mkdir -m 0700 ~/.ssh
-  [ -f ~/.ssh/id_rsa ] || ssh-keygen -f ~/.ssh/id_rsa -C "${USER}@${HOSTNAME}" -b 4096
+  [ -f ~/.ssh/id_rsa ] || ssh-keygen -f ~/.ssh/id_rsa -C "${USER}@`hostname`" -b 4096
 }
 
 
 
-setup_homebrew || fail $? "Could not set up homebrew."
-setup_python_base || fail $? "Could not prepare Python base environment."
-setup_system_libs || fail $? "Could not install dependent libraries."
-setup_containerkit || fail $? "Could not setup Docker and/or Kubernetes."
-setup_hashicorp || fail $? "Could not setup terraform or vagrant."
-setup_userkit || fail $? "Could not set up user environment utilities."
-setup_remoteauth || fail $? "Could not set up authentication environment."
-setup_cloud_services || fail $? "Could not setup cloud platform SDKs."
-setup_database || fail $? "Could not set up database environments."
-setup_nodedev || fail $? "Could not setup NODE.JS environemnt."
-setup_pythondev || fail $? "Could not set up Python development environment."
+generate_bash_config () {
+cat <<CONFIG
+#!/bin/bash
+
+temp=`mktemp /tmp/shellconfig.sh.XXXX`
+
+# Load completion & environment from generated scripts.
+find -L ${DIR_COMPLETION} -type f | xargs cat > \${temp};
+find -L ${DIR_ENVIRON} -type f | xargs cat > \${temp};
+
+# Load Homebrew-installed completion files automatically
+which brew >/dev/null \
+   && [ -f $(brew --prefix)/etc/bash_completion ] \
+   && source $(brew --prefix)/etc/bash_completion
+
+source \${temp}
+rm \${temp}
+
+# end
+CONFIG
+}
 
 
+setup_shellenviron () {
+  requires brew || return $?
+  brew install bash-completion
+  generate_bash_config > ${HOME}/.bashrc_include
+  grep -q 'bashrc_include' ~/.bash_profile || echo 'source ${HOME}/.bashrc_include' >> ~/.bash_profile
+  good "Completed setup of Shell environment."
+}
+
+run_all_setup () {
+  setup_shellenviron || fail $? "Could not set up shell environment."
+  setup_homebrew || fail $? "Could not set up homebrew."
+  setup_python_base || fail $? "Could not prepare Python base environment."
+  setup_system_libs || fail $? "Could not install dependent libraries."
+  setup_containerkit || fail $? "Could not setup Docker and/or Kubernetes."
+  setup_hashicorp || fail $? "Could not setup terraform or vagrant."
+  setup_userkit || fail $? "Could not set up user environment utilities."
+  setup_remoteauth || fail $? "Could not set up authentication environment."
+  setup_cloud_services || fail $? "Could not setup cloud platform SDKs."
+  setup_database || fail $? "Could not set up database environments."
+  setup_nodedev || fail $? "Could not setup NODE.JS environemnt."
+  setup_pythondev || fail $? "Could not set up Python development environment."
+
+}
+
+MODE=${1:-all}
+
+case $MODE in
+  all) run_all_setup;;
+  shell) setup_shellenviron;;
+esac
