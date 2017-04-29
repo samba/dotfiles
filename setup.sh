@@ -99,6 +99,12 @@ setup_containerkit (){
   brew install Caskroom/cask/minikube
 
   brew link docker-machine
+  # The xhyve binary is missing from path?
+  hash -r && requires xhyve || fail 1 "Could not locate xhyve."
+  xhyve_path="$(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve"
+
+  sudo chown root:wheel ${xhyve_path}
+  sudo chmod u+s ${xhyve_path}
 
 
   # Start virtual machines if not present.
