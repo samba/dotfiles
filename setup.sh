@@ -14,6 +14,7 @@ export PATH="/usr/local/bin/:${PATH}"
 
 export DIR_COMPLETION=${HOME}/.bash_completion.d
 export DIR_ENVIRON=${HOME}/.env.d
+export FORCEFUL="${FORCEFUL:-0}"
 
 mkdir -p ${DIR_COMPLETION} ${DIR_ENVIRON}
 
@@ -21,6 +22,10 @@ mkdir -p ${DIR_COMPLETION} ${DIR_ENVIRON}
 
 requires(){ # simple wrapper to check presence of executables.
   which $@ >/dev/null
+}
+
+forceful() {
+  [ "${FORCEFUL:-0}" -eq 1 ] && echo "$@"
 }
 
 color(){
@@ -81,6 +86,7 @@ setup_homebrew () {
 
 }
 
+
 setup_containerkit (){
   requires brew || return $?
   sudo mkdir -p /etc/{kubernetes,docker}
@@ -88,17 +94,20 @@ setup_containerkit (){
   # If they're already installed, clear exisitng links.
   brew unlink docker-machine docker-machine-completion
 
-  brew install \
-    docker docker-completion \
+  # On a fresh installation these have to go first...
+  brew install `forceful --overwrite` docker docker-machine
+  brew link `forceful --overwrite` docker docker-machine
+
+  brew install `forceful --overwrite` \
+    docker-completion \
     docker-compose docker-compose-completion \
-    docker-machine \
     xhyve docker-machine-driver-xhyve \
     docker-machine-nfs docker-clean
 
-  brew install kubernetes-cli compose2kube
+
+  brew install `forceful --overwrite` kubernetes-cli compose2kube
   brew install Caskroom/cask/minikube
 
-  brew link docker-machine
   # The xhyve binary is missing from path?
   hash -r && requires xhyve || fail 1 "Could not locate xhyve."
   xhyve_path="$(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve"
@@ -109,20 +118,17 @@ setup_containerkit (){
 
   # Start virtual machines if not present.
   docker-machine status docker-default | grep -v Running && docker-machine create -d xhyve docker-default
-  
-  
+
+
   minikube config get vm-driver | grep 'could not be found' && minikube config set vm-driver xhyve
   minikube status | grep -v Running && minikube start --vm-driver xhyve
-
-  docker_env=`mktemp /tmp/dockerenv.sh.XXXXX`
-  kubernetes_env=`mktemp /tmp/kubernetesenv.sh.XXXXX`
 
 
   echo 'eval $(docker-machine env docker-default)' > ${DIR_ENVIRON}/docker.env.sh
   echo 'eval $(minikube docker-env)' > ${DIR_ENVIRON}/minikube.env.sh
 
   minikube completion bash > ${DIR_COMPLETION}/minikube.completion.sh
-  
+
 
   good "Completed Kubernetes and Docker setup."
 }
@@ -131,7 +137,7 @@ setup_containerkit (){
 setup_hashicorp (){
   requires brew || return $?
   brew unlink vagrant-completion
-  brew install \
+  brew install `forceful --overwrite` \
     Caskroom/cask/vagrant{,-manager} \
     vagrant-completion \
     terraform
@@ -141,8 +147,8 @@ setup_hashicorp (){
 
 setup_nodedev () {
   requires brew || return $?
-  brew install node phantomjs
-  npm install -g \
+  brew install `forceful --overwrite` node phantomjs
+  npm install --upgrade -g \
     growl \
     {babel,gulp,grunt}-cli \
     gyp \
@@ -165,7 +171,7 @@ setup_python_base () {
 setup_pythondev () {
   requires brew || return $?
   requires pip || return $?
-  brew install python3
+  brew install `forceful --overwrite` python3
   sudo -H pip install \
     virtualenv vex \
     coverage nose unittest2 \
@@ -178,7 +184,7 @@ setup_pythondev () {
 setup_cloud_services (){
   requires brew || return $?
   requires pip || return $?
-  brew install \
+  brew install `forceful --overwrite` \
     Caskroom/cask/google-cloud-sdk
   sudo -H pip install \
     google-api-python-client \
@@ -188,7 +194,7 @@ setup_cloud_services (){
 
 setup_system_libs () {
   requires brew || return $?
-  brew install \
+  brew install `forceful --force --overwrite` \
     libffi libgit2 \
     openssl wget \
     jpeg
@@ -196,7 +202,7 @@ setup_system_libs () {
 
 setup_database (){
   requires brew || return $?
-  brew install \
+  brew install `forceful --overwrite` \
     mysql mongodb postgresql \
     Caskroom/cask/mongohub \
     Caskroom/cask/mysqlworkbench \
@@ -213,7 +219,7 @@ setup_database (){
 setup_userkit () {
   # User environment
   requires brew || return $?
-  brew install \
+  brew install `forceful --overwrite` \
     Caskroom/cask/iterm2 \
     Caskroom/cask/macdown \
     Caskroom/cask/cyberduck \
@@ -227,7 +233,7 @@ setup_userkit () {
 
 
 setup_remoteauth () {
-  mkdir -m 0700 ~/.ssh
+  [ -d ~/.ssh ] || mkdir -m 0700 ~/.ssh
   [ -f ~/.ssh/id_rsa ] || ssh-keygen -f ~/.ssh/id_rsa -C "${USER}@`hostname`" -b 4096
 }
 
