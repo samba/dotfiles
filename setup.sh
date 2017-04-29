@@ -254,6 +254,9 @@ which brew >/dev/null \
    && [ -f $(brew --prefix)/etc/bash_completion ] \
    && source $(brew --prefix)/etc/bash_completion
 
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc'
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc'
+
 source \${temp}
 rm \${temp}
 
