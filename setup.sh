@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Setup script (i.e. provisioning environment) for my development kit on Mac. 
+# Setup script (i.e. provisioning environment) for my development kit on Mac.
 # Includes:
 # - Homebrew, Node, and PIP (Python) package managers
 # - Kubernetes and Docker (via Minikube and Docker Machine, using Xhyve)
@@ -10,15 +10,16 @@
 # - SSH keys if missing
 # - Some BASH completion kit
 
-export PATH="/usr/local/bin/:${PATH}"
+set -e
 
+export PATH="/usr/local/bin:${PATH}"
 export DIR_COMPLETION=${HOME}/.bash_completion.d
 export DIR_ENVIRON=${HOME}/.env.d
 export FORCEFUL="${FORCEFUL:-0}"
 
+[ "${DEBUG:-0}" -eq 1 ] && set -x
+
 mkdir -p ${DIR_COMPLETION} ${DIR_ENVIRON}
-
-
 
 requires(){ # simple wrapper to check presence of executables.
   which $@ >/dev/null
@@ -69,6 +70,9 @@ info () {
 good () {
   status OK "$@" >&2
 }
+
+sudo -v || fail 1 "Cannot prepare system without sudo."
+
 
 setup_homebrew () {
   requires xcodebuild || return $?
@@ -286,7 +290,6 @@ run_all_setup () {
   setup_database || fail $? "Could not set up database environments."
   setup_nodedev || fail $? "Could not setup NODE.JS environemnt."
   setup_pythondev || fail $? "Could not set up Python development environment."
-
 }
 
 MODE=${1:-all}
@@ -295,3 +298,6 @@ case $MODE in
   all) run_all_setup;;
   shell) setup_shellenviron;;
 esac
+
+[ "${DEBUG:-0}" -eq 1 ] && set +x
+set +e
