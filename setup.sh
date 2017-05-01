@@ -179,7 +179,7 @@ setup_pythondev () {
   sudo -H pip install \
     virtualenv vex \
     coverage nose unittest2 \
-    pep8 pyflakes flake8 \
+    pep8 pyflakes flake8 pylint \
     Jinja2 Pillow \
     lesscpy
   good "Completed setup of Python development environment."
