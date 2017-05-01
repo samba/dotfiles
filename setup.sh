@@ -261,6 +261,8 @@ which brew >/dev/null \
 source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc'
 source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc'
 
+minikube status | grep -v Running && minikube start
+
 source \${temp}
 rm \${temp}
 
