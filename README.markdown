@@ -1,50 +1,42 @@
 # Workspace Configuration
 
-This is how I set up my working environment.
+This is how I set up my working environment. 
+(Eventually I'll rename this back to "dotfiles"... undoing years of nonsense.)
 
-# Philosophy
+### Credits Due
 
-In my work, I frequently get to "drop in" to other sysadmin's environments, 
-typically without singificantly customizing them. Thus I prefer to maintain my
-familiarity with tools that are ubiquitous, typically already installed in core
-distributions of Linux. I therefore unabashedly use `bash`, and `vim` with vigor. 
-My own workspace affords a few more customizations, but I build my primary 
-workflow around the tools I'll most often have at my disposal.
+[Mathias Bynens](https://github.com/mathiasbynens/dotfiles) provides a great
+example of a very simple model for handling these details. I've borrowed a few
+ideas from Mathias' work, so be sure to take a look at his too.
 
-Pragmatic, though I do tolerate certain aspects of Apple's reliance on BSD even
-when GNU is readily available. 
-
-## Quickstart:
-
-1. Install Xcode from App Store. Open it and accept the license.
-2. Setup an SSH key
-3. Clone this repository from GitHub
-4. Perform installation
-
-### Setup an SSH Key
+## Set up the Dotfiles
 
 ```shell
-ssh-keygen -C "${USER}@${HOSTNAME}"
-cat ${HOME}/.ssh/id_rsa.pub
+sh setup.sh dotfiles ${HOME}
 ```
 
-Then register this key on your GitHub profile ([SSH Keys][10]).
+## Install Software
 
-### Clone the repository
+Likely this will require you to have Xcode installed, on a Mac.
+You probably want only one of these variants:
 
 ```shell
-git clone git@github.com:samba/Workspace.git ./Workspace
+sh setup.sh apps ${HOME} -o all  # does everything
+sh setup.sh apps ${HOME} -o webdev
+sh setup.sh apps ${HOME} -o containers
+sh setup.sh apps ${HOME} -o cloud
+sh setup.sh apps ${HOME} -o database
+sh setup.sh apps ${HOME} -o golang
+sh setup.sh apps ${HOME} -o python
+sh setup.sh apps ${HOME} -o nodejs
 ```
 
-### Install
-
-Once Xcode is installed, this should just work ;)
+## Setting Mac Defaults
 
 ```shell
-sh setup.sh all
+sh macos/setup_mac_prefs.shell
 ```
 
-Currently Xcode license acceptance (and possibly other details) may require this to be run a few times, with manual handling of error results, if any come up. Sorry... rough edge. Still working on it ;)
 
 
 ## Additional Tools
@@ -62,10 +54,15 @@ Currently Xcode license acceptance (and possibly other details) may require this
 - VirtualBox
 - iTerm 
 - PostgreSQL
+- Caffeine
+- (and lots of others...)
 
 
 ## From AppStore
 
+Additional tools I find useful...
+
+- Xcode
 - Postico
 - Slack
 - Evernote
@@ -73,8 +70,6 @@ Currently Xcode license acceptance (and possibly other details) may require this
 - Pocket
 - Kindle
 - Pixelmator
-- Caffeine
-- Xcode
 - The Unarchiver
 - Cinch
 
