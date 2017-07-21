@@ -17,7 +17,7 @@ __prompt_color_hint () {
 }
 
 __prompt_should_color () {
-    test -z "$PS1" && return 1
+    test -z "$PS1" && return 1  # Don't color non-interactive.
     test -z "`__prompt_color_hint | head -n 1`" && return 1
     return 0
 }
@@ -157,18 +157,21 @@ __generate_color_prompt () {
 
     if tput setaf 1 >/dev/null; then
         tput sgr0
+        # The following start with a commonly compatible color code, followed
+        # by a more specific color for terminals that support it. Normally
+        # this should fail gracefully on older terminals.
         reset="$(tput sgr0)"
         bold="$(tput bold)"
-        blue="$(tput setaf 33)"
-        yellow="$(tput setaf 190)"
-        green="$(tput setaf 64)"
-        red="$(tput setaf 124)"
-        orange="$(tput setaf 166)"
-        cyan="$(tput setaf 37)"
+        blue="$(tput setaf 4)$(tput setaf 33)"
+        yellow="$(tput setaf 3)$(tput setaf 136)"
+        green="$(tput setaf 2)$(tput setaf 64)"
+        red="$(tput setaf 1)$(tput setaf 124)"
+        orange="$(tput setaf 1)$(tput setaf 166)"
+        cyan="$(tput setaf 6)$(tput setaf 37)"
         black="$(tput setaf 0)"
-        purple="$(tput setaf 135)"
-        white="$(tput setaf 15)"
-        violet="$(tput setaf 61)"
+        purple="$(tput setaf 5)$(tput setaf 125)"
+        white="$(tput setaf 7)$(tput setaf 15)"
+        violet="$(tput setaf 5)$(tput setaf 61)"
     else
         reset='\e[0m'
         bold=''  # TODO
@@ -179,7 +182,7 @@ __generate_color_prompt () {
         orange='\e[01;33m'
         cyan='\e[01;36m'
         black='\e[01;30m'
-        purple='\e[01;35m'  # more like fuscia?
+        purple='\e[01;35m' 
         white='\e[01;37m'
         violet='\e[01;35m'
     fi
