@@ -20,6 +20,14 @@ gd () { # shortcut for hopping into project directories
 }
 
 
+cdiff () {
+  if which view >/dev/null; then
+    diff -U 3 -wN "$@" | view -
+  else
+    diff -U 3 -wN "$@"
+  fi
+}
+
 seldir () {
   [ $# -gt 0 ] && dirs -v | egrep "$@" || dirs -    
   read -p "Directory number: " dirnum
