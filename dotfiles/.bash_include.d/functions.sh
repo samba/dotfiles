@@ -58,6 +58,12 @@ myip () {
 }
 
 
+ssh_fingerprints () {
+  find ${HOME}/.ssh -name '*rsa' | while read f; do
+    echo `ssh-keygen -E md5  -lf ${f}` "($f)"
+  done
+}
+
 docker_cleanup () {
   sudo -E docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo -E docker rm
 }
