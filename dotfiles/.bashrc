@@ -98,6 +98,14 @@ __bash_files_import () {
     find /usr/local/Caskroom -type f -name '*.bash.inc' | \
     grep -v backup
 
+  # Google Cloud if installed via the web download (not Homebrew)
+  test -d "${HOME}/Library/google-cloud-sdk" && \
+    echo "${HOME}/Library/google-cloud-sdk/path.bash.inc" && \
+    echo "${HOME}/Library/google-cloud-sdk/completion.bash.inc"
+
+  # SnowSQL cloud data warehouse
+  test -d "/Applications/SnowSQL.app/Contents/MacOS" && \
+    echo "/Applications/SnowSQL.app/Contents/MacOS"
 }
 
 

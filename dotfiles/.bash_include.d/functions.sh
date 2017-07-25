@@ -62,3 +62,7 @@ docker_cleanup () {
   sudo -E docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo -E docker rm
 }
 
+
+macdown() {  # Application shortcut
+    "$(mdfind kMDItemCFBundleIdentifier=com.uranusjr.macdown | head -n1)/Contents/SharedSupport/bin/macdown" $@
+}
