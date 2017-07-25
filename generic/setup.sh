@@ -34,14 +34,7 @@ install_webdev () {
     sudo -H pip install lesscpy flask
 }
 
-install_pythondev () {
-    sudo -H pip install \
-        virtualenv vex \
-        coverage nose unittest2 \
-        pep8 pyflakes flake8 pylint \
-        Jinja2 Pillow \
-        lesscpy
-}
+
 
 install_golang () {
     export GOPATH=${HOME}/Projects/Go/
@@ -68,17 +61,12 @@ main () {
         golang) install_golang ;;
         webdev) 
             install_nodejs
-            install_pythondev
             install_webdev
         ;;
         nodejs) install_nodejs ;;
-        python) 
-            install_pythondev
-        ;;
         all)
             install_nodejs
             install_golang
-            install_pythondev
             install_webdev
             install_cloudutils
         ;;

@@ -35,14 +35,14 @@ find_install_scripts () {
 run_scripts () {
     while read f; do
         echo "## Executing: ${f} ${1} ${2}" >&2
-        test -f "${f}" && sh "${f}" ${1} ${2}
+        test -f "${f}" && sh "${f}" "${1}" "${2}" "${3}"
     done
 }
 
 
 do_install () {
     # script_base=$1, $mode=$2, target_path=$3
-    find_install_scripts "$1" | run_scripts "${3}" "${2}"
+    find_install_scripts "$1" | run_scripts "${3}" "${2}" "${1}"
 }
 
 
@@ -78,8 +78,9 @@ exit 1
 main () {
     test "$#" -gt 1 || print_help
     test -n "$2" && test -d "$2" || print_help
-    mode="$1";
-    path="$2";
+    
+    mode="$1";  # which parts to install/etc
+    path="$2";  # where to install it
     shift 2;
 
 
@@ -87,6 +88,7 @@ main () {
         dotfiles)
             do_install "$(dirname $0)" "prepare" "$path"
             sync_dotfiles "$(dirname $0)" "$path"
+            do_install "$(dirname $0)" "dotfiles" "$path"
             do_install "$(dirname $0)" "restore" "$path"
             do_install "$(dirname $0)" "clean" "$path"
         ;;

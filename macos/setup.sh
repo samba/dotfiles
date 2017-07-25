@@ -142,7 +142,7 @@ main () {
     mode="$2";
 
     case $mode in 
-        prepare|restore|clean) return 0 ;;
+        prepare|restore|clean|dotfiles) return 0 ;;
     esac
 
     require_sudo || return $?
