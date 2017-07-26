@@ -64,6 +64,9 @@ caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%
 #hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
 hardstatus off
 
+# defhstatus "screen ^E (^Et) | $USER@^EH"
+defhstatus "$USER@^EH"
+
 # configure the window list, via C-A "
 windowlist title "%{= .y}Num%{-} %{= .b}Flags%{-} %{= .g}Title%{-}%{-} %= Hardstatus"
 windowlist string "%{+ y}%3n%{-} %{+ b}%f%{-} %{+ g}%t%{-} %= %{+b}%h%{-}"

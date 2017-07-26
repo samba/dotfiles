@@ -31,7 +31,12 @@ __generate_screen_state_control () {
     # NOTE: this assume this script is running remotely
     [ -z "$SSH_TTY"] || title="${HOSTNAME%%.*}:${title}"
 
+    if [ "$TERM" == "screen" ]; then # Set screen's hardstatus
+        echo -ne "\033k$HOSTNAME$\033\\"                                                       
+    fi                                                                                             
+
     # end of prompt
+    # this sets Screen's title flags
     printf '%bk%s%b%b' \\033 "${title:-shell}" \\033 \\0134
 }
 
