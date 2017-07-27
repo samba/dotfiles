@@ -22,6 +22,15 @@ __prompt_should_color () {
     return 0
 }
 
+__print_screen_title () {
+    if [ -n "$STY" ]; then # in a screen session
+        printf "\033k%s\033\\" "$@"
+        screen -X eval "shelltitle $@"
+    else
+        printf "\033]0;%s\007" "$@"
+    fi
+}
+
 __generate_screen_state_control () {
 
     # Initially the title should be the current directory (shortened)
@@ -31,13 +40,7 @@ __generate_screen_state_control () {
     # NOTE: this assume this script is running remotely
     [ -z "$SSH_TTY"] || title="${HOSTNAME%%.*}:${title}"
 
-    if [ "$TERM" == "screen" ]; then # Set screen's hardstatus
-        echo -ne "\033k$HOSTNAME$\033\\"                                                       
-    fi                                                                                             
-
-    # end of prompt
-    # this sets Screen's title flags
-    printf '%bk%s%b%b' \\033 "${title:-shell}" \\033 \\0134
+    __print_screen_title "$title"
 }
 
 
@@ -45,7 +48,7 @@ __generate_screen_state_control () {
 # operations without the mess of punctuation of the prior approach of 
 # injecting them into the $PROMPT_COMMAND 
 __generate_prompt_command () {
-    history -a;  # append history file.
+    history -a >/dev/null;  # append history file.
     __generate_screen_state_control    # this must be last.
 }
 
@@ -219,6 +222,7 @@ __generate_color_prompt () {
     # Note this uses old-school color formatting due to the deferred logic.
     printf -v errstat "\[\e[00;\$((\$? ? 31 : 32 ))m\]\$?\[\e[0m\]"
 
+    # Presents a Git status in the form of "<branch> <changeflags>"
     printf -v gitfmt '\[%s\]Br\[%s\] \[%s\]Fu\[%s\]St\[%s\]Cs\[%s\]Cu\[%s\]' \
         "${cyan}" "${reset}" "${red}" "${yellow}" "${green}" "${purple}" "${reset}"
 
