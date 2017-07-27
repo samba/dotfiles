@@ -20,9 +20,10 @@ gd () { # shortcut for hopping into project directories
 }
 
 
+
 cdiff () {
-  if which view >/dev/null; then
-    diff -U 3 -wN "$@" | view -
+  if which vim >/dev/null; then
+    diff -U 3 -w -N $@ | vim -c 'set syntax=diff' -R -
   else
     diff -U 3 -wN "$@"
   fi
