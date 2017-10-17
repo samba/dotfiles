@@ -37,12 +37,16 @@ bind i screen irssi
 bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '# |root:' sudo -i
 
+bind s screen -t 'bash' ssh-agent bash
+
+
 # set C-a <space> to show the window list
 bind ' ' windowlist -m
 
 
 
-
+# Automatically start with a bash shell too.
+screen -t 'bash' ssh-agent bash
 
 # detach on hangup. 
 autodetach on
