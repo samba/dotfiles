@@ -113,6 +113,17 @@ __color () {
     esac
 }
 
+__kubectl_prompt_status () {
+   
+    read template
+
+    which kubectl >/dev/null || return 0
+
+    [ -z "$template" ] || echo "${template//Ctx/$(kubectl config current-context)}"
+
+    return 0
+}
+
 __git_prompt_status () {
     # This expects any color aspects to be embedded in the incoming template.
 
@@ -228,7 +239,9 @@ __generate_color_prompt () {
 
     GIT_PROMPT="\$(echo \"${gitfmt}\" | __git_prompt_status)"
 
-    export PS1="${bell}${now} ${errstat} ${jobs} ${workdir} ${GIT_PROMPT} \\n${shell} "
+    KUBECTL_CONTEXT="\$(echo \"\[${yellow}\]Ctx\[${reset}\]\" | __kubectl_prompt_status)"
+
+    export PS1="${bell}${now} ${errstat} ${jobs} ${workdir} ${GIT_PROMPT} ${KUBECTL_CONTEXT} \\n${shell} "
     export PS2="$(__colorfilter -e -y ">") "
     export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
     export PS4="$(__colorfilter -e -b "+")"
