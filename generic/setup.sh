@@ -27,10 +27,12 @@ install_nodejs () {
 }
 
 install_cloudutils () {
+    require_sudo || return $?
     sudo -H pip install google-api-python-client awscli awslogs
 }
 
 install_webdev () {
+    require_sudo || return $?
     sudo -H pip install lesscpy flask
 }
 
@@ -52,9 +54,9 @@ main () {
 
     case $mode in
         prepare|restore|clean) return 0 ;;
+        downloads) return 0 ;;
     esac
 
-    require_sudo || return $?
 
     case "$mode" in
         cloud) install_cloudutils ;;

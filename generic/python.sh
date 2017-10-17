@@ -7,8 +7,9 @@ require_sudo () {
 }
 
 setup_custom_load () {
-    require_sudo || return $?
     python -c "import site; print site.getusersitepackages()" | while read p; do
+        cmp -s "$1/misc/usercustomize.py" "$p/usercustomize.py" && continue 
+        require_sudo || return $?
         sudo cp -v "$1/misc/usercustomize.py" "$p/usercustomize.py"
     done
 }
