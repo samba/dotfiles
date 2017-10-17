@@ -14,8 +14,13 @@ gofind () {
         sort -u
 }
 
+
+__gofind_exclude_compiled_scratch () {
+  grep -v darwin_amd64
+}
+
 gd () { # shortcut for hopping into project directories
-  foundpath="`gofind -type d -name "${@}" | head -n 1`"
+  foundpath="`gofind -type d -name "${@}" | __gofind_exclude_compiled_scratch | head -n 1`"
   test -d "$foundpath" && pushd $foundpath
 }
 
