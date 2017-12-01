@@ -89,6 +89,9 @@ __bash_files_import () {
   echo "/etc/bash_completion"
   echo "${HOME}/.bashrc_completion" "${HOME}/.bash_completion"
   echo "${HOME}/.bash_aliases"
+
+  # Load all the shell scripts in the user's .bash_include.d folder too.
+  # This should afford user some leeway to customize as well.
   test -d "${HOME}/.bash_include.d" && \
     find "${HOME}/.bash_include.d" -type f -name '*.sh'
 

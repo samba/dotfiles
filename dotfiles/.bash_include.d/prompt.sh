@@ -45,11 +45,11 @@ __generate_screen_state_control () {
 
 
 # This method exists solely to wrap a variety of importantly sequenced
-# operations without the mess of punctuation of the prior approach of 
-# injecting them into the $PROMPT_COMMAND 
+# operations that should be executed as part of the $PROMPT_COMMAND
+# ... rather than piling them in a giant string.
 __generate_prompt_command () {
-    history -a >/dev/null;  # append history file.
-    __generate_screen_state_control    # this must be last.
+    history -a > /dev/null;  # append history file.
+    test -z "$VSCODE_CLI" && __generate_screen_state_control    # this must be last.
 }
 
 __colorfilter () {
