@@ -57,7 +57,7 @@ main () {
 
     case "$mode" in
         # All development contexts
-        webdev|python|nodejs|golang|cloud|containers|all)
+        webdev|python|nodejs|golang|cloud|containers|dotfiles|all)
             is_vim_setup_already || setup_vim "$path"
         ;;
     esac
