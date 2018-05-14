@@ -119,7 +119,7 @@ __kubectl_prompt_status () {
 
     which kubectl >/dev/null || return 0
 
-    [ -z "$template" ] || echo "${template//Ctx/$(kubectl config current-context)}"
+    [ -z "$template" ] || echo "${template//Ctx/$(kubectl config current-context 2>/dev/null)}"
 
     return 0
 }
