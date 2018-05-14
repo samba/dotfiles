@@ -83,7 +83,8 @@ install_usermode () {
         macdown \
         transmission \
         veracrypt \
-        caffeine
+        caffeine \
+        oversight
     brew install \
         terminal-notifier \
         gnupg \
