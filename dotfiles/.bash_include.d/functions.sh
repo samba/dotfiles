@@ -73,6 +73,8 @@ ssh_fingerprints () {
 
 docker_cleanup () {
   sudo -E docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo -E docker rm
+  sudo -E docker image prune
+  sudo -E docker system prune
 }
 
 
