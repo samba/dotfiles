@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 
 export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"

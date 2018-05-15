@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 gofind () {
     # Hopefully a simpler way to find things in important places...
@@ -33,6 +33,7 @@ cdiff () {
     diff -U 3 -wN "$@"
   fi
 }
+
 
 seldir () {
   [ $# -gt 0 ] && dirs -v | egrep "$@" || dirs -    

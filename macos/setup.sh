@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 require_sudo () {
     sudo -v && return 0 # get password earlier...

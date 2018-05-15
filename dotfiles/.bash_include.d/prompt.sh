@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 __prompt_color_hint () {
     case "$TERM" in
