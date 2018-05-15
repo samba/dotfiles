@@ -37,7 +37,19 @@ sh setup.sh apps ${HOME} -o nodejs
 sh macos/setup_mac_prefs.shell
 ```
 
+## Comparing Live Dotfiles
 
+On occasion a live system may have modifications to its dotfiles that should be
+merged into this project. 
+
+A utility script is provided to simplify this effort:
+
+```shell
+bash util/live_diff.sh
+```
+
+*NOTE* that the script will probably not perform correctly if called in any
+other fashion; it's a hack. 
 
 ## Additional Tools
 
