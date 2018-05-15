@@ -12,6 +12,7 @@ else # MacOS or some BSD
   export LSCOLORS='gxfxcxdxbxegedabagacad'
 fi
 
+export LS_OPTIONS="${LS_OPTIONS} -pF"
 
 alias ls='ls $LS_OPTIONS'
 alias la='ls $LS_OPTIONS -alh'
