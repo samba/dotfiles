@@ -44,6 +44,8 @@ bind s screen -t 'bash' ssh-agent bash
 bind ' ' windowlist -m
 
 
+# Automatically start with a `top` too
+screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 
 # Automatically start with a bash shell too.
 screen -t 'bash' ssh-agent bash
