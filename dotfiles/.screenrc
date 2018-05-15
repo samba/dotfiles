@@ -68,6 +68,25 @@ caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%
 #hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
 hardstatus off
 
+# Set the hardstatus prop on gui terms to set the titlebar/icon title
+termcapinfo xterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+
+# set these terminals up to be 'optimal' instead of vt100
+termcapinfo xterm*|linux*|rxvt*|Eterm* OP
+
+# Allow mac mouse scrolling to play nice.
+# cf. http://slaptijack.com/system-administration/mac-os-x-terminal-and-gnu-screen-scrollback/
+termcapinfo xterm* ti@:te@
+
+
+# Set the terminal to something sensible
+# cf. https://wiki.archlinux.org/index.php/GNU_Screen#Use_256_colors
+# term "screen-256color"
+# term "xterm-256color"
+# term ${TERM}
+
+
+
 # defhstatus "screen ^E (^Et) | $USER@^EH"
 defhstatus "$USER@^EH"
 

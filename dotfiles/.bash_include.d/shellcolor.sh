@@ -21,6 +21,16 @@ print_available_colors () {
   echo
 }
 
+test_256_colors () {
+for i in {0..255} ; do
+    printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"
+    if (( i == 15 )) || (( i > 15 )) && (( (i-15) % 6 == 0 )); then
+        printf "\n";
+    fi
+done
+}
+
+
 
 # This function prepares strings with color- and style-oriented control codes.
 # Commands are usually formatted as:

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+
 __prompt_color_hint () {
+    # echo "TERM is ${TERM}" >&2
     case "$TERM" in
-        xterm)
+        xterm*)
             test "${COLORTERM:0:6}" = "gnome-" && \
                 infocmp gnome-256color >/dev/null 2>&1 && \
                 echo "gnome-256color"
@@ -18,7 +20,7 @@ __prompt_color_hint () {
 
 __prompt_should_color () {
     test -z "$PS1" && return 1  # Don't color non-interactive.
-    test -z "`__prompt_color_hint | head -n 1`" && return 1
+    test -z "${1:-${COLORTERM}}" && return 1
     return 0
 }
 
@@ -267,11 +269,27 @@ __basic_prompt () {
 
 
 export PROMPT_COMMAND="__generate_prompt_command"
-export COLORTERM="`__prompt_color_hint | head -n 1`"
+export COLORTERM="$(__prompt_color_hint | head -n 1)"
+
+# echo "COLORTERM is ${COLORTERM}" >&2
 
 
-if __prompt_should_color; then
+
+
+if __prompt_should_color "${COLORTERM}"; then
     __generate_color_prompt
+    
+    # Fix terminal identification as it effects color features of `tput`
+    case "${TERM}" in 
+        screen|xterm) # common short terminal names
+        case "${COLORTERM}" in
+            truecolor|*-256color) # color is supported
+                # enables `tput colors` == 256
+                export TERM="${TERM}-256color"
+            ;;
+        esac
+        ;;
+    esac
 else
      __basic_prompt
 fi
@@ -279,3 +297,4 @@ fi
 
 unset __basic_prompt
 unset __generate_color_prompt
+unset __prompt_should_color
