@@ -10,7 +10,7 @@ sync_dotfiles () {
         --exclude ".DS_Store" \
         --exclude "*.md" \
         --exclude "*.txt" \
-        -arvh --no-perms
+        -arvh --no-perms --no-links
 }
 
 find_install_scripts () {
