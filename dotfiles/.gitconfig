@@ -38,8 +38,9 @@
   updated = magenta
   branch = green 
 
-
+# TODO: integrate https://gist.github.com/rakyll/452e2e748a2a990ed5b8838861eafc12
 [alias]
+  la = "!git config -l | grep alias | cut -c 7-"
   st = status -sb
   current = !(git status -sb >/dev/null && echo 'clean: \\c' || echo 'dirty: \\c') && echo `git log -1 '--pretty=format:%H %ai'`
   ci = commit -a
@@ -49,6 +50,7 @@
   cb = checkout -b
   df = diff --stat
   lp = log -p
+  da = diff --abbrev --minimal -M -C -D -b
   dc = !git diff --cached --diff-filter=AMCR
   di = !git diff --diff-filter=AMCR
   dl = !git diff --color | less -R
@@ -59,6 +61,7 @@
   last = cat-file commit HEAD
   new = !gitk --all --not ORIG_HEAD
   prepare = !git fetch --all && git status -sb && git diff --stat
+  fs = "!git fetch --all && git status -sb && git diff --stat"
 
 [push]
 	default = matching
