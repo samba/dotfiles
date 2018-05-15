@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
 
-export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
+if ps -L | tr -s ' ' '\n' | grep -q euser ; then
+  # The GNU default mode...
+  export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
+else 
+  # BSD ps doesn't support euser, etc.
+  export PS_FORMAT="pid,ppid,state,%cpu,%mem,user,command"
+  alias ps='ps -o $PS_FORMAT'
+fi
 
 
 if ls --color >/dev/null 2>/dev/null ; then  # GNU/Linux
