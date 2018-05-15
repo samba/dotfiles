@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Configuration for login shells
 
+# echo "Evaluating .bash_profile" >&2
+
 if [ -x /usr/libexec/java_home ]; then
   export JAVA_HOME=`/usr/libexec/java_home -F 2>/dev/null`
 fi
@@ -53,18 +55,30 @@ __check_util_paths () {
 
 }
 
-
-__actually_dirs () {
+__cleanup_path () {
   while read i; do
+    test -z "$i" && continue
     test -d "$i" && echo "$i"
-  done
+  done < <(tr -s ':' '\n') | uniq | tr -s '\n' ':' | sed 's/:$//'
 }
 
+
+if test "$(echo '::' | sed -E 's/:+/:/' 2>/dev/null)" = ":"; then
+  export SED_REGEXP_VARIANT='-E'
+else 
+  export SED_REGEXP_VARIANT='-R'
+fi
+
+
+
 # Collect the paths that actually exist for $PATH
-export PATH="$(__check_util_paths | __actually_dirs | tr -s '\n' ':'):${PATH}"
+export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
 
+# Clean up the path a bit.
+export PATH="$(echo "$PATH" | __cleanup_path)"
 
-
+unset __cleanup_path
+unset __check_util_paths
 
 
 # Import interactive shell configuration
