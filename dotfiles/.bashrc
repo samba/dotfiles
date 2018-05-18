@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Configuration for interactive shells
-
+# !!NOTE: some functions herein used come from .bash_profile !!
 
 export EDITOR=`which vim nano | head -n 1`
 
@@ -93,7 +93,7 @@ __bash_files_import () {
   # Load all the shell scripts in the user's .bash_include.d folder too.
   # This should afford user some leeway to customize as well.
   test -d "${HOME}/.bash_include.d" && \
-    find "${HOME}/.bash_include.d" -type f -name '*.sh'
+    find "${HOME}/.bash_include.d" -type f -name '*.sh' | sort
 
 
   # A sweeping inclusion, covers Google Cloud SDK and a variety of others..
@@ -112,12 +112,11 @@ __bash_files_import () {
 }
 
 
-
-
-for f in $(__bash_files_import); do
+while read f; do
   test -f "$f" && source "$f"
-done
+done < <(bash::cachefile includes __bash_files_import)
 
 unset f
-
+unset __bash_files_import
+unset import_cache
 

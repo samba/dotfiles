@@ -69,10 +69,27 @@ else
   export SED_REGEXP_VARIANT='-R'
 fi
 
+# Simplistic mode of populating cache data for faster startup.
+# Usage:
+#   bash::cachefile <name>  <populator function>
+# 
+# If the target file is not present, executes the given function to populate
+# its content, and then prints the content. Future calls will load the reuse
+# the file data directly.
+bash::cachefile () {
+  local target="${HOME}/.cache/bash/${1}"
+  shift 1;
+  if ! test -f "$target"; then
+    mkdir -p "$(dirname "$target")"
+    ${@} > "${target}"
+  fi
+  cat "${target}"
+}
+
 
 
 # Collect the paths that actually exist for $PATH
-export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
+export PATH="$(bash::cachefile paths __check_util_paths | tr -s '\n' ':'):${PATH}"
 
 # Clean up the path a bit.
 export PATH="$(echo "$PATH" | __cleanup_path)"

@@ -3,6 +3,7 @@
 This is how I set up my working environment. 
 (Eventually I'll rename this back to "dotfiles"... undoing years of nonsense.)
 
+
 ### Credits Due
 
 [Mathias Bynens](https://github.com/mathiasbynens/dotfiles) provides a great
@@ -84,6 +85,12 @@ Additional tools I find useful...
 - Pixelmator
 - The Unarchiver
 - Cinch
+
+
+## Known Issues
+
+- [x] Startup is pretty slow. Fixed via file cache.
+- [ ] Screen hardstatus and title handling is awkward.
 
 [1]: https://code.visualstudio.com/download
 [2]: https://desktop.github.com/
