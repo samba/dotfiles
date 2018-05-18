@@ -89,8 +89,8 @@ Additional tools I find useful...
 
 ## Known Issues
 
-- [x] Startup is pretty slow. Fixed via file cache.
-- [ ] Screen hardstatus and title handling is awkward.
+- [x] Startup was pretty slow. Fixed via file cache.
+- [x] Screen hardstatus and title handling were awkward. Simplified in both shell and screen config.
 
 [1]: https://code.visualstudio.com/download
 [2]: https://desktop.github.com/
