@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-[-z "$SSH_AGENT_PID" ] || ssh-agent -k
+
+
+[ -n "$SSH_AGENT_PID" ] && [ -z "$STY" ] && ssh-agent -k
