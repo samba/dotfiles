@@ -24,25 +24,27 @@ __prompt_should_color () {
     return 0
 }
 
-__print_screen_title () {
-    if [ -n "$STY" ]; then # in a screen session
+__send_screen_hardstatus () {
+    if test -n "$STY"; then
+        printf "\x1B_%s\x1B\\" "$@"  # screen hardstatus
         printf "\033k%s\033\\" "$@"
-        screen -X eval "shelltitle $@"
     else
+        # This is normally interpreted as the shell title, in terminal emulators
+        # like xterm, iTerm 2, etc
         printf "\033]0;%s\007" "$@"
     fi
 }
 
-__generate_screen_state_control () {
+__workingpath () {
 
     # Initially the title should be the current directory (shortened)
-    local title="$(pwd | sed -E "s@${HOME}@~@; s@([^/])[^/]*/@\\1/@g;")"
+    local workingpath="$(pwd | sed -E "s@${HOME}@~@; s@([^/])[^/]*/@\\1/@g;")"
 
     # When operating over SSH, include hostname in title
     # NOTE: this assume this script is running remotely
-    [ -z "$SSH_TTY"] || title="${HOSTNAME%%.*}:${title}"
+    [ -z "$SSH_TTY"] || workingpath="${HOSTNAME%%.*}:${workingpath}"
 
-    __print_screen_title "$title"
+    echo $workingpath
 }
 
 
@@ -50,8 +52,11 @@ __generate_screen_state_control () {
 # operations that should be executed as part of the $PROMPT_COMMAND
 # ... rather than piling them in a giant string.
 __generate_prompt_command () {
-    history -a > /dev/null;  # append history file.
-    test -z "$VSCODE_CLI" && __generate_screen_state_control    # this must be last.
+    history -a >/dev/null;  # append history file.
+    test -z "$VSCODE_CLI" && __send_screen_hardstatus "$(__workingpath)"
+    
+    # a null-title sequence for screen to interpret the live command
+    test -n "$STY" && printf "\033k\033\134"  
 }
 
 __colorfilter () {
@@ -226,10 +231,15 @@ __generate_color_prompt () {
     printf -v workdir '\[%s\]\\W\[%s\]' "$blue" "$reset"
 
     # Ending marker of the command prompt
-    printf -v shell '\[%s\]\\$\[%s\]' "$green" "$reset"
+    # printf -v shell '\[%s\]\\$\[%s\]' "$green" "$reset"
+    # this is a naked terminator for screen's automatic shelltitle support.
+    printf -v shell "\$"  
     
     # Current background jobs
     printf -v jobs '\j' # no formatting
+
+    # Whitespace explicit to ensure code clarity :)
+    printf -v end " "  # an empty space
 
     # Append the return value of the last command to the prompt (red if error)
     # Note this uses old-school color formatting due to the deferred logic.
@@ -243,7 +253,7 @@ __generate_color_prompt () {
 
     KUBECTL_CONTEXT="\$(echo \"\[${yellow}\]Ctx\[${reset}\]\" | __kubectl_prompt_status)"
 
-    export PS1="${bell}${now} ${errstat} ${jobs} ${workdir} ${GIT_PROMPT} ${KUBECTL_CONTEXT} \\n${shell} "
+    export PS1="${bell}${now} ${errstat} ${jobs} ${workdir} ${GIT_PROMPT} ${KUBECTL_CONTEXT} \\n${shell}${end}"
     export PS2="$(__colorfilter -e -y ">") "
     export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
     export PS4="$(__colorfilter -e -b "+")"
@@ -288,12 +298,17 @@ if __prompt_should_color "${COLORTERM}"; then
                 export TERM="${TERM}-256color"
             ;;
         esac
+        test "truecolor" = "${COLORTERM}" && \
+            screen -X eval "at # truecolor on"
         ;;
     esac
 else
      __basic_prompt
 fi
 
+# Override manual title spec on first run.
+# NB: keep this consistent with the shelltitle directive in .screenrc
+test -n "$STY" && screen -X shelltitle '$ |shell'
 
 unset __basic_prompt
 unset __generate_color_prompt

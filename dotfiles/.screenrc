@@ -8,6 +8,11 @@
 
 defscrollback 50000
 
+# detach on hangup. 
+autodetach on
+
+# If a window goes unresponsive, don't block the whole session waiting for it.
+nonblock on
 
 # use C-\  instead of C-a for screen control char
 # escape \034\034 
@@ -31,9 +36,8 @@ bind q
 bind ^S
 bind s
 
-# for launching some of the stuff i use most
+# for launching some of the stuff I use most
 bind v screen vim --servername vim
-bind i screen irssi
 bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '# |root:' sudo -i
 
@@ -44,11 +48,8 @@ bind ' ' windowlist -m
 
 
 # Automatically start with a `top` too
-screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
+screen -t 'top' bash -c "which htop > /dev/null && htop || top"
 
-
-# detach on hangup. 
-autodetach on
 
 # each window should be a login shell...
 # deflogin on # this one fails on Mac OS X
@@ -57,15 +58,37 @@ shell -${SHELL} # this may cause problems with key interpretation, e.g. backspac
 # terminal sharing 
 multiuser on # so I can attach from multiple points.
 
-# Use a default name of "shell" but try to read command title when possible.
-shelltitle '$ |shell'
+# The title escape sequence should 
+defdynamictitle on
+
+# Use a default name of ">" but try to read command title when possible.
+shelltitle "$ |shell"
+
+# The following flags can be applied in hardstatus and caption declarations.
+# %t = title of the current window
+# %h = hard status of the current window
+# %H = hostname
+# %X = executed command without args
+# %x = executed command with args
+# %l = system Load
+# %n = window number
+# %f = window flags
+# %u = (other) users of this window
+# %s = window size
+
+
+# sets hardstatus = "<number> (<title>)"
+# NOTE: hostname may be inserted via shell components
+defhstatus "^Et"
+hardstatus lastline '%t'
 
 # stat line at the bottom of each screen 
-caption always "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%t%{-} %?%{+ .y}[%f]%{-}%? %?%u%? %= %?%?%{+ .b}[%h]%?%{-} %{+ .y}%l%{-} %{+ .g}%0c:%s%{-}"
+# NOTE: the screen title is REMOVED here because it will be show in the hardstatus, i.e. terminal header.
+# caption string "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%h%{-} %?%{+ .y}[%f]%{-}%? %?%u%? %= %x %?%?%{+ .b}[%t]%?%{-} %{+ .g}%H%{-} %{+ .y}%l%{-} %{+ .g}%0c:%s%{-}"
+caption string "%{= KW}%{+ .y}%0c:%s%{-} %{+ .c}%n%{-} %{+ .m}%t%{-} %{+ .g}%h%{-} %= %{+ .g}%l%{-}"
+caption always
+# caption top  # not supported in 4.06?
 
-# stat line at the  very bottom of the terminal 
-#hardstatus alwayslastline '%{=dd}%{= .g}%{b G}%H%{-} %=%?%-w%?%{=b y}%n %t%{-}%?%+w%?%= %{= .g}l:%{= y}%l%{-} %{= .g}%0c:%s%{-}'
-hardstatus off
 
 # Set the hardstatus prop on gui terms to set the titlebar/icon title
 termcapinfo xterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
@@ -86,22 +109,11 @@ termcapinfo xterm* ti@:te@
 
 
 
-# defhstatus "screen ^E (^Et) | $USER@^EH"
-defhstatus "$USER@^EH"
-
 # configure the window list, via C-A "
 windowlist title "%{= .y}Num%{-} %{= .b}Flags%{-} %{= .g}Title%{-}%{-} %= Hardstatus"
 windowlist string "%{+ y}%3n%{-} %{+ b}%f%{-} %{+ g}%t%{-} %= %{+b}%h%{-}"
 
-# Colorful, informational window list
-# These cause some issues on Mac OS X... (usually stops responding) 
-# windowlist title  "%{+ y}Flag%{-} %{+ y}Num%{-} %{+ g}Title%{-} %= %{+ b}Hardstatus%{-}"
-# windowlist string "%{+ y}%f%04=%{-} %{+ y}%3n%{-} %{+ g}%t%{-} %= %?[%u]%? %{+ b}%h%{-}"
 
-
-
-# If a window goes unresponsive, don't block the whole session waiting for it.
-nonblock on
 
 
 # Filename for the paste buffer
