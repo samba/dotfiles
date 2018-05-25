@@ -1,27 +1,25 @@
 #!/usr/bin/env bash
 
+
+
 gofind () {
-    # Hopefully a simpler way to find things in important places...
+  # Paths to search
+  (
+    test -d /go && echo "/go"
+    test -z "$GOPATH" || (echo "${GOPATH/:/\\n}" | sed 's@$@/src@')
+    test -d ~/Projects && echo "${HOME}/Projects"
+  ) | sed 's@//@/@' | xargs -I {} find -L {} -type d -name '*.git' \
+    | egrep -v -e "/(vendor|node_modules|dep|.*cache.*)/?" \
+    | sed 's@/.git$@@' \
+    | sort -u
 
-    (test -d /go && echo /go
-      test -d ${HOME}/go && echo ${HOME}/go
-      test -d ${HOME}/Projects/ && echo $HOME/Projects/
-      test -d ${HOME}/projects/ && echo $HOME/projects/
-    ) | while read p; do 
-        find $p "$@"; 
-    done | egrep -v -e "(vendor|node_modules)/" \
-            -e "\.?virt(ual)?env/"  | \
-        sort -u
 }
 
-
-__gofind_exclude_compiled_scratch () {
-  grep -v darwin_amd64
-}
 
 gd () { # shortcut for hopping into project directories
-  foundpath="`gofind -type d -name "${@}" | __gofind_exclude_compiled_scratch | head -n 1`"
-  test -d "$foundpath" && pushd $foundpath
+  local scan=$(test $# -gt 0  && echo "grep $@" || echo "cat")
+  local foundpath=$(gofind | $scan | head -n 1)
+  test -d ${foundpath} && pushd ${foundpath}
 }
 
 
