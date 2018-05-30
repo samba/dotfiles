@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Configuration for login shells
+# Configuration for login shells.
+# This will be executed in subshells too.
 
 # echo "Evaluating .bash_profile" >&2
 
@@ -21,11 +22,26 @@ if test -d "${HOME}/.gem"; then
   export PATH="${HOME}/.gem/bin:${PATH}"
 fi
 
+
+if test "$(echo '::' | sed -E 's/:+/:/' 2>/dev/null)" = ":"; then
+  export SED_REGEXP_VARIANT='-E'
+else 
+  export SED_REGEXP_VARIANT='-R'
+fi
+
+
 __check_util_paths () {
   # Produce a series of directories that usually have executables I'm interested in.
 
   echo ${HOME}/.bin
   echo ${HOME}/.dotfiles/bin
+
+	# Homebrew will install some utilities here and there...
+	# I need them early in my path.
+  test -d "/usr/local/git/bin" && echo /usr/local/git/bin
+  test -d "/usr/local/mysql/bin" && echo /usr/local/mysql/bin
+  test -d "/usr/local/bin" && echo /usr/local/bin
+
 
   # Google AppEngine
   test -d /Applications/GoogleAppEngineLauncher.app/ && \
@@ -48,26 +64,8 @@ __check_util_paths () {
     xargs -0 -I {} find {} -name bin
 
   test -d "${GOPATH}" && find "${GOPATH}" -maxdepth 3 -type d -name bin
-
-  echo /usr/local/git/bin
-  echo /usr/local/mysql/bin
-  echo /usr/local/bin
-
 }
 
-__cleanup_path () {
-  while read i; do
-    test -z "$i" && continue
-    test -d "$i" && echo "$i"
-  done < <(tr -s ':' '\n') | uniq | tr -s '\n' ':' | sed 's/:$//'
-}
-
-
-if test "$(echo '::' | sed -E 's/:+/:/' 2>/dev/null)" = ":"; then
-  export SED_REGEXP_VARIANT='-E'
-else 
-  export SED_REGEXP_VARIANT='-R'
-fi
 
 # Simplistic mode of populating cache data for faster startup.
 # Usage:
@@ -91,10 +89,10 @@ bash::cachefile () {
 # Collect the paths that actually exist for $PATH
 export PATH="$(bash::cachefile paths __check_util_paths | tr -s '\n' ':'):${PATH}"
 
-# Clean up the path a bit.
-export PATH="$(echo "$PATH" | __cleanup_path)"
+# Remove blanks from PATH
+export PATH="${PATH/::/:}"
 
-unset __cleanup_path
+
 unset __check_util_paths
 
 
