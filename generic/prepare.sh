@@ -46,6 +46,13 @@ setup_ssh_keys () {
     mkdir -p ~/.ssh/keys ~/.ssh/sock
 }
 
+wipeout_previous_cache () {
+  mkdir -p ${HOME}/.cache
+  rm -rvf ${HOME}/.cache/bash
+}
+
+
+
 main () {
 
     path="$1";
@@ -59,6 +66,7 @@ main () {
         prepare) 
             test -f "$target" && populate_params_stash "$target" "$temp"
             setup_ssh_keys
+            wipeout_previous_cache
         ;;
         restore) 
             test -f "$target" && restore_params_config "$target" "$temp"
