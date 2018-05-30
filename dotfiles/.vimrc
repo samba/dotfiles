@@ -480,6 +480,26 @@ endfunction
 nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
 
 
+function! LineCommentFlip() range
+  let l:prefix = printf(&commentstring, ' ')
+  for linenum in range(a:firstline, a:lastline)
+    let text = getline(linenum)
+    if(match(text, prefix) == 0)                                      " comment is present
+      let result = substitute(text, ('^' . l:prefix), '', '')
+      call setline(linenum, result)
+    else                                                              " comment is absent
+      let result = substitute(text, '^', l:prefix, '')
+      call setline(linenum, result)
+    endif
+  endfor
+endfunction
+
+command! -range FlipComments <line1>,<line2>call LineCommentFlip()<CR>
+
+vmap <Leader>/ :FlipComments<CR>
+nmap <Leader>/ :FlipComments<CR>
+
+
 " Automatically load httplog format
 autocmd BufRead   *access.log*  setf httplog
 
