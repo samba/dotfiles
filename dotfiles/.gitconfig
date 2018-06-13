@@ -25,7 +25,7 @@
 	remote = green
 
 [color "diff"]
-	meta = yellow bold
+	meta = cyan bold
 	frag = magenta bold
 	old = red bold
 	new = green bold
@@ -38,10 +38,16 @@
   updated = magenta
   branch = green 
 
-# TODO: integrate https://gist.github.com/rakyll/452e2e748a2a990ed5b8838861eafc12
+[log]
+  date = short 
+
 [alias]
   la = "!git config -l | grep alias | cut -c 7-"
   st = status -sb
+  fs = "!git fetch --all && git status -sb && git diff --stat"
+  s = status --short --branch --ignore-submodules=untracked
+  l = log --graph --oneline --format="format:%C(green)%h%C(reset)%x09%C(red)%ad%C(reset)%x09%s%x09%C(cyan)%d%x09%C(yellow)%ae"
+  amend = commit --amend --no-edit
   current = !(git status -sb >/dev/null && echo 'clean: \\c' || echo 'dirty: \\c') && echo `git log -1 '--pretty=format:%H %ai'`
   ci = commit -a
   br = branch
@@ -55,13 +61,8 @@
   di = !git diff --diff-filter=AMCR
   dl = !git diff --color | less -R
   onelog = log --graph --oneline 
-  hist = log --graph --oneline --format=format:'%C(yellow)%h%C(reset) %s %C(green)%an%C(reset) %C(yellow)%d%C(reset) %C(dim magenta)%ai%C(reset)'
+  hist = !git l --date=iso
   showfiles = show --stat
-;  showfiles = show --format=format:'%C(yellow)%H%C(reset)%nCommit: %C(green)%cn%C(reset) <%C(dim white)%ce%C(reset)> %C(dim magenta)%ci%C(reset)%nAuthor: %C(dim green)%an%C(reset) <%C(dim white)%ae%C(reset)> %C(dim magenta)%ai%C(reset)%nSubject: %s%n' --name-only
-  last = cat-file commit HEAD
-  new = !gitk --all --not ORIG_HEAD
-  prepare = !git fetch --all && git status -sb && git diff --stat
-  fs = "!git fetch --all && git status -sb && git diff --stat"
 
 [push]
 	default = matching
