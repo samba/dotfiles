@@ -55,9 +55,11 @@ esac
 # Shortcut for encrypted VIM sessions
 alias xvim='vim -x'
 
-
 # Easily trigger Python's debugger...
 alias pdb='python -m pdb'
+
+# Pop a new screen session in the current directory.
+alias screendupe='screen bash -c "cd $PWD; exec ${SHELL} --login -i"'
 
 # URL-encode strings
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
