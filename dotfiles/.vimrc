@@ -208,7 +208,6 @@ autocmd BufWinLeave * silent! mkview
 autocmd BufWinEnter * silent! loadview
 " }@
 
-" FileType & autocomplete handling @{
 
 " Enable per-file formatting and the like
 set modeline
@@ -229,6 +228,7 @@ hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
 
 
 
+" Completion menu & such @{
 
 set wildmenu
 set wildmode=list:longest,list:full
@@ -347,6 +347,9 @@ call SetupCompletionKeys()
 " Shortcut to toggle completion keys (Leader-C in normal mode)
 nnoremap <expr> <Leader>C  (":call " . (g:completion_active == 1 ? "RevokeCompletionKeys" : "SetupCompletionKeys") . "()<CR>")
 
+" }@  end completion 
+
+
 set dictionary+=/usr/share/dict/words
 
 " For BASH and similar shell languages:
@@ -362,7 +365,7 @@ let g:sh_maxlines=1000
 
 
 
-" FileType-specific settings
+" FileType-specific settings @{
 autocmd filetype python setlocal noet foldenable foldmethod=indent
 autocmd filetype javascript setlocal foldenable foldmethod=indent
 autocmd filetype html setlocal foldenable foldmethod=indent
@@ -479,6 +482,9 @@ endfunction
 
 nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
 
+" }@
+
+" Sensibly commenting out code blocks... @{
 
 function! LineCommentFlip() range
   let l:parts = split(printf(&commentstring, ' <> '), ' <> ')
@@ -517,11 +523,13 @@ autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript']
 
 
-
 " }@
 
 " Shortcut for replacing all instances of the word under cursor
 nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
+
+
+" GNU screen & terminal title handling @{
 set titlestring=vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
 if &term == "screen"
   set t_ts=k
@@ -531,7 +539,8 @@ endif
 if &term == "screen" || &term == "xterm"
   set title
 endif
+" }@
 
 
 " .vimrc modeline
-" ...
+" vim: set foldmarker="@{,}@"
