@@ -520,6 +520,8 @@ let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript']
 
 " }@
 
+" Shortcut for replacing all instances of the word under cursor
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
 set titlestring=vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
 if &term == "screen"
   set t_ts=k
