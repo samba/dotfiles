@@ -11,9 +11,9 @@ set directory=$HOME/.vim/swap " swap files location
 set tags=./tags,$HOME/.vim/tags " you probably want to add more to these later.
 " }@
 
-
-execute pathogen#infect()
-
+if exists('*pathogen#infect')
+  execute pathogen#infect()
+endif
 
 colorscheme desert 
 
