@@ -66,7 +66,7 @@ main () {
         prepare) 
             test -f "$target" && populate_params_stash "$target" "$temp"
             setup_ssh_keys
-            wipeout_previous_cache
+            test "${KEEP_CACHE}" -eq 1 || wipeout_previous_cache
         ;;
         restore) 
             test -f "$target" && restore_params_config "$target" "$temp"
