@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+export PROMPT_REVERSE=1
+
+# used later to indicate command error in prompt.
+LAST_RETURN_CODE=0
+
+# This is not expected to work in any other shells.
+test "$(basename ${SHELL#-})" = "bash" || {
+  echo "This prompt coloration script probably won't work right in your shell. ($SHELL)" >&2
+  return 1
+}
 
 __prompt_color_hint () {
     # echo "TERM is ${TERM}" >&2
@@ -52,6 +62,7 @@ __workingpath () {
 # operations that should be executed as part of the $PROMPT_COMMAND
 # ... rather than piling them in a giant string.
 __generate_prompt_command () {
+    LAST_RETURN_CODE=$?
     history -a >/dev/null;  # append history file.
     test -z "$VSCODE_CLI" && __send_screen_hardstatus "$(__workingpath)"
     
@@ -120,20 +131,12 @@ __color () {
     esac
 }
 
-__kubectl_prompt_status () {
-   
-    read template
 
-    which kubectl >/dev/null || return 0
-
-    [ -z "$template" ] || echo "${template//Ctx/$(kubectl config current-context 2>/dev/null)}"
-
-    return 0
-}
-
-__git_prompt_status () {
+__git_prompt_status_template () {
     # This expects any color aspects to be embedded in the incoming template.
 
+    local template
+    local pad="${1}"
     read template
 
     which git >/dev/null 2>/dev/null || return 1
@@ -152,112 +155,125 @@ __git_prompt_status () {
     untracked=""
 
     # Produce the branch name first
-    branch="$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD || echo "(unknown)")"
+    branch="${pad}$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD || echo "(unknown)")${pad}"
     
     # Staged changes
-    git diff --quiet --ignore-submodules --cached || staged="+"    
+    git diff --quiet --ignore-submodules --cached || staged="${pad}+${pad}"    
  
     # Unstaged changes
-    git diff-files --quiet --ignore-submodules -- || unstaged="!"
+    git diff-files --quiet --ignore-submodules -- || unstaged="${pad}!${pad}"
    
     # Untracked files
-    test -z "`git ls-files --others --exclude-standard`" || untracked="?"
+    test -z "`git ls-files --others --exclude-standard`" || untracked="${pad}?${pad}"
    
     # Stashed state
-    git rev-parse --verify refs/stash &>/dev/null && stashed="$"
-    
-    template="${template//Br/${branch}}"
-    template="${template//Cs/$staged}"
-    template="${template//Cu/$unstaged}"
-    template="${template//St/$stashed}"
-    template="${template//Fu/$untracked}"
+    git rev-parse --verify refs/stash &>/dev/null && stashed="${pad}\$${pad}"
 
-    echo "$template"
+    template="${template//\$br/${branch}}"
+    template="${template//\$sg/${staged}}"
+    template="${template//\$st/${stashed}}"
+    template="${template//\$ug/${unstaged}}"
+    template="${template//\$ut/${untracked}}"
+
+    echo "${template}"
 
     return 0
 }
 
 
+
+
+
 # Prompt configuration wrapped in method with local vars to prevent littering shell namespace.
 __generate_color_prompt () {
 
+    # Initialize a generally compatible set of base colors & controls
+    local bell='\[\a\]'
+    local reset='\[\e[0m\]'
+    local default='\[\e[39m\e[49m\]'
+    local bold='\[\e[1m\]'  # TODO
+    local blue='\[\e[01;34m\]'
+    local yellow='\[\e[01;33m\]'
+    local green='\[\e[01;32m\]'
+    local red='\[\e[01;31m\]'
+    local orange='\[\e[01;33m\]' # looks like yellow.
+    local cyan='\[\e[01;36m\]'
+    local black='\[\e[01;30m\]'
+    local purple='\[\e[01;35m\]' 
+    local white='\[\e[01;37m\]'
+    local violet='\[\e[01;35m\]'
+    
+    local reverse='\e[7;m'
+    local pad="\$(test 1 -eq \${PROMPT_REVERSE} && echo \" \" || echo \"\")"
+    local rpad="\$(test 1 -eq \${PROMPT_REVERSE} && echo \"\" || echo \" \")"
+    
+    # displays bright background, with bold text
+    # colors are reversed (automatically)
+    local autoreverse="\[\e[\$((\${PROMPT_REVERSE} ? 7 : 0 ));\$((\${PROMPT_REVERSE} ? 1 : 0 ))m\]"
+    
+    # color is red if error, green otherwise
+    # LAST_RETURN_CODE is updated via __generate_prompt_command (PROMPT_COMMAND)
+    local error="\[\e[00;\$((\${LAST_RETURN_CODE} ? 31 : 32 ))m\]${autoreverse}"
+
+
     if tput setaf 1 >/dev/null; then
-        tput sgr0
+        tput sgr0 # reset now
+
         # The following start with a commonly compatible color code, followed
         # by a more specific color for terminals that support it. Normally
         # this should fail gracefully on older terminals.
-        reset="$(tput sgr0)"
-        bold="$(tput bold)"
-        blue="$(tput setaf 4)$(tput setaf 33)"
-        yellow="$(tput setaf 3)$(tput setaf 136)"
-        green="$(tput setaf 2)$(tput setaf 64)"
-        red="$(tput setaf 1)$(tput setaf 124)"
-        orange="$(tput setaf 1)$(tput setaf 166)"
-        cyan="$(tput setaf 6)$(tput setaf 37)"
-        black="$(tput setaf 0)"
-        purple="$(tput setaf 5)$(tput setaf 125)"
-        white="$(tput setaf 7)$(tput setaf 15)"
-        violet="$(tput setaf 5)$(tput setaf 61)"
-    else
-        reset='\e[0m'
-        bold=''  # TODO
-        blue='\e[01;34m'
-        yellow='\e[01;33m'
-        green='\e[01;32m'
-        red='\e[01;31m'
-        orange='\e[01;33m'
-        cyan='\e[01;36m'
-        black='\e[01;30m'
-        purple='\e[01;35m' 
-        white='\e[01;37m'
-        violet='\e[01;35m'
+
+        reset="\[$(tput sgr0)\]"
+        bold="\[$(tput bold)\]"
+        blue="\[$(tput setaf 4)$(tput setaf 33)\]"
+        yellow="\[$(tput setaf 3)$(tput setaf 136)\]"
+        green="\[$(tput setaf 2)$(tput setaf 64)\]"
+        red="\[$(tput setaf 1)$(tput setaf 124)\]"
+        orange="\[$(tput setaf 1)$(tput setaf 166)\]"
+        cyan="\[$(tput setaf 6)$(tput setaf 37)\]"
+        black="\[$(tput setaf 0)\]"
+        purple="\[$(tput setaf 5)$(tput setaf 125)\]"
+        white="\[$(tput setaf 7)$(tput setaf 15)\]"
+        violet="\[$(tput setaf 5)$(tput setaf 61)\]"
+        reverse="\[$(tput rev)\]"
+
+        # TODO: allow named profiles (scripts) to override these.
+
     fi
 
-
-    local bell now user host workdir chroot shell jobs;
-
-    printf -v bell '\[\a\]'
     
-    # The timestamp
-    printf -v now '\[%s\]\\t\[%s\]' "$cyan" "$reset"
 
-    # Current username
-    printf -v user '\[%s\]\\u\[%s\]' "$green" "$reset"
+    # command string to fetch context name
+    local kubectx="which kubectl >/dev/null && kubectl config current-context 2>/dev/null"
 
-    # Current hostname
-    printf -v host '\[%s\]\\h\[%s\]' "$yellow" "$reset"
+    # command string to fetch context
+    # (branch {untracked}{staged}{unstaged}{stashed})
+    local gitfmt="${cyan}\$br${red}\$ut${orange}\$sg${yellow}\$ug${violet}\$st"
+    printf -v gitstat "echo %q | __git_prompt_status_template \"${pad}\"" "$gitfmt"
 
-    # Current working directory
-    printf -v workdir '\[%s\]\\W\[%s\]' "$blue" "$reset"
+    declare -a PROMPT_PARTS=(
+        "${bell}${autoreverse}"
+        "${cyan}${pad}\\\\t${pad}"                # timestamp
+        "${error}${pad}\$?${pad}"                 # error status of last command
+        "${default}${pad}\j${pad}"                # background jobs
+        "${blue}${pad}\W${pad}"                   # current directory
+        "\$(${gitstat})"                          # git context
+        "${orange}${pad}\$(${kubectx})${pad}"     # kubernetes context
+        "${reset}\n\$${reset}"                    # prompt ending
+    )
 
-    # Ending marker of the command prompt
-    # printf -v shell '\[%s\]\\$\[%s\]' "$green" "$reset"
-    # this is a naked terminator for screen's automatic shelltitle support.
-    printf -v shell "\$"  
-    
-    # Current background jobs
-    printf -v jobs '\j' # no formatting
+    # The "%b" components must align to the PROMPT_PARTS elements.
+    printf -v PS1 "%b%b${rpad}%b${rpad}%b${rpad}%b${rpad}%b${rpad}%b${rpad}%b%s" "${PROMPT_PARTS[@]}" "${reset} "
 
-    # Whitespace explicit to ensure code clarity :)
-    printf -v end " "  # an empty space
-
-    # Append the return value of the last command to the prompt (red if error)
-    # Note this uses old-school color formatting due to the deferred logic.
-    printf -v errstat "\[\e[00;\$((\$? ? 31 : 32 ))m\]\$?\[\e[0m\]"
-
-    # Presents a Git status in the form of "<branch> <changeflags>"
-    printf -v gitfmt '\[%s\]Br\[%s\] \[%s\]Fu\[%s\]St\[%s\]Cs\[%s\]Cu\[%s\]' \
-        "${cyan}" "${reset}" "${red}" "${yellow}" "${green}" "${purple}" "${reset}"
-
-    GIT_PROMPT="\$(echo \"${gitfmt}\" | __git_prompt_status)"
-
-    KUBECTL_CONTEXT="\$(echo \"\[${yellow}\]Ctx\[${reset}\]\" | __kubectl_prompt_status)"
-
-    export PS1="${bell}${now} ${errstat} ${jobs} ${workdir} ${GIT_PROMPT} ${KUBECTL_CONTEXT} \\n${shell}${end}"
-    export PS2="$(__colorfilter -e -y ">") "
+    export PS1="${PS1}"
+    export PS2="${yellow}>${reset} "
     export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
-    export PS4="$(__colorfilter -e -b "+")"
+    export PS4="${blue}+${reset} "
 
+    unset PROMPT_PARTS
+    unset gitfmt
+    unset gitstat
+    unset kubectx
 }
 
 wtf () {
@@ -281,10 +297,6 @@ __basic_prompt () {
 export PROMPT_COMMAND="__generate_prompt_command"
 export COLORTERM="$(__prompt_color_hint | head -n 1)"
 
-# echo "COLORTERM is ${COLORTERM}" >&2
-
-
-
 
 if __prompt_should_color "${COLORTERM}"; then
     __generate_color_prompt
@@ -306,10 +318,11 @@ else
      __basic_prompt
 fi
 
+
 # Override manual title spec on first run.
 # NB: keep this consistent with the shelltitle directive in .screenrc
 test -n "$STY" && screen -X shelltitle '$ |shell'
 
 unset __basic_prompt
-unset __generate_color_prompt
+# unset __generate_color_prompt
 unset __prompt_should_color

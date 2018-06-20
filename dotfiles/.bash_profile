@@ -79,7 +79,7 @@ bash::cachefile () {
   shift 1;
   if ! test -f "$target"; then
     mkdir -p "$(dirname "$target")"
-    ${@} > "${target}"
+    ${@} > "${target}"  # execute the func & prepare cache
   fi
   cat "${target}"
 }
