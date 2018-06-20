@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+internet_available () {
+    ping -q -c 1 -W 1 google.com
+}
 
 update_git_path () {
   if [ -d "$2" ]; then
@@ -17,7 +20,6 @@ setup_vim () {
   mkdir -p ${1}/.vim/{backup,swap,doc}
   mkdir -p ${1}/.vim/{modules,autoload,bundle,syntax,plugin,ftdetect}
 
-  cp -v dotfiles/vimrc ${1}/.vimrc
   
   update_git_path https://github.com/tpope/vim-pathogen.git ${1}/.vim/modules/pathogen
   
@@ -27,10 +29,13 @@ setup_vim () {
   popd
   pushd ${1}/.vim/bundle
   
-  
-  update_git_path https://github.com/elzr/vim-json.git vim-json
-  update_git_path https://github.com/vim-scripts/openssl.vim.git vim-openssl
-  update_git_path https://github.com/tpope/vim-markdown.git vim-markdown
+  internet_available && {
+
+    update_git_path https://github.com/elzr/vim-json.git vim-json
+    update_git_path https://github.com/vim-scripts/openssl.vim.git vim-openssl
+    update_git_path https://github.com/tpope/vim-markdown.git vim-markdown
+
+  }
 
   popd 
 }
