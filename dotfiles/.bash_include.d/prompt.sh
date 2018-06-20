@@ -277,7 +277,7 @@ __generate_color_prompt () {
 }
 
 wtf () {
-    printf "You are %s on %s in %s.\n" \
+    printf "%s@%s:%s\n" \
         "$(echo $USER | __color yellow)" \
         "$(hostname -f | __color green)" \
         "$(pwd | sed "s@${HOME}@~@" | __color blue)" 
