@@ -59,7 +59,7 @@ main () {
     mode="$2";
     target="$path/.gitconfig"
 
-    temp="${HOME}/.temp/gitconfig.`date +%Y%m%d-%H%M`"
+    temp="${HOME}/.temp/gitconfig.`date +%Y%m%d-%H`"
     mkdir -p "${HOME}/.temp"
 
     case "$mode" in
