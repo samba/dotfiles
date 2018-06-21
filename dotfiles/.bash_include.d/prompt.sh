@@ -253,13 +253,13 @@ __generate_color_prompt () {
 
     declare -a PROMPT_PARTS=(
         "${bell}${autoreverse}"
-        "${cyan}${pad}\\\\t${pad}"                # timestamp
-        "${error}${pad}\$?${pad}"                 # error status of last command
-        "${default}${pad}\j${pad}"                # background jobs
-        "${blue}${pad}\W${pad}"                   # current directory
-        "\$(${gitstat})"                          # git context
-        "${orange}${pad}\$(${kubectx})${pad}"     # kubernetes context
-        "${reset}\n\$${reset}"                    # prompt ending
+        "${cyan}${pad}\\\\t${pad}"                  # timestamp
+        "${error}${pad}\${LAST_RETURN_CODE}${pad}"  # error status of last command
+        "${default}${pad}\j${pad}"                  # background jobs
+        "${blue}${pad}\W${pad}"                     # current directory
+        "\$(${gitstat})"                            # git context
+        "${orange}${pad}\$(${kubectx})${pad}"       # kubernetes context
+        "${reset}\n\$${reset}"                      # prompt ending
     )
 
     # The "%b" components must align to the PROMPT_PARTS elements.
