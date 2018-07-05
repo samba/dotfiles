@@ -41,12 +41,17 @@
 [log]
   date = short 
 
+# From `git config --help`
+# The basic colors accepted are normal, black, red, green, yellow, blue, magenta, cyan and white. 
+# The first color given is the foreground; the second is the background.
+# Colors may also be specified as numbers 0 through 255, or #aabbcc for 24-bit terminals.
+
 [alias]
   la = "!git config -l | grep alias | cut -c 7-"
   st = status -sb
   fs = "!git fetch --all && git status -sb && git diff --stat"
   s = status --short --branch --ignore-submodules=untracked
-  l = log --graph --oneline --format="format:%C(green)%h%C(reset)%x09%C(red)%ad%C(reset)%x09%s%x09%C(cyan)%d%x09%C(yellow)%ae"
+  l = log --graph --oneline --format="'format:%C(green)% h%C(reset)% s%C(magenta)% ad%C(reset)%C(cyan)% d%C(reset)%C(yellow)% ae%C(reset)'"
   amend = commit --amend --no-edit
   current = !(git status -sb >/dev/null && echo 'clean: \\c' || echo 'dirty: \\c') && echo `git log -1 '--pretty=format:%H %ai'`
   ci = commit -a
