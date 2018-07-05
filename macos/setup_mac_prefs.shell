@@ -669,6 +669,8 @@ defaults write com.apple.Terminal ShowLineMarks -int 0
 # Install the Solarized Dark theme for iTerm
 test -f "${HOME}/init/Solarized Dark.itermcolors" && open "${HOME}/init/Solarized Dark.itermcolors"
 
+# TODO register powerline fonts
+
 # Don’t display the annoying prompt when quitting iTerm
 # defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 

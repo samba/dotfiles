@@ -90,6 +90,9 @@ install_usermode () {
         gnupg \
         bfg \
         p7zip
+
+    # Powerline fonts
+    brew search "/font-.*-for-powerline/" 2>/dev/null | xargs brew install
 }
 
 install_nodejs () {
