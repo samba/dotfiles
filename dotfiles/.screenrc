@@ -42,6 +42,9 @@ bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '# |root:' sudo -i
 
 
+bind X screen -t '$ |debug:' bash -x --login -i
+
+
 
 # set C-a <space> to show the window list
 bind ' ' windowlist -m
