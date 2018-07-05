@@ -213,6 +213,7 @@ __generate_color_prompt () {
     
     # color is red if error, green otherwise
     # LAST_RETURN_CODE is updated via __generate_prompt_command (PROMPT_COMMAND)
+    # TODO(sam) XXX when PROMPT_REVERSE=0 the error color does not apply.
     local error="\[\e[00;\$((\${LAST_RETURN_CODE} ? 31 : 32 ))m\]${autoreverse}"
 
 
@@ -258,7 +259,7 @@ __generate_color_prompt () {
         "${default}${pad}\j${pad}"                  # background jobs
         "${blue}${pad}\W${pad}"                     # current directory
         "\$(${gitstat})"                            # git context
-        "${orange}${pad}\$(${kubectx})${pad}"       # kubernetes context
+        "${yellow}${pad}\$(${kubectx})${pad}"       # kubernetes context
         "${reset}\n\$${reset}"                      # prompt ending
     )
 
