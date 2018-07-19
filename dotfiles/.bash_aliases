@@ -79,3 +79,13 @@ alias bell="tput bel"
 
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
+
+
+
+# Kubernetes
+alias k='kubectl'
+alias kpo='kubectl get pods -o wide'
+alias ksvc='kubectl get services -o wide'
+alias kdep='kubectl get deployments -o wide'
+alias knod='kubectl get nodes -o wide'
+alias ktail='kubectl log -f'
