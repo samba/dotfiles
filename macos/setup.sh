@@ -142,8 +142,11 @@ install_database () {
         mongodbpreferencepane
 
     mkdir -p ~/Library/LaunchAgents
-    cp `brew --prefix mysql`/*mysql*.plist ~/Library/LaunchAgents/
-    launchctl load -w ~/Library/LaunchAgents/*mysql*.plist
+    find "$(brew --prefix mysql)" -type f -name '*.plist' | while read f; do
+        cp -v "${f}"  ~/Library/LaunchAgents/
+        launchctl load -w "~/Library/LaunchAgents/$(basename "${f}")"
+    done
+    
 }
 
 install_golang () {
