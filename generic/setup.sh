@@ -6,6 +6,12 @@ require_sudo () {
     return 1
 }
 
+fail () {
+    local err=$1; shift 1;
+    echo "$@" >&2
+    exit ${err}
+}
+
 
 requires () {
     which $1 && return 0
@@ -63,18 +69,18 @@ main () {
 
 
     case "$mode" in
-        cloud) install_cloudutils ;;
-        golang) install_golang ;;
+        cloud) install_cloudutils || fail $? "Cloud utilities could not be installed";;
+        golang) install_golang || fail $? "Golang utils could not be installed";;
         webdev) 
-            install_nodejs
-            install_webdev
+            install_nodejs || fail $? "Node.JS utils could not be installed"
+            install_webdev || fail $? "Web development utils could not be installed"
         ;;
-        nodejs) install_nodejs ;;
+        nodejs) install_nodejs || fail $? "Node.JS utils could not be installed" ;;
         all)
-            install_nodejs
-            install_golang
-            install_webdev
-            install_cloudutils
+            install_nodejs || fail $? "Node.JS utils could not be installed"
+            install_golang || fail $? "Golang utils could not be installed"
+            install_webdev || fail $? "Web development utils could not be installed"
+            install_cloudutils || fail $? "Cloud utilities could not be installed"
         ;;
     esac
 }

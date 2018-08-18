@@ -82,19 +82,36 @@ install_cloudutils () {
 
 install_usermode () {
     # Various GUI utilities
-    brew cask install \
-        iterm2 fork github-desktop \
-        cyberduck \
-        macdown \
-        transmission \
-        veracrypt \
-        caffeine \
-        oversight
-    brew install \
-        terminal-notifier \
-        gnupg \
-        bfg \
-        p7zip
+    brew::notify cask install iterm2
+
+    # Sadly this is required...
+    brew::notify cask install java
+
+    # Security kit
+    brew::notify install gnupg
+    brew::notify cask install veracrypt
+
+
+    # File sharing and software distribution kit
+    brew::notify cask install transmission
+    brew::notify cask install cyberduck
+    brew::notify install p7zip
+
+
+    # Developer tools
+    brew::notify install github-keygen
+    brew::notify install terminal-notifier
+    brew::notify install bfg # requires Java
+    brew::notify cask install macdown # fail
+    brew::notify cask install github
+    brew::notify cask install fork
+
+
+    # Productivity etc
+    brew::notify cask install caffeine
+    brew::notify cask install oversight
+
+
 
     # Powerline fonts
     brew search "/font-.*-for-powerline/" 2>/dev/null | xargs brew install
@@ -106,8 +123,7 @@ install_nodejs () {
 
 install_webdev ()  {
     install_python_base
-    brew cask install \
-        postman
+    brew::notify cask install postman
 }
 
 install_pythondev () {
@@ -116,10 +132,13 @@ install_pythondev () {
 }
 
 install_database () {
-    brew install \
-        mysql mongodb postgresql
-    brew cask install \
-        mongohub mysqlworkbench robomongo \
+
+    requires mysql || brew::notify install mysql
+    requires psql || brew::notify install postgresql
+    requires mongodb || brew::notify install mongodb 
+    
+    brew::notify cask install \
+        mysqlworkbench \
         mongodbpreferencepane
 
     mkdir -p ~/Library/LaunchAgents

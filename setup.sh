@@ -1,5 +1,8 @@
 #!/bin/sh
 
+export BASH="$(which bash)"
+
+
 sync_dotfiles () {
     read -p "This will wipe out your existing dotfiles. Please confirm. [yn]" -n 1
     echo ""
@@ -35,7 +38,9 @@ find_install_scripts () {
 run_scripts () {
     while read f; do
         echo "## Executing: ${f} ${1} ${2}" >&2
-        test -f "${f}" && sh "${f}" "${1}" "${2}" "${3}"
+        test -x "${BASH}" && test -f "${f}" && {
+            ${BASH} -x "${f}" "${1}" "${2}" "${3}" || return $?
+        }
     done
 }
 
@@ -86,17 +91,17 @@ main () {
 
     case "$mode" in
         dotfiles)
-            do_install "$(dirname $0)" "prepare" "$path"
-            sync_dotfiles "$(dirname $0)" "$path"
-            do_install "$(dirname $0)" "dotfiles" "$path"
-            do_install "$(dirname $0)" "restore" "$path"
-            do_install "$(dirname $0)" "clean" "$path"
+            do_install "$(dirname $0)" "prepare" "$path" || return $?
+            sync_dotfiles "$(dirname $0)" "$path" || return $?
+            do_install "$(dirname $0)" "dotfiles" "$path" || return $?
+            do_install "$(dirname $0)" "restore" "$path" || return $?
+            do_install "$(dirname $0)" "clean" "$path" || return $?
         ;;
         apps)
             while getopts :o: Option; do
                 case $Option in
                     o) 
-                        do_install "$(dirname $0)" "$OPTARG" "$path"
+                        do_install "$(dirname $0)" "$OPTARG" "$path" || return $?
                     ;;
                 esac
             done
