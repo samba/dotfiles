@@ -12,11 +12,15 @@ GIT_USER_EMAIL="$(git config -f $1 --get user.email)"
 GITHUB_USER="$(git config -f $1 --get github.user)"
 GITHUB_EMAIL="$(git config -f $1  --get github.email)"
 GITHUB_TOKEN="$(git config -f $1  --get github.token)"
+GIT_SIGNING_KEY="$(git config --global --get user.signingkey)"
+GIT_SIGN_COMMITS="$(git config --global --get commit.gpgsign)"
 
 
 if test -f \$1; then
   git config -f \$1 user.name "\${GIT_USER_NAME}"
   git config -f \$1 user.email "\${GIT_USER_EMAIL}"
+  git config -f \$1 user.signingkey "\${GIT_SIGNING_KEY}"
+  git config -f \$1 commit.gpgsign "\${GIT_SIGN_COMMITS}"
   git config -f \$1 github.user "\${GITHUB_USER}"
   git config -f \$1 github.email "\${GITHUB_EMAIL}"
   git config -f \$1 github.token "\${GITHUB_TOKEN}"
