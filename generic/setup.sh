@@ -28,11 +28,13 @@ install_nodejs () {
 
 install_cloudutils () {
     require_sudo || return $?
+    requires pip || return $?
     sudo -H pip install google-api-python-client awscli awslogs
 }
 
 install_webdev () {
     require_sudo || return $?
+    requires pip || return $?
     sudo -H pip install lesscpy flask
 }
 
@@ -41,6 +43,8 @@ install_webdev () {
 install_golang () {
     export GOPATH=${HOME}/Projects/Go/
     mkdir -p ${HOME}/Projects/Go/{src,bin,pkg}
+
+    requires go || return $?
 
     go get -u github.com/golang/lint/golint
     go get honnef.co/go/simple/cmd/gosimple

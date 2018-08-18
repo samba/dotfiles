@@ -6,6 +6,19 @@ require_sudo () {
     return 1
 }
 
+fail () {
+    local err=$1; shift 1;
+    echo "$@" >&2
+    exit ${err}
+}
+
+
+requires () {
+    which $1 && return 0
+    echo "$2" >&2
+    return 1
+}
+
 setup_custom_load () {
     python -c "import site; print site.getusersitepackages()" | while read p; do
         cmp -s "$1/misc/usercustomize.py" "$p/usercustomize.py" && continue 
@@ -16,6 +29,7 @@ setup_custom_load () {
 
 install_pythondev () {
     require_sudo || return $?
+    requires pip || return $?
     sudo -H pip install \
         virtualenv vex \
         coverage nose unittest2 \
