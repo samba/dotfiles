@@ -9,13 +9,13 @@ require_sudo () {
 
 requires () {
     which $1 && return 0
-    echo "$2" >&2
+    echo "no executable resolved: $1" >&2
     return 1
 }
 
 
 install_homebrew () {
-    which homebrew && return 0
+    which brew && return 0
     requires xcodebuild  "Please install XCode from the App Store." || return 1
 
     set -e
@@ -29,6 +29,11 @@ install_homebrew () {
 
     set +e
     return 0
+}
+
+brew::notify () {
+   brew ${@} && return $?
+   echo "!!! installation failed: brew $@" >&2
 }
 
 install_system_libs () {
