@@ -155,14 +155,16 @@ install_golang () {
 
 setup_git_osx_keychain () {
 
-  git credential-osxkeychain get >/dev/null
-  if [ $? -ne 1 -a $? -ne 0 ]; then
-    curl -s -O http://github-media-downloads.s3.amazonaws.com/osx/git-credential-osxkeychain
-    chmod u+x git-credential-osxkeychain
-    sudo mv git-credential-osxkeychain $(dirname $(which git))/git-credential-osxkeychain
-  fi
+    git config --global credential.helper osxkeychain
+    which git-credential-osxkeychain || return 0
 
-  git config --global credential.helper osxkeychain
+
+    # Install the credential helper
+    require_sudo
+    requires curl || fail 2 "requires \`curl\` to install git-credential-osxkeychain"
+    sudo curl -s -O http://github-media-downloads.s3.amazonaws.com/osx/git-credential-osxkeychain \
+        -o "$(dirname $(which git))/git-credential-osxkeychain"
+    sudo chmod u+x "$(dirname $(which git))/git-credential-osxkeychain"
 
 }
 
