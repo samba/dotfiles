@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euf -o pipefail
+# set -x
 
 # Generate a static script that restores the proper git config.
 # This will make recovery easier in the event that a task somewhere else in this process fails.
