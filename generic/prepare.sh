@@ -3,6 +3,8 @@
 set -euf -o pipefail
 # set -x
 
+KEEP_CACHE="${KEEP_CACHE:-0}"
+
 # Generate a static script that restores the proper git config.
 # This will make recovery easier in the event that a task somewhere else in this process fails.
 populate_params_stash () {
