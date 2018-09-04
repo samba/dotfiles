@@ -23,6 +23,7 @@ setup_custom_load () {
     python -c "import site; print site.getusersitepackages()" | while read p; do
         cmp -s "$1/misc/usercustomize.py" "$p/usercustomize.py" && continue 
         require_sudo || return $?
+        mkdir -p "$p"
         sudo cp -v "$1/misc/usercustomize.py" "$p/usercustomize.py"
     done
 }
