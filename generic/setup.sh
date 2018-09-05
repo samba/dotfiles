@@ -35,7 +35,11 @@ install_nodejs () {
 install_cloudutils () {
     require_sudo || return $?
     requires pip || return $?
+    requires gcloud || return $?
+
     sudo -H pip install google-api-python-client awscli awslogs
+    gcloud components install app-engine-python app-engine-python-extras kubectl
+
 }
 
 install_webdev () {
