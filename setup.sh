@@ -2,7 +2,6 @@
 
 export BASH="$(which bash)"
 
-
 sync_dotfiles () {
     read -p "This will wipe out your existing dotfiles. Please confirm. [yn]" -n 1
     echo ""
