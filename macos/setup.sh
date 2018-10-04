@@ -37,7 +37,9 @@ brew::notify () {
 }
 
 install_system_libs () {
-    brew install libffi libgit2 openssl wget jpeg
+    requires wget || brew::notify install wget
+    requires openssl || brew::notify install openssl
+    brew::notify install libffi libgit2 jpeg
 }
 
 install_python_base () {
@@ -77,7 +79,7 @@ install_containers () {
 
 install_cloudutils () {
     install_python_base
-    brew cask install google-cloud-sdk
+    requires gcloud || brew::notify cask install google-cloud-sdk
 }
 
 install_usermode () {
@@ -118,7 +120,7 @@ install_usermode () {
 }
 
 install_nodejs () {
-    brew install node phantomjs
+    requires node || brew::notify install node 
 }
 
 install_webdev ()  {
@@ -128,7 +130,7 @@ install_webdev ()  {
 
 install_pythondev () {
     install_python_base
-    brew install python3
+    requires python3 || brew::notify install python3
 }
 
 install_database () {
@@ -150,7 +152,7 @@ install_database () {
 }
 
 install_golang () {
-    brew install go
+    requires go || brew::notify install go
 }
 
 setup_git_osx_keychain () {
