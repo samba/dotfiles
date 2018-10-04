@@ -117,7 +117,7 @@ install_usermode () {
 
 
     # Powerline fonts
-    brew search "/font-.*-for-powerline/" 2>/dev/null | xargs brew install
+    brew search --casks "/font-.*-for-powerline/" 2>/dev/null | tail -n +2 | xargs -t brew cask install
 }
 
 install_nodejs () {
