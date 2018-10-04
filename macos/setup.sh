@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euf -o pipefail
+
 require_sudo () {
     sudo -v && return 0 # get password earlier...
     echo "Cannot prepare system without sudo." >&2
@@ -12,6 +14,7 @@ requires () {
     echo "no executable resolved: $1" >&2
     return 1
 }
+
 
 
 install_homebrew () {
@@ -138,6 +141,7 @@ install_database () {
         mysqlworkbench \
         mongodbpreferencepane
 
+    # Set up MySQL to launch automatically
     mkdir -p ~/Library/LaunchAgents
     find "$(brew --prefix mysql)" -type f -name '*.plist' | while read f; do
         cp -v "${f}"  ~/Library/LaunchAgents/
