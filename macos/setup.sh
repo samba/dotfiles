@@ -126,6 +126,7 @@ install_nodejs () {
 install_webdev ()  {
     install_python_base
     brew::notify cask install postman
+    brew::notify install closure-compiler
 }
 
 install_pythondev () {
