@@ -92,6 +92,7 @@ install_usermode () {
     # Security kit
     brew::notify install gnupg
     brew::notify cask install veracrypt
+    brew::notify cask install gpg-suite
 
 
     # File sharing and software distribution kit
