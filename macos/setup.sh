@@ -53,23 +53,16 @@ install_python_base () {
 install_containers () {
     # Container and Virtual Machine environments
 
-    brew install compose2kube kubernetes-cli
+    requires kubectl || brew::notify install kubernetes-cli
+    requires xhyve || brew::notify install xhyve
+    requires minikube || brew::notify cask install minikube
 
-    brew install xhyve
 
-    brew install docker-compose 
+    # brew install compose2kube
+    # brew install docker-compose
     brew install docker-clean
 
-    # Set permissions on xhyve properly
-    brew --prefix | while read p; do
-        sudo chown root:wheel $p/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-        sudo chmod u+s $p/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-    done
-
     # Docker's official release.
-    # NOTE: This is preferred over several alternatives that leverage xhyve,
-    # because the xhyve mode uses the 9p filesystem for mounted volumes/etc. 
-    # This breaks when contained software requires manipulation of symbolic links.
     brew cask install docker
 
     brew cask install vagrant vagrant-manager
