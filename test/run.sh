@@ -8,6 +8,7 @@ set -euf -o pipefail
 function prepare () {
     grep -v '=' Makefile | egrep -o '^(\w+):'
     SSHKEY_PASSWORD="thisisatest" make dotfiles
+    make @install_packages
 }
 
 echo "Running tests..." >&2
