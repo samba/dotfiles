@@ -40,6 +40,7 @@ class CommandRender(object):
 
 class BrewRenderer(CommandRender):
     call = "brew"
+    args = "--display-items --force"
     priority = 1
 
 class BrewCaskRenderer(CommandRender):
