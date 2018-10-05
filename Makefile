@@ -10,15 +10,16 @@ SSHKEY_PASSWORD?=NOVALUE
 KEEP_CACHE?=FALSE
 PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
 
-help:
-	@grep -oE '^([a-zA-Z]\w+):(\s|$$)' $(MAKEFILE_LIST) | while read s; do printf "\033[36m%-30s\033[0m\n" $$s; done
+# SED_FLAG ?= $(shell test $$(echo "test" | sed -E 's@[a-z]@_@g') = "____" && echo "-E" || echo "-R")
 
-apps:
-	bash ./setup.sh apps $(HOME) -o all
+help: # borrowed from https://github.com/jessfraz/dotfiles/blob/master/Makefile
+	@grep -oE '^([a-zA-Z]\w+: .* ##.*)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-install: dotfiles apps
+apps: @install_packages  ## just the applications
 
-dotfiles:
+install: dotfiles apps  ## everything
+
+dotfiles:  ## just the dotfiles
 	$(MAKE) gitbackup
 	$(MAKE) @sync_dotfiles
 	$(MAKE) gitrestore
