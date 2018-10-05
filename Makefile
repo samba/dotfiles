@@ -52,14 +52,33 @@ $(CACHE):
 $(HOME)/.gitconfig:
 	echo "; empty .gitconfig" >$@
 
-packages.generated.sh: util/packages.index.csv util/packages.py
-	which python
-	echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
-	python util/packages.py -i $< > $@
+generated/:
+	mkdir $(@)
 
-	
-install_packages: packages.generated.sh
+generated/roles.txt: generated/
+	echo "developer user-cli security network libs python" > $@
+
+generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.txt
+	which python
+	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
+	python util/packages.py -i $< $(shell cat generated/roles.txt)> $@
+
+$(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
+	mkdir -p $(@D)
+	bash $^
+	touch -r $< $@
+
+.PHONY: @install_packages	
+@install_packages: generated/packages.sh 
+ifeq ($(SYSTEM),Darwin)
+	bash macos/setup.sh install
+endif
 	bash -x $<
+ifeq ($(SYSTEM),Darwin)
+	bash macos/setup.sh configure
+	$(MAKE) $(CACHE)/mac_prefs_auto
+endif
+
 
 # Stash the unique settings of my git config
 gitbackup: $(CACHE)/restore_git.sh
