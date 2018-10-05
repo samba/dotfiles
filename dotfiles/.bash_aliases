@@ -73,6 +73,42 @@ for f in $( # Some useful built-ins from Apple
 done
 
 
+case $(uname -s) in 
+  Darwin)  ### Aliases that only make sense on a Mac.
+      
+    if which lwp-request >/dev/null; then
+      for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+        alias "$method"="lwp-request -m '$method'"
+      done
+      unset method
+    fi
+
+
+    # Settings control for MacOS
+    alias plist="/usr/libexec/PlistBuddy"
+
+    # Lock screen
+    alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+
+
+    # Toggle the Desktop search engine
+    alias mac_disable_spotlight="sudo mdutil -a -i off"
+    alias mac_enable_spotlight="sudo mdutil -a -i on"
+
+    # Toggle the Desktop icons
+    alias mac_show_desktop="defaults write com.apple.finer CreateDesktop -bool true && killall Finder"
+    alias mac_hide_desktop="defaults write com.apple.finer CreateDesktop -bool false && killall Finder"
+
+    # Toggle hidden files in the Finder file browser
+    alias mac_show_hidden_files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    alias mac_hide_hidden_files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+  ;;
+esac
+
+
+
+
 # Ring the bell after a long running command, 
 # e.g. > cp bigfile /mnt/destination && bell
 alias bell="tput bel"

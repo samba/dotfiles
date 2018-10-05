@@ -117,6 +117,13 @@ while read f; do
   test -f "$f" && source "$f"
 done < <(bash::cachefile includes __bash_files_import)
 
+
+# Explicitly seeking these files is apparently faster than a dynamic search.
+test -f "${HOME}/.bash_functions" && source "${HOME}/.bash_functions"
+test -f "${HOME}/.bash_colors" && source "${HOME}/.bash_colors"
+test -f "${HOME}/.bash_prompt" && source "${HOME}/.bash_prompt"
+test -f "${HOME}/.bash_sshagent" && source "${HOME}/.bash_sshagent"
+
 unset f
 unset __bash_files_import
 unset import_cache
