@@ -7,7 +7,7 @@ set -euf -o pipefail
 # This notation only works in bash. Wee!
 function prepare () {
     grep -v '=' Makefile | egrep -o '^(\w+):'
-    make dotfiles
+    SSHKEY_PASSWORD="thisisatest" make dotfiles
 }
 
 echo "Running tests..." >&2

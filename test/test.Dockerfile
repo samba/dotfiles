@@ -6,4 +6,4 @@ RUN apt-get -q update && apt-get install -y \
     sudo \
     openssh-client \
     git-core \
-    python2.7
+    python2.7 python
