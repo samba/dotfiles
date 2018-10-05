@@ -1,6 +1,6 @@
 .PHONY: dotfiles apps install
 
-DOCKER_TEST_IMAGE:=dotfiles_test:local
+DOCKER_TEST_IMAGE?=dotfiles_test:local
 CACHE?=$(HOME)/.cache
 USER?=$(shell whoami)
 HOSTNAME?=$(shell hostname)
@@ -8,7 +8,10 @@ SYSTEM?=$(shell uname -s)
 SSH_CONFIG?=$(HOME)/.ssh/config
 SSHKEY_PASSWORD?=NOVALUE
 KEEP_CACHE?=FALSE
+PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
 
+help:
+	@grep -oE '^([a-zA-Z]\w+):(\s|$$)' $(MAKEFILE_LIST) | while read s; do printf "\033[36m%-30s\033[0m\n" $$s; done
 
 apps:
 	bash ./setup.sh apps $(HOME) -o all
@@ -17,14 +20,16 @@ install: dotfiles apps
 
 dotfiles:
 	$(MAKE) gitbackup
-	$(MAKE) sync_dotfiles
+	$(MAKE) @sync_dotfiles
 	$(MAKE) gitrestore
-	$(MAKE) setup_config
+	$(MAKE) @setup_config
 	$(MAKE) sshkeys
-	$(MAKE) pythonconfig
-	$(MAKE) vimconfig
+	$(MAKE) @pythonconfig
+	$(MAKE) @vimconfig
+	@echo "OK all done!"
 
-sync_dotfiles:
+.PHONY: @sync_dotfiles
+@sync_dotfiles:
 	rsync $(CURDIR)/dotfiles/ $(HOME)/ \
         --exclude ".git/" \
         --exclude ".osx" \
@@ -33,7 +38,8 @@ sync_dotfiles:
         --exclude "*.txt" \
         -arvh --no-perms --no-links
 
-setup_config:
+.PHONY: @setup_config
+@setup_config:
 	grep -q "config.published" $(SSH_CONFIG) || \
 		echo "Include ~/.ssh/config.published" >>$(SSH_CONFIG)
 	mkdir -p $(HOME)/.ssh/keys $(HOME)/.ssh/sock
@@ -74,20 +80,23 @@ else
 	ssh-keygen -N "$(SSHKEY_PASSWORD)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
 endif
 
-wipeout_cache:
+.PHONY: @wipeout_cache
+@wipeout_cache:
 ifneq ($(KEEP_CACHE),FALSE)
 	rm -rvf $(CACHE)
 endif
 
 # Install the Python usercustomize.py at the correct location. 
-pythonconfig:
-	python -c "import site; print site.getusersitepackages()" | \
+.PHONY: @pythonconfig
+@pythonconfig:
+	which python && python -c "import site; print site.getusersitepackages()" | \
 		while read p; do \
 			mkdir -p $$p; cp -v $(CURDIR)/generic/misc/usercustomize.py $$p/ ;\
 		done
 
 # Setup my common Vim extensions
-vimconfig:
+.PHONY: @vimconfig
+@vimconfig:
 	# This requires some bash-specific functionality.
 	bash util/vimsetup.sh
 
