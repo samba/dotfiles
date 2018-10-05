@@ -1,6 +1,7 @@
 brew,cloud,google-cloud-sdk,cask
 brew,user-cli,wget,none
 brew,user-cli,openssl,none
+brew,developer,git,none
 brew,developer,iterm2,cask
 brew,developer,github-keygen,none
 brew,developer,terminal-notifier,none
@@ -36,8 +37,8 @@ brew,postgresql,postgresql,none
 brew,mongodb,mongodb,none
 brew,mysql,mysqlworkbench,cask
 brew,mongodb,mongodbpreferencepane,cask
-brew,golang-dev,go
-easy_install,python,pip
+brew,golang,go
+brew,python,python3
 pip,cloud,awscli
 pip,cloud,awslogs
 pip,cloud,google-api-python-client
@@ -57,9 +58,9 @@ pip,python-dev,Jinja2
 pip,python-dev,Pillow
 pip,webdev,lesscpy
 pip,webdev,flask
-go,golang-dev,github.com/golang/lint/golint
-go,golang-dev,honnef.co/go/simple/cmd/gosimple
-go,golang-dev,golang.org/x/tools/cmd/goimports
+go,golang,github.com/golang/lint/golint
+go,golang,honnef.co/go/simple/cmd/gosimple
+go,golang,golang.org/x/tools/cmd/goimports
 npm,webdev,google-closure-compiler-js
 npm,jsdev,babel-cli
 npm,jsdev,gulp-cli
@@ -72,4 +73,6 @@ npm,jsdev,eslint
 npm,jsdev,mocha
 npm,jsdev,growl
 npm,webdev,node-sass
-apt-get,usermode,bash-completion
+apt-get,user-cli,bash-completion
+apt-get,developer,git-core
+apt-get,developer,vim-nox
