@@ -127,5 +127,10 @@ endif
 	touch -r $< $@
 
 test-docker: .cache/test-docker-image
-	docker run -it --rm -v "$(CURDIR):/code" -w "/code" \
-		$(DOCKER_TEST_IMAGE) /bin/bash test/run.sh /code
+	docker run -it --rm -v "$(CURDIR):/home/tester/code" \
+		$(DOCKER_TEST_IMAGE) /bin/bash test/run.sh /home/tester/code
+
+
+run-docker: .cache/test-docker-image
+	docker run -it --rm -v "$(CURDIR):/home/tester/code" \
+		$(DOCKER_TEST_IMAGE) /bin/bash -c 'make dotfiles && bash -il'
