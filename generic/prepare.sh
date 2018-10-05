@@ -48,7 +48,7 @@ setup_ssh_keys () {
     test -d ~/.ssh || mkdir -m 0700 ~/.ssh
     test -f ~/.ssh/id_rsa && return 0
     echo "Preparing an SSH key..." >&2
-    ssh-keygen -f ~/.ssh/id_rsa -C "${USER}@`hostname`" -b 4096
+    ssh-keygen -f ~/.ssh/id_rsa -C "${USER:-$(whoami)}@`hostname`" -b 4096
 
     # also setup common SSH paths
     mkdir -p ~/.ssh/keys ~/.ssh/sock

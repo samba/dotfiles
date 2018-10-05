@@ -22,7 +22,7 @@ find_install_scripts () {
             find ${1}/macos/ -type f -name '*.sh' | sort
             ;;
         Linux)
-            which apt-get && find ${1}/debian/ -type f -name '*.sh' | sort
+            which -q apt-get && find ${1}/debian/ -type f -name '*.sh' | sort
             ;;
         *)
             echo "Unrecognized operating system: [`uname -s`]" >&2
