@@ -46,6 +46,15 @@ $(CACHE):
 $(HOME)/.gitconfig:
 	echo "; empty .gitconfig" >$@
 
+packages.generated.sh: util/packages.index.csv util/packages.py
+	which python
+	echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
+	python util/packages.py -i $< > $@
+
+	
+install_packages: packages.generated.sh
+	bash -x $<
+
 # Stash the unique settings of my git config
 gitbackup: $(CACHE)/restore_git.sh
 $(CACHE)/restore_git.sh: $(HOME)/.gitconfig  | $(CACHE)
