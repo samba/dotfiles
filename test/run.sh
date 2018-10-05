@@ -1,7 +1,6 @@
 #!/bin/bash
 # This script is intended to be run in Debian Linux (or similar)
-# It 
-
+# It is NOT expected to work well directly on the repo, or on a Mac.
 
 set -euf -o pipefail
 

@@ -50,9 +50,7 @@ main () {
     esac
 
     case "$mode" in
-        dotfiles)
-            setup_custom_load "$base"
-        ;;
+   
         python)
             install_pythondev
         ;;
