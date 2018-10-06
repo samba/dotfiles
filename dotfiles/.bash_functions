@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 
 
+function http () {
+  # usage: http POST "http://example.com/uri" "{\"test\":true}"
+  # Provides a uniform shortcut for issuing HTTP requests.
+  local verb=$1; shift;
+  local URL=$1; shift;
+  local body=${1:-""}; shift;
+
+  while read prgm; do
+    case "$(basename ${prgm})" in 
+      curl)
+        ${prgm} -X ${verb} --data "${body}" -o - "${URL}" 
+      ;;
+      wget)
+        ${prgm} --method="${verb}" --body-data "${body}" -O - "${URL}"
+      ;;
+    esac
+  done < <(which -a curl wget | head -n 1)
+
+}
+
+
 
 gofind () {
   # Paths to search
