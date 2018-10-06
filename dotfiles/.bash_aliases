@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-if ps -L | tr -s ' ' '\n' | grep -q euser ; then
+if which ps >/dev/null && ps -L | tr -s ' ' '\n' | grep -q euser ; then
   # The GNU default mode...
   export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
 else 
