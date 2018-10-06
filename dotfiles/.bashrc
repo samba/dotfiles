@@ -85,46 +85,49 @@ complete -W "NSGlobalDomain" defaults;
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
 
 
+
+
 __bash_files_import () {
-  which brew >/dev/null && echo "$(brew --prefix)/etc/bash_completion"
-  echo "/etc/bash_completion"
-  echo "${HOME}/.bashrc_completion" "${HOME}/.bash_completion"
-  echo "${HOME}/.bash_aliases"
+  
+  # Explicitly seeking these files is apparently faster than a dynamic search.
+  test -f "/etc/bash_completion" && echo "/etc/bash_completion"
 
-  # Load all the shell scripts in the user's .bash_include.d folder too.
-  # This should afford user some leeway to customize as well.
-  test -d "${HOME}/.bash_include.d" && \
-    find "${HOME}/.bash_include.d" -type f -name '*.sh' | sort
+  test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
+  test -f "${HOME}/.bash_colors" && echo "${HOME}/.bash_colors"
+  test -f "${HOME}/.bash_prompt" && echo "${HOME}/.bash_prompt"
+  test -f "${HOME}/.bash_sshagent" && echo "${HOME}/.bash_sshagent"
+  test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"
+  test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
 
+  # find /usr/local/Caskroom -type f -name '*.bash.inc'
 
-  # A sweeping inclusion, covers Google Cloud SDK and a variety of others..
-  test -d /usr/local/Caskroom && \
-    find /usr/local/Caskroom -type f -name '*.bash.inc' | \
-    grep -v backup
+  if test -d /usr/local/Caskroom; then
+    for p in "path.bash.inc" "completion.bash.inc"; do
+      echo "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/${p}"
+    done
+  fi
 
   # Google Cloud if installed via the web download (not Homebrew)
-  test -d "${HOME}/Library/google-cloud-sdk" && \
-    echo "${HOME}/Library/google-cloud-sdk/path.bash.inc" && \
-    echo "${HOME}/Library/google-cloud-sdk/completion.bash.inc"
+  if test -d "${HOME}/Library/google-cloud-sdk"; then
+    for p in "path.bash.inc" "completion.bash.inc"; do
+      echo "${HOME}/Library/google-cloud-sdkgoogle-cloud-sdk/${p}"
+    done
+  fi
 
-  # SnowSQL cloud data warehouse
-  test -d "/Applications/SnowSQL.app/Contents/MacOS" && \
-    echo "/Applications/SnowSQL.app/Contents/MacOS"
+  if test -d "/usr/local/opt/"; then
+    # Homebrew links a bunch of scripts into this path.
+    which brew >/dev/null && find $(brew --prefix)/etc/bash_completion.d/ -type l -maxdepth 1 
+  fi
+
+  
+
 }
 
 
 while read f; do
   test -f "$f" && source "$f"
-done < <(bash::cachefile includes __bash_files_import)
+done < <(__bash_files_import)
 
-
-# Explicitly seeking these files is apparently faster than a dynamic search.
-test -f "${HOME}/.bash_functions" && source "${HOME}/.bash_functions"
-test -f "${HOME}/.bash_colors" && source "${HOME}/.bash_colors"
-test -f "${HOME}/.bash_prompt" && source "${HOME}/.bash_prompt"
-test -f "${HOME}/.bash_sshagent" && source "${HOME}/.bash_sshagent"
 
 unset f
 unset __bash_files_import
-unset import_cache
-
