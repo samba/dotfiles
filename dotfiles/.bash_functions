@@ -11,7 +11,7 @@ function http () {
   while read prgm; do
     case "$(basename ${prgm})" in 
       curl)
-        ${prgm} -X ${verb} --data "${body}" -o - "${URL}" 
+        ${prgm} -s -X ${verb} --data "${body}" -o - "${URL}" 
       ;;
       wget)
         ${prgm} --method="${verb}" --body-data "${body}" -O - "${URL}"
@@ -21,6 +21,26 @@ function http () {
 
 }
 
+function myip () {
+  if which dig >/dev/null ; then
+    echo "public:" "$(dig +short myip.opendns.com @resolver1.opendns.com)"
+  else
+    echo "public:" "$(http GET "https://api.ipify.org")"
+  fi
+
+  case $(uname -s) in
+    Darwin)
+
+      if which ifconfig >/dev/null && which ipconfig >/dev/null ; then
+        while read iface; do
+          local ipaddr=$(ipconfig getifaddr ${iface})
+          test -z "${ipaddr}" || echo "${iface}: ${ipaddr}"
+        done < <(ifconfig -a | egrep -o '^[a-z0-9]+(?::)' | tr -d ':')
+      fi
+  esac
+
+
+}
 
 
 gofind () {
@@ -67,20 +87,6 @@ crypto () {
     decrypt) openssl aes-256-cbc -d -in "${2}" -out -;;
     help|-h|*) echo "Usage: crypto [en|de]crypt filename  # to stdout " >&2 ;;
   esac
-}
-
-myip () {
-    ( # wrapped in a subshell so we can make it pretty. 
-    # Query my own public IP address
-    echo "public:" "$(dig +short myip.opendns.com @resolver1.opendns.com)"
-
-
-    # Report my private IP address
-    ifconfig -a | egrep -o '^[a-z0-9]+(?::)' | tr -d ':' | while read iface; do
-        ipaddr=$(ipconfig getifaddr $iface)
-        test -z "$ipaddr" || echo "$iface:" "$ipaddr"
-    done 
-    ) | column -t 
 }
 
 
