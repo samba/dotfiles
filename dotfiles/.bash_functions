@@ -85,7 +85,7 @@ crypto () {
   case $1 in
     encrypt) openssl aes-256-cbc -e -in "${2}" -out -;;
     decrypt) openssl aes-256-cbc -d -in "${2}" -out -;;
-    help|-h|*) echo "Usage: crypto [en|de]crypt filename  # to stdout " >&2 ;;
+    help|-h|*) echo "Usage: crypto {encrypt|decrypt} filename  # to stdout " >&2 ;;
   esac
 }
 

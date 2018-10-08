@@ -117,6 +117,10 @@ alias bell="tput bel"
 alias path='echo -e ${PATH//:/\\n}'
 
 
+# Encryption shortcuts
+alias encrypt="openssl aes-256-cbc -e";
+alias decrypt="openssl aes-256-cbc -d";
+
 
 # Kubernetes
 alias k='kubectl'
