@@ -65,7 +65,7 @@ multiuser on # so I can attach from multiple points.
 defdynamictitle on
 
 # Use a default name of ">" but try to read command title when possible.
-shelltitle "$ |shell"
+shelltitle "> |shell"
 
 # The following flags can be applied in hardstatus and caption declarations.
 # %t = title of the current window
