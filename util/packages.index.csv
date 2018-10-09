@@ -9,6 +9,8 @@ brew,developer,bfg,none
 brew,developer,macdown,cask
 brew,developer,github,cask
 brew,developer,fork,cask
+brew,developer,visual-studio-code,cask
+brew,developer,dash,cask
 brew,containers,xhyve,none
 brew,kubernetes,kubernetes-cli,none
 brew,kubernetes,minikube,cask
