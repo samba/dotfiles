@@ -33,6 +33,8 @@ fi
 __check_util_paths () {
   # Produce a series of directories that usually have executables I'm interested in.
 
+  local SEARCH_NODEJS_BIN=false;
+
   echo ${HOME}/.bin
   echo ${HOME}/.dotfiles/bin
 
@@ -60,8 +62,11 @@ __check_util_paths () {
     find ${HOME}/Library/Python/ -type d -name bin
 
   # Hopefully a NodeJS environment was installed too.
-  find /usr/local/ -type d -name 'node@*' -print0 | \
-    xargs -0 -I {} find {} -name bin
+  if test SEARCH_NODEJS_BIN = true; then
+    # XXX: this one is SLOW
+    find /usr/local/ -type d -name 'node@*' -print0 | \
+      xargs -0 -I {} find {} -name bin
+  fi
 
   test -d "${GOPATH}" && find "${GOPATH}" -maxdepth 3 -type d -name bin
 }
@@ -74,20 +79,20 @@ __check_util_paths () {
 # If the target file is not present, executes the given function to populate
 # its content, and then prints the content. Future calls will load the reuse
 # the file data directly.
-bash::cachefile () {
-  local target="${HOME}/.cache/bash/${1}"
-  shift 1;
-  if ! test -f "$target"; then
-    mkdir -p "$(dirname "$target")"
-    ${@} > "${target}"  # execute the func & prepare cache
-  fi
-  cat "${target}"
-}
+# bash::cachefile () {
+#   local target="${HOME}/.cache/bash/${1}"
+#   shift 1;
+#   if ! test -f "$target"; then
+#     mkdir -p "$(dirname "$target")"
+#     ${@} > "${target}"  # execute the func & prepare cache
+#   fi
+#   cat "${target}"
+# }
 
 
 
 # Collect the paths that actually exist for $PATH
-export PATH="$(bash::cachefile paths __check_util_paths | tr -s '\n' ':'):${PATH}"
+export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
 
 # Remove blanks from PATH
 export PATH="${PATH/::/:}"

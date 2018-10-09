@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Configuration for interactive (non-login) shells
 # Settings applied here will not effect shells in embedded environments, e.g. VSCode
-# !!NOTE: some functions herein used come from .bash_profile !!
 
 export EDITOR=`which vim nano | head -n 1`
 
