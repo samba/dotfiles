@@ -2,3 +2,4 @@
 temp
 *.generated.sh
 generated/
+.DS_Store
