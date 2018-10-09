@@ -40,12 +40,15 @@ function setup_colors () {
 
 function setup_tools () {
   local current_signing_key="$(git config -f $1 --get user.signingkey)"
+  local current_signing_active="$(git config -f $1 --get commit.gpgsign)"
   git config -f $1 core.editor vim
   git config -f $1 merge.tool vimdiff
   git config -f $1 credential.helper osxkeychain
   git config -f $1 gpg.program "gpg"
   git config -f $1 user.signingkey "${current_signing_key:-${GIT_SIGNING_KEY}}"
-  git config -f $1 commit.gpgsign true
+  
+  # Explicitly disable signing commits, unless the user already has it active.
+  git config -f $1 commit.gpgsign ${current_signing_active:-false}
 }
 
 function setup_proto () {
