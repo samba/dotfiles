@@ -2,7 +2,7 @@
 # Configuration for interactive (non-login) shells
 # Settings applied here will not effect shells in embedded environments, e.g. VSCode
 
-export EDITOR=`which vim nano | head -n 1`
+export EDITOR=$(which vim nano | head -n 1)
 
 # Configure history backlog
 export HISTCONTROL=ignoreboth:erasedups
