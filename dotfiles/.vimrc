@@ -538,7 +538,7 @@ autocmd BufRead   *access.log*  setf httplog
 
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript']
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'shell=sh']
 
 
 " }@
