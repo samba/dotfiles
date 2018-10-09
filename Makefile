@@ -1,5 +1,6 @@
 .PHONY: dotfiles apps install
 
+DATE?=$(shell date +%Y-%m-%d_%H%M)
 DOCKER_TEST_IMAGE?=dotfiles_test:local
 CACHE?=$(HOME)/.cache
 USER?=$(shell whoami)
@@ -20,6 +21,7 @@ apps: @install_packages  ## Install the applications
 install: dotfiles apps  ## Install everything (dotfiles + applications)
 
 dotfiles:  ## Install the dotfiles
+	$(MAKE) backup
 	$(MAKE) gitbackup
 	$(MAKE) @sync_dotfiles
 	$(MAKE) gitrestore
@@ -63,6 +65,30 @@ generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.
 	which python
 	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
 	python util/packages.py -i $< $(shell cat generated/roles.txt)> $@
+
+
+.PHONY: backup
+backup: generated/backup.$(DATE).tar.gz  ## Backup archive of settings this might change.
+generated/backup.$(DATE).tar.gz: generated/
+	# move any existing file to a discrete location.
+	cd ${HOME} && tar -czf $(PWD)/$@ \
+		--exclude=".git" \
+		--exclude=".vim/view/*" --exclude=".vim/swap/*" \
+		./.bash* \
+		./.gitconfig* \
+		./.inputrc \
+		./.psqlrc \
+		./.pythonrc.py \
+		./.screenrc \
+		./.vimrc \
+		./.vim* \
+		./.config/htop/htoprc \
+		./.ssh/config* \
+		./.ssh/id_rsa*
+
+
+clean-backup:
+	rm -v generated/backup.*.tar.gz
 
 $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 	mkdir -p $(@D)
