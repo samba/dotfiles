@@ -109,6 +109,7 @@ esac
 # Inspired by https://github.com/jessfraz/dotfiles/blob/master/.functions
 if which git >/dev/null; then
   alias diff="git diff --no-index --color-words"
+  alias g="git"
 fi
 
 
