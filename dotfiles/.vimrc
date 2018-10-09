@@ -226,7 +226,6 @@ set wildignore+=*.o,*.obj,*.~,.lo,.so,.pyc,.swp,.bak
 set suffixes+=.in,.a,.bak,.swp,.pyc
 
 set completeopt=menuone,longest
-" set completeopt=menuone,longest
 
 set pumheight=12
 
@@ -498,6 +497,7 @@ function! WriteModeline (line)
 endfunction
 
 
+" Writes a modeline at the last line of the buffer
 nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
 
 " }@
