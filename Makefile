@@ -135,3 +135,6 @@ run-docker: .cache/test-docker-image
 	docker run -it --rm -v "$(CURDIR):/home/tester/code" \
 		-e "SSHKEY_PASSWORD=testing" \
 		$(DOCKER_TEST_IMAGE) /bin/bash -c 'make dotfiles && bash -il'
+
+diff:
+	@bash util/live_diff.sh
