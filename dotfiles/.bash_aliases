@@ -45,12 +45,6 @@ case `which md5sum md5` in
 esac
 
 
-case `which mvim` in
-  *mvim)
-    export MVIM_SERVER="VIM$$"
-    alias tvim='mvim --servername ${MVIM_SERVER} --remote-tab-silent'
-  ;;  
-esac
 if which xclip >/dev/null; then
   test -x "$(which pbcopy)" || alias pbcopy='xclip -selection clipboard'
   test -x "$(which pbpaste)" || alias pbpaste='xclip -selection clipboard -o'
