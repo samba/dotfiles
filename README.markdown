@@ -3,6 +3,7 @@
 This is how I set up my working environment. 
 (Eventually I'll rename this back to "dotfiles"... undoing years of nonsense.)
 
+Shortcuts: [Bootstrapping](#bootstrap-installation)
 
 ### Credits Due
 
@@ -26,6 +27,19 @@ For more options, try `make help`.
 
 *Note*: a variety of macOS settings are automatically tuned during the `apps` phase. 
 This process will terminate any running Chrome, Safari, and various other apps, due to actively changing settings. Unless the preferences file gets changed, this should only happen once.
+
+### Bootstrap Installation
+
+This should be copy-and-pastable.
+
+**Prerequisites:**
+
+- On Mac, install XCode
+- On Debian, `apt-get install git-core make python python2.7`
+
+```shell
+git clone https://github.com/samba/Workspace.git && cd Workspace && make dotfiles
+```
 
 ### Customization
 
@@ -55,9 +69,6 @@ Currently some other useful roles are defined:
 
 To install these roles, ust modify the file `generated/roles.txt`, adding the
 desired roles, and re-run `make apps`.
-
-
-
 
 
 ## More Apps from the AppStore
