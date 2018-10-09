@@ -18,15 +18,6 @@ endif
 colorscheme desert 
 
 
-
-" Show tree navigation in Explorer mode
-let g:netrw_liststyle = 3
-let g:netrw_preview   = 1
-let g:netrw_winsize   = 30
-
-" Open files from Explorer view in a new tab
-let g:netrw_browse_split = 3
-
 " Performance @{
 set nocompatible
 
@@ -232,8 +223,8 @@ hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
 
 set wildmenu
 set wildmode=list:longest,list:full
-" set wildignore+=*.o,*.obj,*.~,.lo,.so,.pyc,.swp,.bak
-" set suffixes+=.in,.a,.bak,.swp,.pyc
+set wildignore+=*.o,*.obj,*.~,.lo,.so,.pyc,.swp,.bak
+set suffixes+=.in,.a,.bak,.swp,.pyc
 
 set completeopt=menuone,longest
 " set completeopt=menuone,longest
@@ -348,6 +339,34 @@ call SetupCompletionKeys()
 nnoremap <expr> <Leader>C  (":call " . (g:completion_active == 1 ? "RevokeCompletionKeys" : "SetupCompletionKeys") . "()<CR>")
 
 " }@  end completion 
+
+" NetRW File Browser configuration @{
+
+" Show tree navigation in Explorer mode
+let g:netrw_liststyle = 3
+let g:netrw_preview   = 1
+let g:netrw_winsize   = 25
+let g:netrw_altview   = 1
+
+" Open files from Explorer view in a new window, split horizontally
+let g:netrw_browse_split = 4
+
+" Hide the netrw banner.
+let g:netrw_banner    = 0
+
+" Hide dot files and the like by default. (reactivate via `gh`)
+let g:netrw_hide      = 1
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()  
+
+" Start the right-side panel automatically.
+augroup ProjectDrawer 
+  autocmd!
+  autocmd VimEnter * :Vexplore
+augroup END
+
+
+" END NetRW File Browser configuration }@
+
 
 
 set dictionary+=/usr/share/dict/words
