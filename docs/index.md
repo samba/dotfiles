@@ -1,7 +1,6 @@
 ---
 title: Dotfiles by samba
 ---
-# [samba/dotfiles][1]
 
 Probably you should check out the [README][1] if you care for much detail.
 
