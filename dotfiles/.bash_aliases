@@ -107,6 +107,12 @@ case $(uname -s) in
 esac
 
 
+# Use colored diff by Git when available.
+# Inspired by https://github.com/jessfraz/dotfiles/blob/master/.functions
+if which git >/dev/null; then
+  alias diff="git diff --no-index --color-words"
+fi
+
 
 
 # Ring the bell after a long running command, 

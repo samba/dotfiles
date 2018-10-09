@@ -65,11 +65,11 @@ gd () { # shortcut for hopping into project directories
 
 
 
-cdiff () {
+function cdiff () { # color diff via vim, whee!
   if which vim >/dev/null; then
-    diff -U 3 -w -N $@ | vim -c 'set syntax=diff' -R -
+    $(which diff) -U 3 -w -N $@ | vim -c 'set syntax=diff' -R -
   else
-    diff -U 3 -wN "$@"
+    $(which diff) -U 3 -wN "$@"
   fi
 }
 
