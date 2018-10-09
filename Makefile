@@ -90,12 +90,14 @@ $(CACHE)/restore_git.sh: $(HOME)/.gitconfig  | $(CACHE)
 gitrestore:    ## Restore the Git settings previously stashed
 	bash -x util/gitconfig.sh restore $(HOME)/.gitconfig
 
+$(HOME)/.ssh/id_rsa.password:
+	dd if=/dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 48 > $@
 
 sshkeys: $(HOME)/.ssh/id_rsa  ## Generate SSH keys automatically
-$(HOME)/.ssh/id_rsa:
+$(HOME)/.ssh/id_rsa: $(HOME)/.ssh/id_rsa.password
 	test -d $(HOME)/.ssh || mkdir -m 0700 $(HOME)/.ssh
 ifeq ($(SSHKEY_PASSWORD),NOVALUE)
-	ssh-keygen -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
+	ssh-keygen -N "$$(cat $<)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
 else
 	ssh-keygen -N "$(SSHKEY_PASSWORD)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
 endif
