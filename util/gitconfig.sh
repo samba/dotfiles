@@ -8,7 +8,7 @@ export CACHE="${CACHE:-${HOME}/.cache}"
 # Generate a static script that restores the proper git config.
 # This will make recovery easier in the event that a task somewhere else in this process fails.
 function populate_params_stash () {
-cat >> ${2} <<EOF
+cat > ${2} <<EOF
 #!/usr/bin/env sh
 # Stashed properties from $1
 GIT_USER_NAME="$(git config -f $1 --get user.name)"
