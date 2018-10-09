@@ -132,14 +132,13 @@ nmap <silent> <Leader>Number :set number!<CR>
 nmap <silent> <Leader>n :set number!<CR>
 
 
-
 " }@
 
 " Autoindent @{
 
 " toggle auto-indent
 set autoindent smartindent
-set tabstop=2 shiftwidth=2 expandtab " spaces for tabs, indentation, and avoid real tabs
+set tabstop=4 shiftwidth=4 expandtab " spaces for tabs, indentation, and avoid real tabs
 
 nmap <Leader>Indent :set autoindent!<CR>
 nmap <Leader>Tab :set expandtab!<CR>
