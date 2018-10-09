@@ -1,7 +1,6 @@
 # Workspace Configuration
 
 This is how I set up my working environment. 
-(Eventually I'll rename this back to "dotfiles"... undoing years of nonsense.)
 
 Shortcuts: [Bootstrapping](#bootstrap-installation)
 
@@ -38,7 +37,7 @@ This should be copy-and-pastable.
 - On Debian, `apt-get install git-core make python python2.7`
 
 ```shell
-git clone https://github.com/samba/Workspace.git && cd Workspace && make dotfiles
+git clone https://github.com/samba/dotfiles.git && cd dotfiles && make dotfiles
 ```
 
 ### Customization
