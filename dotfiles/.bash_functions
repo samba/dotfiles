@@ -57,7 +57,7 @@ gofind () {
 }
 
 
-gd () { # shortcut for hopping into project directories
+function gd () { # shortcut for hopping into project directories
   local scan=$(test $# -gt 0  && echo "grep $@" || echo "cat")
   local foundpath=$(gofind | $scan | head -n 1)
   test -d ${foundpath} && pushd ${foundpath}

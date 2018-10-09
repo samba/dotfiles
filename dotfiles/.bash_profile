@@ -98,6 +98,12 @@ export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
 export PATH="${PATH/::/:}"
 
 
+# Provide easier access to Go project paths 
+test -d "${GOPATH}" && \
+  export CDPATH=${CDPATH}:${GOPATH}/src/github.com:${GOPATH}/src/golang.org:${GOPATH}/src
+
+export CDPATH="${CDPATH}:~/Projects/" 
+
 unset __check_util_paths
 
 
