@@ -51,6 +51,10 @@ case `which mvim` in
     alias tvim='mvim --servername ${MVIM_SERVER} --remote-tab-silent'
   ;;  
 esac
+if which xclip >/dev/null; then
+  test -x "$(which pbcopy)" || alias pbcopy='xclip -selection clipboard'
+  test -x "$(which pbpaste)" || alias pbpaste='xclip -selection clipboard -o'
+fi
 
 # Shortcut for encrypted VIM sessions
 alias xvim='vim -x'
