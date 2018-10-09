@@ -2,7 +2,9 @@
 
 This is how I set up my working environment. 
 
-Shortcuts: [Bootstrapping](#bootstrap-installation)
+Shortcuts: 
+- [Bootstrapping](#bootstrap-installation)
+- [Project home][5] [(direct link)][6]
 
 ### Credits Due
 
@@ -11,21 +13,6 @@ inspiration drawn heavily from a few other developers. A few of them:
 
 - [Mathias Bynens](https://github.com/mathiasbynens/dotfiles) 
 - [Jess Frazelle](https://github.com/jessfraz/dotfiles)
-
-
-## Installation
-
-Probably you want one of these two modes:
-
-```shell
-make dotfiles  # installs just the dotfiles
-make apps      # installs just the apps
-```
-
-For more options, try `make help`.
-
-*Note*: a variety of macOS settings are automatically tuned during the `apps` phase. 
-This process will terminate any running Chrome, Safari, and various other apps, due to actively changing settings. Unless the preferences file gets changed, this should only happen once.
 
 ### Bootstrap Installation
 
@@ -69,30 +56,5 @@ Currently some other useful roles are defined:
 To install these roles, ust modify the file `generated/roles.txt`, adding the
 desired roles, and re-run `make apps`.
 
-
-## More Apps from the AppStore
-
-Additional tools I find useful...
-
-- Xcode  (*Note* this is probably required _first_ before this `Makefile` will work.)
-- Postico
-- Slack
-- Evernote
-- Skitch
-- Pocket
-- Kindle
-- Pixelmator
-- The Unarchiver
-- Emphetamine
-- Cinch
-- Trello
-- MindNode 5
-- LastPass
-
-
-
-[1]: https://code.visualstudio.com/download
-[2]: https://desktop.github.com/
-[3]: https://www.google.com/chrome/browser/desktop/
-[4]: https://kapeli.com/dash
-[10]: https://github.com/settings/keys
+[5]: http://samba.github.com/dotfiles
+[6]: ./docs/index.md
