@@ -1,3 +1,6 @@
+---
+title: Dotfiles by samba
+---
 # Dotiles by [samba][1]
 
 Probably you should check out the [README][1] if you care for much detail.
@@ -36,7 +39,7 @@ For more options, try `make help`.
 - Suitable integration between these above (particularly `bash`, `vim`, and `screen`)
 - Automatic generation of an SSH key if needed
 - Some `.ssh/config` for compression and socket multiplexing
-- Some `git` aliases
+- Some `git` aliases and usability improvements.
 - A Python `usercustomize.py` with a colored prompt
 - Lots of tweaks for macOS user experience
 
@@ -55,7 +58,8 @@ The command prompt this installs displays several components:
 - Kubernetes cluster context (if present)
 - Short prompt on separate line, _colored by last command exit code_
 
-Screenshot:
+**Screenshot:**
+
 ![Command Prompt Screenshot](./commandprompt.png)
 
 ### Vim configuration
