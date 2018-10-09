@@ -543,4 +543,4 @@ endif
 
 
 " .vimrc modeline
-" vim: set foldmarker="@{,}@"
+" vim: set foldmarker=@{,}@ foldmethod=marker
