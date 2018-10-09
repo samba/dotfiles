@@ -6,76 +6,65 @@ This is how I set up my working environment.
 
 ### Credits Due
 
-[Mathias Bynens](https://github.com/mathiasbynens/dotfiles) provides a great
-example of a very simple model for handling these details. I've borrowed a few
-ideas from Mathias' work, so be sure to take a look at his too.
+This repository is an amalgamation of my own fine-tuning, with some initial
+inspiration drawn heavily from a few other developers. A few of them:
 
-## Set up the Dotfiles
+- [Mathias Bynens](https://github.com/mathiasbynens/dotfiles) 
+- [Jess Frazelle](https://github.com/jessfraz/dotfiles)
 
-```shell
-sh setup.sh dotfiles ${HOME}
-```
 
-## Install Software
+## Installation
 
-Likely this will require you to have Xcode installed, on a Mac.
-You probably want only one of these variants:
+Probably you want one of these two modes:
 
 ```shell
-sh setup.sh apps ${HOME} -o all  # does everything
-sh setup.sh apps ${HOME} -o webdev
-sh setup.sh apps ${HOME} -o containers
-sh setup.sh apps ${HOME} -o cloud
-sh setup.sh apps ${HOME} -o database
-sh setup.sh apps ${HOME} -o golang
-sh setup.sh apps ${HOME} -o python
-sh setup.sh apps ${HOME} -o nodejs
+make dotfiles  # installs just the dotfiles
+make apps      # installs just the apps
 ```
 
-## Setting Mac Defaults
+For more options, try `make help`.
 
-```shell
-sh macos/setup_mac_prefs.shell
-```
+*Note*: a variety of macOS settings are automatically tuned during the `apps` phase. 
+This process will terminate any running Chrome, Safari, and various other apps, due to actively changing settings. Unless the preferences file gets changed, this should only happen once.
 
-## Comparing Live Dotfiles
+### Customization
 
-On occasion a live system may have modifications to its dotfiles that should be
-merged into this project. 
+The app installation phase relies on a collection of roles to identify groups 
+of applications, based on the [package index](./util/packages.index.csv).
 
-A utility script is provided to simplify this effort:
+By default, the [Makefile](./Makefile) generates a list of roles, into `generated/roles.txt`, which is read to select apps for installation:
+- developer
+- user-cli
+- security
+- network
+- libs
+- python
 
-```shell
-bash util/live_diff.sh
-```
+Currently some other useful roles are defined:
+- cloud
+- kubernetes
+- vms
+- containers
+- webdev
+- mysql
+- postgresql
+- mongodb
+- golang
+- python-dev
+- jsdev
 
-*NOTE* that the script will probably not perform correctly if called in any
-other fashion; it's a hack. 
-
-## Additional Tools
-
-- [Visual Studio Code][1]
-- [GitHub for Mac][2]
-- [Google Chrome][3]
-- [Dash][4] Documentation Browser
-
-
-## Software installed by this automation.
-
-- Docker
-- Minikube & Kubernetes CLI
-- VirtualBox
-- iTerm 
-- PostgreSQL
-- Caffeine
-- (and lots of others...)
+To install these roles, ust modify the file `generated/roles.txt`, adding the
+desired roles, and re-run `make apps`.
 
 
-## From AppStore
+
+
+
+## More Apps from the AppStore
 
 Additional tools I find useful...
 
-- Xcode
+- Xcode  (*Note* this is probably required _first_ before this `Makefile` will work.)
 - Postico
 - Slack
 - Evernote
@@ -84,13 +73,13 @@ Additional tools I find useful...
 - Kindle
 - Pixelmator
 - The Unarchiver
+- Emphetamine
 - Cinch
+- Trello
+- MindNode 5
+- LastPass
 
 
-## Known Issues
-
-- [x] Startup was pretty slow. Fixed via file cache.
-- [x] Screen hardstatus and title handling were awkward. Simplified in both shell and screen config.
 
 [1]: https://code.visualstudio.com/download
 [2]: https://desktop.github.com/
