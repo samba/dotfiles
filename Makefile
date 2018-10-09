@@ -22,9 +22,7 @@ install: dotfiles apps  ## Install everything (dotfiles + applications)
 
 dotfiles:  ## Install the dotfiles
 	$(MAKE) backup
-	$(MAKE) gitbackup
 	$(MAKE) @sync_dotfiles
-	$(MAKE) gitrestore
 	$(MAKE) @setup_config
 	$(MAKE) sshkeys
 	$(MAKE) @pythonconfig
@@ -42,18 +40,20 @@ dotfiles:  ## Install the dotfiles
         -arvh --no-perms --no-links
 
 .PHONY: @setup_config
-@setup_config:
+@setup_config: $(HOME)/.gitconfig
 	grep -q "config.published" $(SSH_CONFIG) || \
 		echo "Include ~/.ssh/config.published" >>$(SSH_CONFIG)
 	mkdir -p $(HOME)/.ssh/keys $(HOME)/.ssh/sock
 	chmod 0700 $(HOME)/.ssh
 
 
+$(HOME)/.gitconfig: ./util/gitconfig.sh
+	touch $@
+	bash util/gitconfig.sh $@
+
+
 $(CACHE):
 	mkdir -p $@
-
-$(HOME)/.gitconfig:
-	echo "; empty .gitconfig" >$@
 
 generated/:
 	mkdir $(@)
