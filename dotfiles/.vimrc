@@ -549,14 +549,14 @@ nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
 
 
 " GNU screen & terminal title handling @{
-set titlestring=vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
-if &term == "screen"
+set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
+
+if (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "xterm")
+  set title
+  " auto BufEnter * :set title | let &titlestring = &g:titlestring_template
+  auto VimLeave * :set t_ts=k\
   set t_ts=k
   set t_fs=\
-endif
-
-if &term == "screen" || &term == "xterm"
-  set title
 endif
 " }@
 
