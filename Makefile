@@ -15,11 +15,11 @@ PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
 help: # borrowed from https://github.com/jessfraz/dotfiles/blob/master/Makefile
 	@grep -oE '^([a-zA-Z]\w+: .* ##.*)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-apps: @install_packages  ## just the applications
+apps: @install_packages  ## Install the applications
 
-install: dotfiles apps  ## everything
+install: dotfiles apps  ## Install everything (dotfiles + applications)
 
-dotfiles:  ## just the dotfiles
+dotfiles:  ## Install the dotfiles
 	$(MAKE) gitbackup
 	$(MAKE) @sync_dotfiles
 	$(MAKE) gitrestore
@@ -81,17 +81,17 @@ ifeq ($(SYSTEM),Darwin)
 endif
 
 
-# Stash the unique settings of my git config
-gitbackup: $(CACHE)/restore_git.sh
+
+gitbackup: $(CACHE)/restore_git.sh ## Stash the unique settings of my git config
 $(CACHE)/restore_git.sh: $(HOME)/.gitconfig  | $(CACHE)
 	bash util/gitconfig.sh stash $<
 
-# Restore the Git settings previously stashed
-gitrestore:
+
+gitrestore:    ## Restore the Git settings previously stashed
 	bash -x util/gitconfig.sh restore $(HOME)/.gitconfig
 
 
-sshkeys: $(HOME)/.ssh/id_rsa
+sshkeys: $(HOME)/.ssh/id_rsa  ## Generate SSH keys automatically
 $(HOME)/.ssh/id_rsa:
 	test -d $(HOME)/.ssh || mkdir -m 0700 $(HOME)/.ssh
 ifeq ($(SSHKEY_PASSWORD),NOVALUE)
@@ -131,10 +131,10 @@ test-docker: .cache/test-docker-image
 		$(DOCKER_TEST_IMAGE) /bin/bash test/run.sh /home/tester/code
 
 
-run-docker: .cache/test-docker-image
+run-docker: .cache/test-docker-image  ## Run this dotfiles project in a Docker Linux container.
 	docker run -it --rm -v "$(CURDIR):/home/tester/code" \
 		-e "SSHKEY_PASSWORD=testing" \
 		$(DOCKER_TEST_IMAGE) /bin/bash -c 'make dotfiles && bash -il'
 
-diff:
+diff:  ## basically diff  -r ${HOME} ${repo} (for live dotfiles)
 	@bash util/live_diff.sh
