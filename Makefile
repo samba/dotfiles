@@ -123,9 +123,9 @@ sshkeys: $(HOME)/.ssh/id_rsa  ## Generate SSH keys automatically
 $(HOME)/.ssh/id_rsa: $(HOME)/.ssh/id_rsa.password
 	test -d $(HOME)/.ssh || mkdir -m 0700 $(HOME)/.ssh
 ifeq ($(SSHKEY_PASSWORD),NOVALUE)
-	ssh-keygen -N "$$(cat $<)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
+	test -f $@ || ssh-keygen -N "$$(cat $<)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
 else
-	ssh-keygen -N "$(SSHKEY_PASSWORD)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
+	test -f $@ || ssh-keygen -N "$(SSHKEY_PASSWORD)" -C "$(USER)@$(HOSTNAME)" -b 4096 -f $@
 endif
 
 .PHONY: @wipeout_cache
