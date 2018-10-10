@@ -2,6 +2,7 @@ brew,cloud,google-cloud-sdk,cask
 brew,user-cli,wget,none
 brew,user-cli,openssl,none
 brew,user-cli,watch,none
+brew,user-cli,the_silver_searcher,none
 brew,developer,git,none
 brew,developer,iterm2,cask
 brew,developer,github-keygen,none
@@ -79,3 +80,4 @@ npm,webdev,node-sass
 apt-get,user-cli,bash-completion
 apt-get,developer,git-core
 apt-get,developer,vim-nox
+
