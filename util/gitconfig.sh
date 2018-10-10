@@ -125,6 +125,8 @@ function setup_alias () {
   git config -f $1 alias.branches "branch -a"
   git config -f $1 alias.tags "tags -l"
   git config -f $1 alias.remotes "remote -v"
+
+  git config -f $1 alias.ignore "!f() { echo \"\$@\" >> \$(dirname \$(git rev-parse --git-dir))/.gitignore; }; f"
 }
 
 function main () {
