@@ -1,6 +1,7 @@
 brew,cloud,google-cloud-sdk,cask
 brew,user-cli,wget,none
 brew,user-cli,openssl,none
+brew,user-cli,watch,none
 brew,developer,git,none
 brew,developer,iterm2,cask
 brew,developer,github-keygen,none
