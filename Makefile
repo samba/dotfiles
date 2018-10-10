@@ -144,9 +144,11 @@ endif
 
 # Setup my common Vim extensions
 .PHONY: @vimconfig
-@vimconfig:
+@vimconfig: $(CACHE)/vim_plugins_loaded
+$(CACHE)/vim_plugins_loaded: util/vimsetup.sh
 	# This requires some bash-specific functionality.
 	bash util/vimsetup.sh
+	touch $@
 
 
 .cache/test-docker-image: test/test.Dockerfile
