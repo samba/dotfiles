@@ -123,6 +123,10 @@ def queryCommands(indexFile, categories, packager):
     #  repr(categories)
     commands = dict()
     for record in reader:
+        if len(record) < 1:
+            continue  # skip empty rows
+        if record[0].startswith('#'):
+            continue  # skip comment lines
         cmd = record[0]
         if packager is not None and (packager != cmd):
             continue
