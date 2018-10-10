@@ -95,7 +95,7 @@ function setup_alias () {
   git config -f $1 alias.co "checkout"
 
   # Pull/fetch shortcuts
-  git config -f $1 alias.pr "pull --rebase"
+  git config -f $1 alias.pr "pull --autostash --rebase"
   git config -f $1 alias.fs "!git fetch --all && git status -sb && git diff --stat"
 
   # Various commit shortcuts
