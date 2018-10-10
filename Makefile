@@ -76,13 +76,13 @@ generated/backup.$(DATE).tar.gz: generated/
 		--exclude=".vim/view/*" --exclude=".vim/swap/*" \
 		./.bash* \
 		./.gitconfig* \
-		./.inputrc \
-		./.psqlrc \
-		./.pythonrc.py \
-		./.screenrc \
-		./.vimrc \
+		$$(test -f ./.inputrc && echo ./.inputrc) \
+		$$(test -f ./.psqlrc && echo ./.psqlrc) \
+		$$(test -f ./.pythonrc.py && echo ./.pythonrc.py) \
+		$$(test -f ./.screenrc && echo ./.screenrc) \
+		$$(test -f ./.config/htop/htoprc && echo ./.config/htop/htoprc) \
+		$$(test -f ./.vimrc && echo ./.vimrc) \
 		./.vim* \
-		./.config/htop/htoprc \
 		./.ssh/config* \
 		./.ssh/id_rsa*
 
