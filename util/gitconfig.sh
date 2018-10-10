@@ -2,6 +2,9 @@
 
 set -euf -o pipefail
 
+# Some of the aliases and related config in this setup are inspired by:
+# https://github.com/jessfraz/dotfiles/blob/master/.gitconfig
+
 # This is my default signing key. You probably want to change it.
 # If your git config also provides a signing key ID, it will 
 # take precedence, and this setting will have no effect..
@@ -118,6 +121,10 @@ function setup_alias () {
   git config -f $1 alias.alias "!git config -l | grep alias | cut -c 7- | sort | awk 'BEGIN {FS = \"=\"}; {printf \"\033[36m%-10s\033[0m %s\n\", \$1, \$2}'"
 
   git config -f $1 alias.showfiles "show --stat"
+
+  git config -f $1 alias.branches "branch -a"
+  git config -f $1 alias.tags "tags -l"
+  git config -f $1 alias.remotes "remote -v"
 }
 
 function main () {
