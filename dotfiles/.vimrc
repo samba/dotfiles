@@ -17,6 +17,8 @@ endif
 
 colorscheme desert 
 
+set fillchars+=vert:\: 
+
 
 " Performance @{
 set nocompatible
