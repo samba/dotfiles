@@ -568,6 +568,7 @@ if (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "
   auto VimLeave * :set t_ts=k\
   set t_ts=k
   set t_fs=\
+  set ttymouse=xterm2
 endif
 " }@
 
