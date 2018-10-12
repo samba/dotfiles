@@ -72,8 +72,13 @@ nmap <Leader>sb :set scrollbind!<CR>
 nmap <Leader>P :set paste!<CR>
 
 
+" toggles Presentation mode (e.g. for use in conferences)
+nmap <leader>R :set foldmethod=syntax foldcolumn=0 foldenable! number!<CR>
+
+
 " toggles auto-changedir in Ex mode?
 nmap <Leader>CD :set invacd<CR>
+
 
 " insert a dot character
 imap <Leader>dot <C-V>u2022
