@@ -409,7 +409,7 @@ autocmd FileType c set omnifunc=ccomplete#Complete
 
 " let the enter key take me to navigate help files
 autocmd FileType help nmap <buffer> <CR> <C-]>
-autocmd FileType help set foldcolumn=0 nonumber "no foldcolumn for help files
+autocmd FileType help set foldcolumn=0 nonumber foldenable foldmethod=marker "no foldcolumn for help files
 
 " Makefiles should permit tabs.
 autocmd FileType make setlocal noexpandtab
