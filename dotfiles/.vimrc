@@ -191,7 +191,7 @@ set mousemodel=popup_setpos
 " Code folding configuration @{
 " reference: http://varnit.wordpress.com/2007/10/23/vim-code-folding/
 set foldenable
-nmap <Leader>F set foldenable!<CR>
+nmap <Leader>Fold set foldenable!<CR>
 
 set foldcolumn=4
 set foldmethod=syntax
