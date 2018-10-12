@@ -49,7 +49,8 @@ nmap <Leader>b :ls<CR>:b<Space>
 nmap <Leader>ro :set invreadonly<CR>
 
 
-noremap <Leader>tex :tabe %:h<CR>
+" noremap <Leader>tex :tabe %:h<CR>
+noremap <Leader>tex :20Lexplore %:h<CR>
 noremap <Leader>tn :tabnext<CR>
 noremap <Leader>tp :tabprev<CR>
 
@@ -121,7 +122,8 @@ set rulerformat=%30(%n\ %Y\ %B\ %=\ %l,%c%V\ %P%)
 
 
 " put new windows below and right by default
-set splitbelow splitright
+set splitbelow 
+set splitright
 
 
 " Highlight the current line & column position
@@ -343,11 +345,12 @@ nnoremap <expr> <Leader>C  (":call " . (g:completion_active == 1 ? "RevokeComple
 " Show tree navigation in Explorer mode
 let g:netrw_liststyle = 3
 let g:netrw_preview   = 1
-let g:netrw_winsize   = 25
-let g:netrw_altview   = 1
+let g:netrw_winsize   = 80
+let g:netrw_altv      = &spr
+
 
 " Open files from Explorer view in a new window, split horizontally
-let g:netrw_browse_split = 4
+let g:netrw_browse_split = 2
 
 " Hide the netrw banner.
 let g:netrw_banner    = 0
@@ -357,11 +360,13 @@ let g:netrw_hide      = 1
 let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()  
 
 " Start the right-side panel automatically.
-augroup ProjectDrawer 
-  autocmd!
-  autocmd VimEnter * :Vexplore
-augroup END
+"augroup ProjectDrawer 
+"  autocmd!
+"  autocmd VimEnter * :Vexplore
+"augroup END
 
+" netrw windows should show an abbreviated path for statusline.
+autocmd filetype netrw setlocal statusline=%(%{pathshorten(getcwd())}%)
 
 " END NetRW File Browser configuration }@
 
