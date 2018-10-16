@@ -131,7 +131,7 @@ function setup_alias () {
   git config -f $1 alias.hist "!git l --date=iso"
 
   # List aliases
-  git config -f $1 alias.alias "!git config -l | grep alias | cut -c 7- | sort | awk 'BEGIN {FS = \"=\"}; {printf \"\033[36m%-10s\033[0m %s\n\", \$1, \$2}'"
+  git config -f $1 alias.alias "!git config -l | grep alias | cut -c 7- | sort | awk 'BEGIN {FS = \"=\"}; {printf \"\033[36m%-10s\033[0m %s\n\", \$1, substr(\$0, length(\$1) +2) }'"
 
   git config -f $1 alias.showfiles "show --stat"
 
