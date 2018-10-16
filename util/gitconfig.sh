@@ -85,6 +85,8 @@ function setup_gitworkflow () {
 
 function setup_alias () {
 
+  local gitlogformat="%C(green)% h%C(reset)% s%C(magenta)% ad%C(reset)%C(cyan)% d%C(reset)%C(yellow)% ae%C(reset)"
+
   # Status shortcuts
   git config -f $1 alias.st "status -sb"
   git config -f $1 alias.s "status --short --branch --ignore-submodules=untracked"
@@ -112,7 +114,18 @@ function setup_alias () {
   # Logging with all the right details.
   git config -f $1 alias.lo "log --graph --oneline"
   git config -f $1 alias.lp "log -p"
-  git config -f $1 alias.l "log --graph --oneline --format='format:%C(green)% h%C(reset)% s%C(magenta)% ad%C(reset)%C(cyan)% d%C(reset)%C(yellow)% ae%C(reset)'"
+  git config -f $1 alias.l "log --graph --oneline --format='format:${gitlogformat}'"
+
+  # Search for commits...
+  # ... containing source code changes like so:
+  git config -f $1 alias.fc "!f() { local p=\"\$1\"; shift; git log --pretty='format:${gitlogformat}' --decorate -E -G \"\$p\" \${@}; }; f" 
+  # ... containing commit messages like so:
+  git config -f $1 alias.fm "!f() { local p=\"\$1\"; shift; git log --pretty='format:${gitlogformat}' --decorate -E --grep=\"\$p\" \${@}; }; f"
+  # ... branches containing commit:
+  git config -f $1 alias.fb "!f() { git branch -a --contains \$1; }; f"
+  # ... tags containing commit:
+  git config -f $1 alias.ft "!f() { git describe --always --contains \$1; }; f"
+  
 
   # log with full dates; relies on the logging alias above
   git config -f $1 alias.hist "!git l --date=iso"
@@ -122,10 +135,12 @@ function setup_alias () {
 
   git config -f $1 alias.showfiles "show --stat"
 
+  # Semantically logical "list the things" aliases
   git config -f $1 alias.branches "branch -a"
   git config -f $1 alias.tags "tags -l"
   git config -f $1 alias.remotes "remote -v"
 
+  # Append an ignore pattern to the appropriate .gitignore
   git config -f $1 alias.ignore "!f() { echo \"\$@\" >> \$(dirname \$(git rev-parse --git-dir))/.gitignore; }; f"
 }
 
