@@ -4,9 +4,19 @@
 function http () {
   # usage: http POST "http://example.com/uri" "{\"test\":true}"
   # Provides a uniform shortcut for issuing HTTP requests.
-  local verb=$1; shift;
-  local URL=$1; shift;
-  local body=${1:-""}; shift;
+
+  local helptext="usage: http {GET|PUT|POST|DELETE...} http://example.com/url  \"{json...}\""
+
+  local verb="${1:-NONE}"
+  local URL="${2:-NONE}"
+  local body="${3:-""}"
+
+  case "${verb}" in 
+    -h|--help|help|NONE)
+        echo "${helptext}" >&2
+        return 1
+    ;;
+  esac
 
   while read prgm; do
     case "$(basename ${prgm})" in 
