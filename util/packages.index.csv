@@ -33,6 +33,11 @@ brew,libs,java,cask
 brew,libs,libffi,none
 brew,libs,libgit2,none
 brew,libs,jpeg,none
+# NOTE: handbrake GUI is a cask, while CLI is not.
+brew,media,handbrake,none
+brew,media,handbrake,cask
+brew,media,burn,cask
+brew,media,vlc,cask
 brew,webdev,node,none
 brew,webdev,postman,cask
 brew,webdev,closure-compiler,none
