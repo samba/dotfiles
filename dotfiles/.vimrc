@@ -33,6 +33,17 @@ set hidden                      "hid:   allows opening a new buffer in place of 
 " }@ end Performance
 
 
+" Encryption settings @{
+if has('cryptv')
+	if has('crypt-blowfish')
+		set cryptmethod=blowfish
+	endif
+	if has('crypt-blowfish2')
+		set cryptmethod=blowfish2 
+	endif	
+endif
+" }@
+
 " Misc options & key mappings @{
 " NOTE: lots of other key mappings are positioned in this file in their
 " relevant groups.
