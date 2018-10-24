@@ -11,9 +11,9 @@ set directory=$HOME/.vim/swap " swap files location
 set tags=./tags,$HOME/.vim/tags " you probably want to add more to these later.
 " }@
 
-if exists('*pathogen#infect')
-  execute pathogen#infect()
-endif
+" exists(...) fails to detect this method's presence, so we just call it.
+" In environments where it fails, user can comment it out.
+execute pathogen#infect()
 
 colorscheme desert 
 
