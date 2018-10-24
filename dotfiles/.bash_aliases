@@ -50,8 +50,11 @@ if which xclip >/dev/null; then
   test -x "$(which pbpaste)" || alias pbpaste='xclip -selection clipboard -o'
 fi
 
-# Shortcut for encrypted VIM sessions
-alias xvim='vim -x'
+if which vim >/dev/null; then
+    # Shortcut for encrypted VIM sessions
+    alias xvim='vim -xn'
+    alias notes='vim ~/Notes'
+fi
 
 # Easily trigger Python's debugger...
 alias pdb='python -m pdb'
