@@ -1,9 +1,4 @@
 " DEPLOY: 
-" wget http://github.com/samba/dotfiles/raw/master/vim/vimrc-minimal -O ~/.vimrc
-
-" This minimal vimrc is intended to be easily deployed to machines where my
-" dotfiles are not already installed, while maintaining a basic feature set
-" for usability.
 
 " These directories must exist... @{
 set backupdir=$HOME/.vim/backup " backup files location
