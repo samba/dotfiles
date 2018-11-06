@@ -72,9 +72,11 @@ set spelllang=en
 nmap <Leader>Spell :set spell!<CR>
 
 
-" toggle synchronous scrolling of windows
-nmap <Leader>sb :set scrollbind!<CR>
 
+if has('scrollbind')
+    " toggle synchronous scrolling of windows
+    nmap <Leader>sb :set scrollbind!<CR>
+endif
 
 " toggles paste mode
 nmap <Leader>P :set paste!<CR>
