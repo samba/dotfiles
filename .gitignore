@@ -4,3 +4,4 @@ temp
 generated/
 .DS_Store
 .vscode
+.tmp

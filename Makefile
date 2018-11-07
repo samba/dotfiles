@@ -10,6 +10,7 @@ SSH_CONFIG?=$(HOME)/.ssh/config
 SSHKEY_PASSWORD?=NOVALUE
 KEEP_CACHE?=FALSE
 PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
+TEMP_TEST_DIR?=$(CURDIR)/.tmp/test
 
 # SED_FLAG ?= $(shell test $$(echo "test" | sed -E 's@[a-z]@_@g') = "____" && echo "-E" || echo "-R")
 
@@ -51,9 +52,24 @@ $(HOME)/.gitconfig: ./util/gitconfig.sh
 	touch $@
 	bash util/gitconfig.sh $@
 
-
+.PHONY: @cache
+@cache: $(CACHE)
 $(CACHE):
 	mkdir -p $@
+
+$(TEMP_TEST_DIR):
+	mkdir -p $@
+
+.PHONY: clean
+clean:
+	rm -rf $(TEMP_TEST_DIR)
+
+.PHONY: test
+test: $(TEMP_TEST_DIR)  ## Populate a local temporary directory for testing.
+	HOME=$< $(MAKE) @cache
+	HOME=$< $(MAKE) @sync_dotfiles
+	HOME=$< $(MAKE) @pythonconfig
+	HOME=$< $(MAKE) @vimconfig
 
 generated/:
 	mkdir $(@)
