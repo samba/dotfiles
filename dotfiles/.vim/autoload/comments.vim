@@ -24,7 +24,7 @@ endfunction
 
 command! -range FlipComments <line1>,<line2>call LineCommentFlip()
 
-function! MapSlash() 
+function! comments#bind() abort 
 vmap <silent> <Leader>/ :FlipComments<CR>
 nmap <silent> <Leader>/ :FlipComments<CR>
 endfunction

@@ -238,7 +238,10 @@ endif
 filetype off " required before pathogen
 
 execute pathogen#infect()
-call pathogen#helptags()
+execute pathogen#helptags()
+execute diff#bind()
+execute modelines#bind()
+execute comments#bind()
 
 filetype plugin indent on " restore filetype sensibility
 

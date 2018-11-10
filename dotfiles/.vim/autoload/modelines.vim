@@ -45,7 +45,7 @@ function! WriteModeline (line)
   call winrestview(l:prior_view)
 endfunction
 
-
-" Writes a modeline at the last line of the buffer
-nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
-
+function! modelines#bind() abort
+    " Writes a modeline at the last line of the buffer
+    nmap <Leader>ml :silent call WriteModeline(line("$"))<CR>
+endfunction

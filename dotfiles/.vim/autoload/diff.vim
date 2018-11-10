@@ -7,6 +7,10 @@ function! DiffToggle(diffmode)
   endif
 endfunction
 
-" Toggle the diff mode setting.
-map <silent> <Leader>D :call DiffToggle(&diff)<CR>
+
+
+function! diff#bind() abort
+    " Toggle the diff mode setting.
+    map <silent> <Leader>D :call DiffToggle(&diff)<CR>
+endfunction
 
