@@ -131,7 +131,13 @@ endif
 if has('title') 
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
 
-    if (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "xterm")
+
+	let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
+	let compat_terminal =  (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "xterm")
+
+	let g:screen_title = (compat_terminal && !apple_terminal)
+
+    if (g:screen_title) 
       set title
       " auto BufEnter * :set title | let &titlestring = &g:titlestring_template
       auto VimLeave * :set t_ts=k\
