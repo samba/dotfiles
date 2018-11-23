@@ -95,10 +95,13 @@ function setup_alias () {
   git config -f $1 alias.br "branch"
   git config -f $1 alias.op "checkout --orphan"
   git config -f $1 alias.co "checkout"
+  git config -f $1 alias.cb "checkout -b"
 
   # Pull/fetch shortcuts
   git config -f $1 alias.pr "pull --autostash --rebase"
   git config -f $1 alias.fs "!git fetch --all && git status -sb && git diff --stat"
+  git config -f $1 alias.fu "!git rev-parse --abbrev-ref  \$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD)@{upstream}"
+
 
   # Various commit shortcuts
   git config -f $1 alias.ci "commit -a"
