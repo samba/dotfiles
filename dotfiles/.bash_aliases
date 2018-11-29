@@ -137,3 +137,11 @@ alias ksvc='kubectl get services -o wide'
 alias kdep='kubectl get deployments -o wide'
 alias knod='kubectl get nodes -o wide'
 alias ktail='kubectl log -f'
+
+
+# Shortcuts to enable local runs of GitLab CI configuration
+if which docker >/dev/null && which gitlab-runner >/dev/null; then
+    alias grun="gitlab-runner exec docker"
+
+fi
+

@@ -18,6 +18,7 @@ brew,kubernetes,kubernetes-cli,none
 brew,kubernetes,minikube,cask
 brew,containers,docker,cask
 brew,containers,docker-clean,none
+brew,developer,gitlab-runner,none
 brew,vagrant,vagrant,cask
 brew,vagrant,vagrant-manager,cask
 brew,vms,virtualbox,cask
