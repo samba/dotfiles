@@ -118,7 +118,8 @@ __bash_files_import () {
     which brew >/dev/null && find $(brew --prefix)/etc/bash_completion.d/ -type l -maxdepth 1 
   fi
 
-  
+
+  test -f "${HOME}/.bashrc_local" && echo "${HOME}/.bashrc_local"
 
 }
 
