@@ -1,4 +1,4 @@
-.PHONY: dotfiles apps install
+.PHONY: dotfiles apps install prefs
 
 DATE?=$(shell date +%Y-%m-%d_%H%M)
 DOCKER_TEST_IMAGE?=dotfiles_test:local
@@ -18,6 +18,8 @@ help: # borrowed from https://github.com/jessfraz/dotfiles/blob/master/Makefile
 	@grep -oE '^([a-zA-Z]\w+: .* ##.*)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 apps: @install_packages  ## Install the applications
+
+all: dotfiles apps prefs
 
 install: dotfiles apps  ## Install everything (dotfiles + applications)
 
@@ -106,6 +108,8 @@ generated/backup.$(DATE).tar.gz: generated/
 clean-backup:
 	rm -v generated/backup.*.tar.gz
 
+.PHONY: prefs
+prefs: $(CACHE)/mac_prefs_auto  ## Configure OS preferences
 $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 	mkdir -p $(@D)
 	bash $^
@@ -116,10 +120,9 @@ $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh install
 endif
-	bash -x $<
+	bash -x $<  # install packages
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh configure
-	$(MAKE) $(CACHE)/mac_prefs_auto
 endif
 
 
