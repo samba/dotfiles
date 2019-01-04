@@ -11,7 +11,7 @@ function http () {
   local URL="${2:-NONE}"
   local body="${3:-""}"
 
-  case "${verb}" in 
+  case "${verb}" in
     -h|--help|help|NONE)
         echo "${helptext}" >&2
         return 1
@@ -19,9 +19,9 @@ function http () {
   esac
 
   while read prgm; do
-    case "$(basename ${prgm})" in 
+    case "$(basename ${prgm})" in
       curl)
-        ${prgm} -s -X ${verb} --data "${body}" -o - "${URL}" 
+        ${prgm} -s -X ${verb} --data "${body}" -o - "${URL}"
       ;;
       wget)
         ${prgm} --method="${verb}" --body-data "${body}" -O - "${URL}"
@@ -118,7 +118,7 @@ function cdiff () { # color diff via vim, whee!
 
 
 seldir () {
-  [ $# -gt 0 ] && dirs -v | egrep "$@" || dirs -    
+  [ $# -gt 0 ] && dirs -v | egrep "$@" || dirs -
   read -p "Directory number: " dirnum
   [ -z "$dirnum" ] || pushd +${dirnum} >/dev/null 2>/dev/null
   echo "#" `pwd`
