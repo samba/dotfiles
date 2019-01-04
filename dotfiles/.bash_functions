@@ -52,6 +52,38 @@ function myip () {
 
 }
 
+function __gopath_base () {
+    # NB. on MacOS we cannot rely on `go env GOROOT`, because homebrew sets up the
+    # path /usr/local/Cellar/<version>/libexec, which is NOT where we want to checkout
+    # development code...
+    (   echo "$GOPATH" | tr -s ':' '\n';
+        test -z "$GOROOT" || echo "$GOROOT";
+        echo "${HOME}/go"
+    ) | while read i; do
+        test -d "$i" && echo "$i" && return 0
+    done
+}
+
+function gitgo() {
+    local rpath="$1"; shift;
+    local repo_orig="$(echo ${rpath} | sed 's%^github.com/%git@github.com:%')"
+    local gopath="$(__gopath_base | head -n 1)"
+    test -d "${gopath}/src" || return $?
+
+    # validate rpath format (like <host.com>/<org>/<repo> for go origins)
+    echo "${rpath}" | grep -E -q -e '^([a-z0-9]+\.)+[a-z]{2,4}/[a-z0-9]' || return $?
+
+    local tpath="${gopath}/src/${rpath}";
+
+    if test -d "${tpath}"; then
+        echo "Fetching updated ${rpath}..." >&2
+        cd "$tpath" && git fetch --all;
+    else
+        echo "Cloning ${rpath}..." >&2
+        git clone "${repo_orig}" "${tpath}" && cd "$tpath"
+    fi
+}
+
 
 gofind () {
   # Paths to search
