@@ -142,6 +142,11 @@ alias ktail='kubectl log -f'
 # Shortcuts to enable local runs of GitLab CI configuration
 if which docker >/dev/null && which gitlab-runner >/dev/null; then
     alias grun="gitlab-runner exec docker"
-
 fi
 
+
+
+# Autocompletion for alias kubectl if possible
+if [ "function" = "$(type -t __start_kubectl)" ]; then
+  complete -F __start_kubectl k
+fi

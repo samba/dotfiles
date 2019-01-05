@@ -89,14 +89,7 @@ complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes Syste
 __bash_files_import () {
   
   # Explicitly seeking these files is apparently faster than a dynamic search.
-  test -f "/etc/bash_completion" && echo "/etc/bash_completion"
 
-  test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
-  test -f "${HOME}/.bash_colors" && echo "${HOME}/.bash_colors"
-  test -f "${HOME}/.bash_prompt" && echo "${HOME}/.bash_prompt"
-  test -f "${HOME}/.bash_sshagent" && echo "${HOME}/.bash_sshagent"
-  test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"
-  test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
 
   # find /usr/local/Caskroom -type f -name '*.bash.inc'
 
@@ -118,7 +111,13 @@ __bash_files_import () {
     which brew >/dev/null && find $(brew --prefix)/etc/bash_completion.d/ -type l -maxdepth 1 
   fi
 
-
+  test -f "/etc/bash_completion" && echo "/etc/bash_completion"
+  test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
+  test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
+  test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"
+  test -f "${HOME}/.bash_colors" && echo "${HOME}/.bash_colors"
+  test -f "${HOME}/.bash_prompt" && echo "${HOME}/.bash_prompt"
+  test -f "${HOME}/.bash_sshagent" && echo "${HOME}/.bash_sshagent"
   test -f "${HOME}/.bashrc_local" && echo "${HOME}/.bashrc_local"
 
 }
