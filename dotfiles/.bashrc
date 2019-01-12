@@ -106,11 +106,10 @@ __bash_files_import () {
     done
   fi
 
-  if test -d "/usr/local/opt/"; then
-    # Homebrew links a bunch of scripts into this path.
-    which brew >/dev/null && find $(brew --prefix)/etc/bash_completion.d/ -type l -maxdepth 1 
-  fi
+    
+  which brew >/dev/null && echo $(brew --prefix)/etc/bash_completion
 
+  
   test -f "/etc/bash_completion" && echo "/etc/bash_completion"
   test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
   test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
