@@ -164,23 +164,23 @@ endif
 # Setup my common Vim extensions
 .PHONY: @vimconfig
 @vimconfig: $(CACHE)/vim_plugins_loaded
-$(CACHE)/vim_plugins_loaded: util/vimsetup.sh
+$(CACHE)/vim_plugins_loaded: util/vimsetup.sh | $(CACHE)
 	# This requires some bash-specific functionality.
 	bash util/vimsetup.sh
 	touch $@
 
 
-.cache/test-docker-image: test/test.Dockerfile
+$(CACHE)/test-docker-image: test/test.Dockerfile | $(CACHE)
 	mkdir -p $(@D)
 	docker build -t $(DOCKER_TEST_IMAGE) -f $< $(<D)
 	touch -r $< $@
 
-test-docker: .cache/test-docker-image
+test-docker: $(CACHE)/test-docker-image
 	docker run -it --rm -v "$(CURDIR):/home/tester/code" \
 		$(DOCKER_TEST_IMAGE) /bin/bash test/run.sh /home/tester/code
 
 
-run-docker: .cache/test-docker-image  ## Run this dotfiles project in a Docker Linux container.
+run-docker: $(CACHE)/test-docker-image  ## Run this dotfiles project in a Docker Linux container.
 	docker run -it --rm -v "$(CURDIR):/home/tester/code" \
 		-e "SSHKEY_PASSWORD=testing" \
 		$(DOCKER_TEST_IMAGE) /bin/bash -c 'make dotfiles && bash -il'
