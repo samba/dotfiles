@@ -175,7 +175,9 @@ nmap <silent> <Leader>n :set number!<CR>
 "
 " Buffer handling - these are performance improvements.
 set switchbuf=useopen           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
-set hidden                      "hid:   allows opening a new buffer in place of an existing one without first saving the existing one
+
+set nohidden                    " NB: the netrw handling of tree lists doesn't play well with hidden buffers; it ends up writing odd `NetrwTreeListing` files. See related autocmd below.
+"set hidden                      "hid:   allows opening a new buffer in place of an existing one without first saving the existing one
 
 " Swap timer: milliseconds and bytes to wait idle before writing swap
 set updatetime=30000 updatecount=100
@@ -515,6 +517,23 @@ let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()
 " netrw windows should show an abbreviated path for statusline.
 if has('statusline') && has('autocmd')
     autocmd filetype netrw setlocal statusline=%(%{pathshorten(getcwd())}%)
+endif
+
+
+" Netrw writes odd files when used in tree listing mode, combined with hidden
+" buffers. This attempts to mitigate the problem. See `nohidden` above. 
+" See also: https://github.com/tpope/vim-vinegar/issues/13
+if has('autocmd')
+augroup netrw_buf_hidden_fix
+    autocmd!
+
+    " Set all non-netrw buffers to bufhidden=hide
+    autocmd BufWinEnter *
+                \  if &ft != 'netrw'
+                \|     set bufhidden=hide
+                \| endif
+
+augroup end	
 endif
 
 " END NetRW File Browser configuration ==#
