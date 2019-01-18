@@ -52,6 +52,8 @@ brew,mongodb,mongodb,none
 brew,mysql,mysqlworkbench,cask
 brew,mongodb,mongodbpreferencepane,cask
 brew,golang,go
+brew,golang,dep
+brew,golang,godep
 brew,python,python3
 pip,cloud,awscli
 pip,cloud,awslogs
