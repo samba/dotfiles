@@ -554,6 +554,15 @@ nnoremap <leader>a :cclose<CR>
 " =# end quickfix
 
 
+" Use The Silver Searcher if present, because it's really fast. 
+if executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  let g:ctrlp_use_caching = 0
+endif
+
+
+
 " =# end Development environment
 
 
