@@ -27,6 +27,7 @@ brew,vms,virtualbox-extension-pack,cask
 brew,security,gnupg,none
 brew,security,veracrypt,cask
 brew,security,gpg-suite,cask
+brew,security,pinentry-mac,none
 brew,security,oversight,cask
 brew,network,transmission,cask
 brew,network,cyberduck,cask
