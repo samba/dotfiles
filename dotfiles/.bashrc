@@ -76,14 +76,6 @@ test -e "$HOME/.ssh/config"  && complete -o "default" -o "nospace" \
   -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" \
   scp sftp ssh;
 
-# Add tab completion for `defaults read|write NSGlobalDomain`
-# You could just use `-g` instead, but I like being explicit
-complete -W "NSGlobalDomain" defaults;
-
-# Add `killall` tab completion for common apps
-complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
-
-
 
 
 __bash_files_import () {
@@ -106,12 +98,16 @@ __bash_files_import () {
     done
   fi
 
-    
-  which brew >/dev/null && echo $(brew --prefix)/etc/bash_completion
+   
+  
+  if which brew >/dev/null; then
+    echo $(brew --prefix)/etc/bash_completion
+  else 
+    test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
+  fi  
 
   
   test -f "/etc/bash_completion" && echo "/etc/bash_completion"
-  test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
   test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
   test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"
   test -f "${HOME}/.bash_colors" && echo "${HOME}/.bash_colors"
