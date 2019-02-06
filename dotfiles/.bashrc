@@ -40,7 +40,6 @@ shopt -s checkwinsize
 # Perform hostname completion when a word completion follows "@"
 shopt -s hostcomplete
 
-
 # Rescans $PATH when a given command/executable from the hash goes missing...
 shopt -s checkhash;
 
@@ -83,21 +82,14 @@ __bash_files_import () {
   # Explicitly seeking these files is apparently faster than a dynamic search.
 
 
-  # find /usr/local/Caskroom -type f -name '*.bash.inc'
-
   if test -d /usr/local/Caskroom; then
-    for p in "path.bash.inc" "completion.bash.inc"; do
-      echo "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/${p}"
-    done
+    echo "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc"
   fi
 
   # Google Cloud if installed via the web download (not Homebrew)
   if test -d "${HOME}/Library/google-cloud-sdk"; then
-    for p in "path.bash.inc" "completion.bash.inc"; do
-      echo "${HOME}/Library/google-cloud-sdkgoogle-cloud-sdk/${p}"
-    done
+      echo "${HOME}/Library/google-cloud-sdk/completion.bash.inc"
   fi
-
    
   
   if which brew >/dev/null; then

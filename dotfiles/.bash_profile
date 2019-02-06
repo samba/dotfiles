@@ -30,10 +30,8 @@ else
 fi
 
 
-__check_util_paths () {
+function __check_util_paths () {
   # Produce a series of directories that usually have executables I'm interested in.
-
-  local SEARCH_NODEJS_BIN=false;
 
   echo ${HOME}/.bin
   echo ${HOME}/.dotfiles/bin
@@ -44,10 +42,6 @@ __check_util_paths () {
   test -d "/usr/local/mysql/bin" && echo /usr/local/mysql/bin
   test -d "/usr/local/bin" && echo /usr/local/bin
 
-
-  # Google AppEngine
-  test -d /Applications/GoogleAppEngineLauncher.app/ && \
-    find /Applications/GoogleAppEngineLauncher.app/ -type d -name google_appengine
 
   # PostgreSQL
   test -d /Applications/Postgres.app/ && \
@@ -61,33 +55,33 @@ __check_util_paths () {
   test -d ${HOME}/Library/Python/ && \
     find ${HOME}/Library/Python/ -type d -name bin
 
-  # Hopefully a NodeJS environment was installed too.
-  if test SEARCH_NODEJS_BIN = true; then
-    # XXX: this one is SLOW
-    find /usr/local/ -type d -name 'node@*' -print0 | \
-      xargs -0 -I {} find {} -name bin
-  fi
-
   test -d "${GOPATH}" && find "${GOPATH}" -maxdepth 3 -type d -name bin
+
+
+  # Google AppEngine
+  test -d /Applications/GoogleAppEngineLauncher.app/ && \
+    find /Applications/GoogleAppEngineLauncher.app/ -type d -name google_appengine
+
 }
 
 
-# Simplistic mode of populating cache data for faster startup.
-# Usage:
-#   bash::cachefile <name>  <populator function>
-# 
-# If the target file is not present, executes the given function to populate
-# its content, and then prints the content. Future calls will load the reuse
-# the file data directly.
-# bash::cachefile () {
-#   local target="${HOME}/.cache/bash/${1}"
-#   shift 1;
-#   if ! test -f "$target"; then
-#     mkdir -p "$(dirname "$target")"
-#     ${@} > "${target}"  # execute the func & prepare cache
-#   fi
-#   cat "${target}"
-# }
+
+function __login_includes () {
+
+# Settings for specific homebrew contexts
+if test -d /usr/local/Caskroom; then
+
+    # Load PATH settings for google cloud & appengine
+    echo "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc"
+
+fi
+
+# If somehow GCloud is installed directly without homebrew
+if test -d "${HOME}/Library/google-cloud-sdk"; then
+    echo "${HOME}/Library/google-cloud-sdk/path.bash.inc"
+fi
+}
+
 
 
 
@@ -104,10 +98,16 @@ test -d "${GOPATH}" && \
 
 export CDPATH="${CDPATH}:~/Projects/" 
 
-unset __check_util_paths
 
+
+for i; do  # load the associated includes...
+    test -f "$i" && source "$i"
+done < <(__login_includes)
+
+
+unset __check_util_paths __login_includes
 
 # Import interactive shell configuration
-if shopt -q login_shell; then
+if shopt -q login_shell || [[ $- == *i* ]]; then
   [ -f ~/.bashrc ] && source ~/.bashrc;
 fi
