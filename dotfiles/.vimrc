@@ -58,6 +58,7 @@ set shiftround    " round indentation operations to a multiple of shiftwidth
 set splitbelow   " Horizontal windows split below the current window 
 set splitright   " Vertical windows split right of the current window
 
+set backspace=eol,indent,start
 
 set nocursorcolumn
 set nocursorline
