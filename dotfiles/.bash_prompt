@@ -237,7 +237,7 @@ function prompt::basic () {
 }
 
 
-export PROMPT_COMMAND="prompt::command"
+export PROMPT_COMMAND="[[ $(type -t prompt::command) == "function" ]] &&  prompt::command"
 export COLORTERM="$(prompt::color_hint | head -n 1)"
 
 
