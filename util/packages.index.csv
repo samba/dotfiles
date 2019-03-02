@@ -4,6 +4,7 @@ brew,user-cli,openssl,none
 brew,user-cli,watch,none
 brew,user-cli,the_silver_searcher,none
 brew,user-cli,bash-completion,none
+brew,user-cli,jq,none
 brew,developer,git,none
 brew,developer,iterm2,cask
 brew,developer,github-keygen,none
