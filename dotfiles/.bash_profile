@@ -100,7 +100,7 @@ export CDPATH="${CDPATH}:~/Projects/"
 
 
 
-for i; do  # load the associated includes...
+while read i; do  # load the associated includes...
     test -f "$i" && source "$i"
 done < <(__login_includes)
 
