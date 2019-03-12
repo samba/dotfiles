@@ -96,7 +96,17 @@ export PATH="${PATH/::/:}"
 test -d "${GOPATH}" && \
   export CDPATH=${CDPATH}:${GOPATH}/src/github.com:${GOPATH}/src/golang.org:${GOPATH}/src
 
-export CDPATH="${CDPATH}:~/Projects/" 
+
+__list_project_groups () {
+    echo "${HOME}/Projects/"
+    echo "${HOME}/Projects/Personal/"
+    echo "${HOME}/Projects/Datacraft/"
+}
+
+
+while read i; do
+    test -d "$i" && export CDPATH="${CDPATH}:${i}"
+done < <(__list_project_groups) 
 
 
 
@@ -105,7 +115,7 @@ while read i; do  # load the associated includes...
 done < <(__login_includes)
 
 
-unset __check_util_paths __login_includes
+unset __check_util_paths __login_includes  __list_project_groups
 
 # Import interactive shell configuration
 if shopt -q login_shell || [[ $- == *i* ]]; then
