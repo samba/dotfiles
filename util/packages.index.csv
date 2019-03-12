@@ -17,6 +17,7 @@ brew,developer,visual-studio-code,cask
 brew,developer,dash,cask
 brew,containers,xhyve,none
 brew,kubernetes,kubernetes-cli,none
+brew,kubernetes,kubernetes-helm,none
 brew,kubernetes,minikube,cask
 brew,containers,docker,cask
 brew,containers,docker-clean,none
