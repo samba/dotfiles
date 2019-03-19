@@ -115,6 +115,10 @@ while read i; do  # load the associated includes...
 done < <(__login_includes)
 
 
+# Sometimes Google AppEngine SDK hides elsewhere...
+export GOOGLE_APPENGINE_PATH="$(dirname $(which dev_appserver.py))/../platform/google_appengine/"
+
+
 unset __check_util_paths __login_includes  __list_project_groups
 
 # Import interactive shell configuration
