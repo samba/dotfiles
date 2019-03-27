@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# Some command-line clients don't play nicely with AWS' usual configuration and credentials context (e.g. profiles).
+# Sometimes this includes terraform. https://github.com/hashicorp/terraform/issues/18402
+# This utility works around that by:
+#   - Fetching credentials context via `aws` CLI built-in features
+#   - Executing the command with environment variables suitably configured
+#
+# Usage:
+#   awscred list    # shows available profiles (by name)
+#   awscred exec <profile_name> <command>
+
+set -euf -o pipefail
+
+export AWS_SHARED_CREDENTIALS_FILE="${AWS_SHARED_CREDENTIALS_FILE:-${HOME}/.aws/credentials}"
+
+case "$1" in 
+    "exec")
+        export AWS_DEFAULT_PROFILE="$2"
+        export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile $2)
+        export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile $2)
+        export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile $2)
+        shift 2;
+        exec "$@";
+        ;;
+    "list")
+       grep '^\[' ${AWS_SHARED_CREDENTIALS_FILE}  | tr -d '[]'
+       ;;
+esac
+
