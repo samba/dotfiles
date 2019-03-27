@@ -1,7 +1,7 @@
 " Vim runtime configuration. 
-" vim: foldmarker=#=,=# foldmethod=marker
+" vim: foldmarker={{(,)}} foldmethod=marker
 
-" Commonly tuned customizations #=
+" Commonly tuned customizations {{{
 
 colorscheme desert 
 
@@ -15,9 +15,9 @@ colorscheme desert
 " let mapleader = ","     " default: \  <backslach>
 " let g:mapleader = ","   " default: \  <backslash>
 
-" =# end common customizations
+" }}} end common customizations
 
-" Basic environment standardization. #===
+" Basic environment standardization. {{{=
 " this section attempts to implement sensible behavior with simple vim
 " settings. no magic. see also:
 " https://github.com/jessfraz/.vim/blob/master/vimrc
@@ -68,9 +68,9 @@ set modeline     " Enable per-file configuration lines
 set regexpengine=1
 
 set formatoptions=qrn1  " sensible auto-format behavior 
-" ==#
+" =}}}
 
-" Shortcuts, many toggling above behaviors #=
+" Shortcuts, many toggling above behaviors {{{
 
 " Skip to next blank line
 nmap <Leader>k /^\s*$<CR>
@@ -105,9 +105,13 @@ inoremap <C-U> <C-G>u<C-U>
 " (The thing that triggers when you accidently type q... in Normal mode.)
 map q: :q
 
-" =# end shortcuts
+inoremap <C-A> <ESC>^i
+inoremap <C-E> <ESC>$i
 
-" GUI settings #=
+
+" }}} end shortcuts
+
+" GUI settings {{{
 "
 if has("gui_running") " See :help guioptions
   set guioptions-=T " Disable toolbar in GUI mode 
@@ -126,9 +130,9 @@ if has('mouse')
     set mousemodel=popup_setpos
 endif
 
-" =# end GUI settings
+" }}} end GUI settings
 
-" GNU screen & terminal title handling #=
+" GNU screen & terminal title handling {{{
 if has('title') 
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
 
@@ -151,9 +155,9 @@ endif
 set ttyfast    " optimize for fast terminal connectionss
 set lazyredraw " don't update the screen when macros/etc running in background (not command)
 
-" =#
+" }}}
 
-" VIM's own window structure #=
+" VIM's own window structure {{{
 "
 set fillchars+=vert:\:  " the vertical window barrier's character content
 
@@ -170,9 +174,9 @@ nmap <silent> <Leader>Number :set number!<CR>
 nmap <silent> <Leader>n :set number!<CR>
 
 
-" end VIM window structure =#
+" end VIM window structure }}}
 
-" Tab, Window, and Buffer navigation #==
+" Tab, Window, and Buffer navigation {{{=
 "
 " Buffer handling - these are performance improvements.
 set switchbuf=useopen           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
@@ -205,9 +209,9 @@ noremap <Leader>tw :browse tabnew .<CR>
 " endif
 
 
-" ==#
+" =}}}
 
-" Text display, wrapping and annotation #=
+" Text display, wrapping and annotation {{{
 
 " toggle non-printing characters
 nmap <Leader>List :set list!<CR>
@@ -236,10 +240,10 @@ if has('spell')  " Some filetypes below trigger spelling activation
 endif
 
 
-" =#
+" }}}
 
 
-" Plugin handling and related extensions #==
+" Plugin handling and related extensions {{{=
 "
 " exists(...) fails to detect this method's presence, so we just call it.
 " In environments where it fails, user can comment it out.
@@ -257,7 +261,7 @@ filetype plugin indent on " restore filetype sensibility
 " Some plugins I deploy via dotfiles...
 " execute comments#MapSlash() " TODO
 
-" Encryption settings #=
+" Encryption settings {{{
 if has('cryptv')
 	if has('crypt-blowfish')
 		set cryptmethod=blowfish
@@ -266,12 +270,12 @@ if has('cryptv')
 		set cryptmethod=blowfish2 
 	endif	
 endif
-" =#
+" }}}
 
-" ==#
+" =}}}
 
 
-" Code folding defaults #===
+" Code folding defaults {{{==
 
 " reference: http://varnit.wordpress.com/2007/10/23/vim-code-folding/
 
@@ -297,10 +301,10 @@ if has('folding')
 
 endif
 
-" ==#
+" =}}}
 
 
-" Completion menu and related #=
+" Completion menu and related {{{
 
 " Ignored filename suffixes
 set suffixes+=.in,.a,.bak,.swp,.pyc
@@ -352,18 +356,18 @@ if has('wildmenu')
 endif
 
 
-" Setup color/style for completion menu #=
+" Setup color/style for completion menu {{{
 hi Pmenu cterm=none ctermfg=black ctermbg=DarkGreen
 hi PmenuSel cterm=none ctermfg=Green ctermbg=black
 hi PmenuSbar cterm=bold ctermfg=none ctermbg=Green
 hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
-" =#
+" }}}
 
 
 
-" =# end Completion menu
+" }}} end Completion menu
 
-" Language-specific (and filetype-specific) settings: #= 
+" Language-specific (and filetype-specific) settings: {{{ 
 
 if has('autocmd')  " Most of the per-file functionality requires autocmd. 
 
@@ -436,7 +440,7 @@ endif
 
 au FileType text setlocal textwidth=78
 
-" Python #=
+" Python {{{
 " We want consistent spacing in Python, and not tabs.
 autocmd FileType python setlocal ai tabstop=4 softtabstop=4 shiftwidth=4 textwidth=80 smarttab expandtab
 
@@ -445,21 +449,21 @@ autocmd FileType python set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.s
 autocmd FileType python set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
 
 
-" =# end Python
+" }}} end Python
 
 
-" Javascript #=
+" Javascript {{{
 "
 " autocmd FileType javascript set makeprg=make\ test
 autocmd FileType javascript set makeprg=closure\ --test\ -p\ '%'
 
 
-" =# end Javascript
+" }}} end Javascript
 
-" Makefile #=
+" Makefile {{{
 " Makefiles should permit tabs.
 autocmd FileType make setlocal noexpandtab
-" =#
+" }}}
 
 
 
@@ -482,7 +486,7 @@ let g:vim_markdown_json_frontmatter = 1
 let g:terraform_fmt_on_safe = 1
 let g:terraform_align = 1
 
-" BASH and similar shell languages #=
+" BASH and similar shell languages {{{
 "" :help bash
 " let g:is_sh = 1
 " let g:is_bash = 1
@@ -494,9 +498,9 @@ let g:sh_minlines=500
 let g:sh_maxlines=1000
 
 
-" end BASH etc =#
+" end BASH etc }}}
 
-" NetRW File Browser configuration #===
+" NetRW File Browser configuration {{{==
 
 " Show tree navigation in Explorer mode
 let g:netrw_liststyle = 3
@@ -537,19 +541,19 @@ augroup netrw_buf_hidden_fix
 augroup end	
 endif
 
-" END NetRW File Browser configuration ==#
+" END NetRW File Browser configuration =}}}
 
-" =# end Language-specific settings
+" }}} end Language-specific settings
 
 
 
-" Development Environment #=
+" Development Environment {{{
 
 " Shortcut to run any `make all` in the CWD
 map <Leader>m :make<CR>
 
 
-" QuickFix configuration & shortcuts #=
+" QuickFix configuration & shortcuts {{{
 " This trigger takes advantage of the fact that the quickfix window can be
 " easily distinguished by its file-type, qf. The wincmd J command is
 " equivalent to the Ctrl+W, Shift+J shortcut telling Vim to move a window to
@@ -571,7 +575,7 @@ nnoremap <leader>a :cclose<CR>
 
 
 
-" =# end quickfix
+" }}} end quickfix
 
 
 " Use The Silver Searcher if present, because it's really fast. 
@@ -583,12 +587,12 @@ endif
 
 
 
-" =# end Development environment
+" }}} end Development environment
 
 
 
 
-" Misc options & key mappings #=
+" Misc options & key mappings {{{
 " NOTE: lots of other key mappings are positioned in this file in their
 " relevant groups.
 
@@ -609,7 +613,7 @@ function! StripDots()
 endfunction
 
 
-" =#
+" }}}
 
 
 
