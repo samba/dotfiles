@@ -115,6 +115,14 @@ function cdiff () { # color diff via vim, whee!
   fi
 }
 
+function cview () {
+  local ft="$1"; shift;
+  if test $# -eq 0; then
+    vim -R -c "set ft=${ft}" -
+  else
+    vim -R -c "set ft=${ft}" "$@"
+  fi
+}
 
 remove_path_exec() {
     local sarg="${SED_REGEXP_VARIANT:--R}"
