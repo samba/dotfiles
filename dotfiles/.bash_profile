@@ -68,18 +68,14 @@ function __check_util_paths () {
 
 function __login_includes () {
 
-# Settings for specific homebrew contexts
-if test -d /usr/local/Caskroom; then
-
-    # Load PATH settings for google cloud & appengine
-    echo "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc"
-
+# GCloud can be installed in several locations, but we infer it from the available execution
+if which gcloud >/dev/null; then
+	GCLOUD_ROOT=$(gcloud info --format="value(installation.sdk_root)")
+	if test -d "${GCLOUD_ROOT}"; then
+		echo "${GCLOUD_ROOT}/path.bash.inc"
+	fi
 fi
 
-# If somehow GCloud is installed directly without homebrew
-if test -d "${HOME}/Library/google-cloud-sdk"; then
-    echo "${HOME}/Library/google-cloud-sdk/path.bash.inc"
-fi
 }
 
 
