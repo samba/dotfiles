@@ -116,6 +116,15 @@ function cdiff () { # color diff via vim, whee!
 }
 
 
+remove_path_exec() {
+    local sarg="${SED_REGEXP_VARIANT:--R}"
+    for ex; do
+        pexec="$(dirname $(which ${ex}))"
+        export PATH="$(echo "$PATH" | sed $sarg "s@(:${pexec}|${pexec}:|^${pexec}$)@@")"
+    done
+}
+
+
 
 seldir () {
   [ $# -gt 0 ] && dirs -v | egrep "$@" || dirs -
