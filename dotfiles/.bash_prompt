@@ -180,7 +180,7 @@ function prompt::git_status () {
     if ! git diff-files --quiet --ignore-submodules --; then
         template="${template//\$ug/${changes_unstaged}}"
     else
-        template="${template//\$ug/$}"
+        template="${template//\$ug/}"
     fi
    
     # Untracked files
