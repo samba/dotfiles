@@ -43,9 +43,9 @@ function prompt::abbreviate_working_path () {
 
 # Provides ${PROMPT_COMMAND}
 # Redefines PS1 as needed.
+# NB: this command is executed by PROMPT_COMMAND, which provides LAST_RETURN_CODE
 function prompt::command () {
-    local LAST_RETURN_CODE=$?  # XXX: MUST BE FIRST
-    
+
     local set_status=true
     local status_message="$(prompt::abbreviate_working_path)"
     local shell_title=""
@@ -237,7 +237,7 @@ function prompt::basic () {
 }
 
 
-export PROMPT_COMMAND="[[ $(type -t prompt::command) == "function" ]] &&  prompt::command"
+export PROMPT_COMMAND="LAST_RETURN_CODE=\$?; [[ $(type -t prompt::command) == "function" ]] &&  prompt::command"
 export COLORTERM="$(prompt::color_hint | head -n 1)"
 
 
