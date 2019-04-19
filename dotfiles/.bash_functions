@@ -141,6 +141,12 @@ seldir () {
   echo "#" `pwd`
 }
 
+slugify () {
+    tr -cd '[:alnum:][:space:]' | tr -d '\n' | tr '[:upper:]' '[:lower:]' | tr -s '[:space:]' '-';
+    echo; # NB ensure a newline at end of string 
+}
+
+
 crypto () {
   case $1 in
     encrypt) openssl aes-256-cbc -e -in "${2}" -out -;;
