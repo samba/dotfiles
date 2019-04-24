@@ -371,6 +371,16 @@ hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
 
 if has('autocmd')  " Most of the per-file functionality requires autocmd. 
 
+" Highlight unwanted spaces
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+
+
 " Sensible per-language defaults.
 if has('folding')
 	autocmd FileType python setlocal noet foldenable foldmethod=indent
