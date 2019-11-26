@@ -99,18 +99,18 @@ __bash_files_import () {
   fi  
 
   
-  test -f "/etc/bash_completion" && echo "/etc/bash_completion"
-  test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
-  test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"
-  test -f "${HOME}/.bash_colors" && echo "${HOME}/.bash_colors"
-  test -f "${HOME}/.bash_prompt" && echo "${HOME}/.bash_prompt"
-  test -f "${HOME}/.bash_sshagent" && echo "${HOME}/.bash_sshagent"
-  test -f "${HOME}/.bashrc_local" && echo "${HOME}/.bashrc_local"
+  echo "/etc/bash_completion"
+  echo "${HOME}/.bash_functions"
+  echo "${HOME}/.bash_colors"
+  echo "${HOME}/.bash_prompt"
+  echo "${HOME}/.bash_sshagent"
+  echo "${HOME}/.bash_aliases"
+  echo "${HOME}/.bashrc_local"
 
 }
 
-
 while read f; do
+#  echo "#importing <${f}>" >&2
   test -f "$f" && source "$f"
 done < <(__bash_files_import)
 
