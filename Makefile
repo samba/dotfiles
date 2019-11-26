@@ -92,17 +92,17 @@ generated/backup.$(DATE).tar.gz: generated/
 	cd ${HOME} && tar -czf $(PWD)/$@ \
 		--exclude=".git" \
 		--exclude=".vim/view/*" --exclude=".vim/swap/*" \
-		./.bash* \
-		./.gitconfig* \
+		$$(ls -1 ./.bash*) \
+		$$(ls -1 ./.gitconfig*) \
 		$$(test -f ./.inputrc && echo ./.inputrc) \
 		$$(test -f ./.psqlrc && echo ./.psqlrc) \
 		$$(test -f ./.pythonrc.py && echo ./.pythonrc.py) \
 		$$(test -f ./.screenrc && echo ./.screenrc) \
 		$$(test -f ./.config/htop/htoprc && echo ./.config/htop/htoprc) \
 		$$(test -f ./.vimrc && echo ./.vimrc) \
-		./.vim* \
-		./.ssh/config* \
-		./.ssh/id_rsa*
+		$$(test -d ./.vim && echo ./.vim*) \
+		$$(ls -1 ./.ssh/config*) \
+		$$(ls -1 ./.ssh/id_rsa*)
 
 
 clean-backup:
