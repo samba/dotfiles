@@ -35,6 +35,7 @@ function __check_util_paths () {
 
   echo ${HOME}/.bin
   echo ${HOME}/.dotfiles/bin
+  echo "${HOME}/.local/bin"
 
 	# Homebrew will install some utilities here and there...
 	# I need them early in my path.
