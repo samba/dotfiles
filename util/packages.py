@@ -7,13 +7,16 @@ import csv
 
 from collections import namedtuple
 
+# This type is passed to CommandRenderer.__init__()
 Command = namedtuple("Command", ["command", "packages"])
 
 
 class CommandRender(object):
     args = None
     verb = "install"
+    use_sudo = False
     priority = 5
+    variants = []
 
     @classmethod
     def getRenderer(cls, cmd):
@@ -26,18 +29,35 @@ class CommandRender(object):
         self.command = cmd
     
     @property
-    def executable(self):
-        return self.command.command.split(" ")[0]
+    def executables(self):
+        vals = [self.command.command.split(" ")[0]]
+        if len(self.variants):
+            for k in self.variants:
+                if k not in vals:
+                    vals.append(k)
+        return vals
+
+    @property
+    def fixed_args(self):
+        return ' '.join(self.command.command.split(" ")[1:])
+
+    @property
+    def generated_commands(self):
+        sudo = ""
+        if self.use_sudo:
+            sudo = "sudo "
+        for k in self.executables:
+            yield "if {condition}; then {command} {verb} {args} {packages}; fi".format(
+                condition=("command -v %s >/dev/null" % (k,)),
+                command=(sudo + k + self.fixed_args),
+                packages=(" ".join(self.command.packages)),
+                verb=(self.verb if self.verb is not None else ""),
+                args=(self.args if self.args is not None else "")
+            )
 
     def __str__(self):
-        return "{condition} && {command} {verb} {args} {packages}".format(
-            condition=("which %s >/dev/null" % (self.executable,)),
-            command=(self.command.command),
-            packages=(" ".join(self.command.packages)),
-            verb=(self.verb if self.verb is not None else ""),
-            args=(self.args if self.args is not None else "")
-        )
-
+        return '\n'.join(list(self.generated_commands))
+    
 class BrewRenderer(CommandRender):
     call = "brew"
     args = "--display-items --force"
@@ -55,8 +75,8 @@ class GoRender(CommandRender):
 
     def __str__(self):
         return "\n".join([
-            "{condition} && {command.command} {verb} {pkg}".format(
-                condition=("which %s >/dev/null" % (self.executable,)),
+            "if {condition}; then {command.command} {verb} {pkg}; fi".format(
+                condition=("command -v %s >/dev/null" % (self.executable,)),
                 command=self.command,
                 verb=self.verb,
                 pkg=pkg
@@ -71,6 +91,7 @@ class NodeRender(CommandRender):
 
 
 class DebianRender(CommandRender):
+    use_sudo = True
     call = "apt-get"
     args = "-y"
     priority = 0
@@ -91,6 +112,7 @@ class EasyInstallRender(CommandRender):
 class PIPRender(CommandRender):
     call = "pip"
     priority = 8
+    variants = [ "pip3" ]
 
 
 def sort_commands(commands):
@@ -132,11 +154,13 @@ def queryCommands(indexFile, categories, packager):
             continue
         if len(categories) > 0 and record[1] not in categories:
             continue
-
+        
+        # Command identity is the call (e.g. "brew") plus a variant (e.g. "cask")
         cmd = (cmd, record[3] if len(record) > 3 else "none")
+
         if cmd not in commands:
             commands[cmd] = []
-        commands[cmd].append(record[2])
+        commands[cmd].append(record[2]) # map the package name
 
     for cmd, packages in commands.iteritems():
         command = ("%s %s" % (cmd[0], cmd[1] if cmd[1] != "none" else ""))
