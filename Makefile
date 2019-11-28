@@ -10,6 +10,7 @@ SSH_CONFIG?=$(HOME)/.ssh/config
 SSHKEY_PASSWORD?=NOVALUE
 KEEP_CACHE?=FALSE
 PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
+DEBIAN?=$(shell test -f /etc/debian_release && echo "Debian")
 TEMP_TEST_DIR?=$(CURDIR)/.tmp/test
 
 # SED_FLAG ?= $(shell test $$(echo "test" | sed -E 's@[a-z]@_@g') = "____" && echo "-E" || echo "-R")
@@ -84,7 +85,6 @@ generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.
 	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
 	python util/packages.py -i $< $(shell cat generated/roles.txt)> $@
 
-
 .PHONY: backup
 backup: generated/backup.$(DATE).tar.gz  ## Backup archive of settings this might change.
 generated/backup.$(DATE).tar.gz: generated/
@@ -115,8 +115,15 @@ $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 	bash $^
 	touch -r $< $@
 
-.PHONY: @install_packages	
-@install_packages: generated/packages.sh 
+.PHONY: @install_respositories
+@install_repositories:
+ifeq ($(PACKAGE_HANDLER),apt-get)
+	sudo bash ./debian/setup.sh repos
+endif
+
+
+.PHONY: @install_packages
+@install_packages: generated/packages.sh @install_repositories
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh install
 endif
