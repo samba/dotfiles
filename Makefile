@@ -65,6 +65,7 @@ $(TEMP_TEST_DIR):
 .PHONY: clean
 clean:
 	rm -rf $(TEMP_TEST_DIR)
+	rm -rf ./generated/*.terminfo
 
 .PHONY: test
 test: $(TEMP_TEST_DIR)  ## Populate a local temporary directory for testing.
@@ -104,6 +105,18 @@ generated/backup.$(DATE).tar.gz: generated/
 		./.ssh/config* \
 		./.ssh/id_rsa*
 
+.PHONY: terminfo
+terminfo: generated/xterm-256color.terminfo generated/screen-256color.terminfo
+
+
+generic/misc/screen-256color.%: generic/misc/xterm-256color.%
+	sed 's/xterm/screen/' $< > $@
+
+
+# Attempt to automate production of italic termcap profile, per https://alexpearce.me/2014/05/italics-in-iterm2-vim-tmux/
+generated/%.terminfo: generic/misc/%.terminfo.txt
+	tic $< # installs the terminfo file locally
+	date > $@
 
 clean-backup:
 	rm -v generated/backup.*.tar.gz
