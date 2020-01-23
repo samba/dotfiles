@@ -42,7 +42,7 @@ bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '# |root:' sudo -i
 
 
-bind X screen -t '$ |debug:' bash -x --login -i
+bind B screen -t '$ |debug:' bash -x --login -i
 
 
 
