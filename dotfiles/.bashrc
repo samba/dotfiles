@@ -106,7 +106,7 @@ __bash_files_import () {
   echo "${HOME}/.bash_sshagent"
   echo "${HOME}/.bash_aliases"
   echo "${HOME}/.bashrc_local"
-
+  echo "${HOME}/.bash_login_message"
 }
 
 while read f; do

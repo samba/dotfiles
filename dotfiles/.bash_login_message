@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Prints the three most recent remote logins
+last -a -100 ${USER} | grep -v -e tty -e :pts | head -n 3
