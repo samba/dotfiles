@@ -1,14 +1,46 @@
 #!/usr/bin/env bash
-
 # Loads SSH keys in a sensible fashion
 
+# This script may get populated with commands for loading keys
+CURSOR_SCRIPT=${HOME}/.ssh/keycursor.sh
+
+mac_keychain_present () {
+    command security list-keychains >/dev/null 2>/dev/null
+}
 
 ssh_agent_avail () {
 		test -z "$SSH_AGENT_PID" && return 1
-		test -r "$SSH_AUTH_SOCK" || return 1 
+		test -r "$SSH_AUTH_SOCK" || return 1
 		shopt -q login_shell || return 1
 		which ssh-add >/dev/null || return 1
 }
+
+
+
+load_keys () {
+    if mac_keychain_present; then
+        xargs ssh-add -q -K 1>/dev/null 2>/dev/null
+    else
+        write_printer_script ${CURSOR_SCRIPT}
+        DISPLAY=nothing:0 SSH_ASKPASS=${CURSOR_SCRIPT} setsid xargs ssh-add
+    fi
+}
+
+
+# prompt template is "Enter passphrase for <filename>:"
+print_key_password () {
+    fname="${0##Enter passphrase for }"
+    fname="${fname%%:}"
+    test -f "$fname" && test -f "${fname}.password" && cat "${fname}.password"
+}
+
+
+write_printer_script () {
+    echo "#!/usr/bin/env bash" > ${1}
+    type print_key_password | sed '/is a function/d' >> ${1}
+    chmod +x ${1}
+}
+
 
 configure_ssh_agent () {
 	# automatically add keychain-provided keys
@@ -17,11 +49,11 @@ configure_ssh_agent () {
 	# Discover keys that are not already known
 	find "${HOME}/.ssh" -type f -name '*rsa' \
 		| grep -v -f <(ssh-add -l 2>/dev/null | cut -d ' ' -f 3) \
-		| xargs ssh-add -q -K 1>/dev/null   2>/dev/null
+		| load_keys
 
 
 	# List known keys
-	# ssh-add -l
+	ssh-add -l
 }
 
 if shopt -q login_shell; then
