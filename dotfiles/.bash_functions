@@ -156,6 +156,41 @@ crypto () {
 }
 
 
+xtar () {
+
+  target="-"
+  mode="none"
+  OPTIND=0
+
+  while getopts f:xtch flag "${@}"; do
+    case "$flag" in 
+      f) target="$OPTARG";;
+      c) mode="create";;
+      x) mode="extract";;
+      t) mode="list";;
+      h) 
+        echo -e "\txtar -c -f <filename> [paths] -- <tar options> # create an encrypted archive " >&2; 
+        echo -e "\txtar -x -f <filename> [paths] -- -C ./target/  # extract an encrypted archive " >&2;
+        echo -e "\txtar -t -f <filename> [paths]                  # list contents of an encrypted archive " >&2;  
+        return 0;;
+      -) break;;
+    esac
+  done
+
+  shift $(( OPTIND - 1 ));
+
+  case "$mode" in
+    extract) openssl aes-256-cbc -d -in "${target}" | tar -xf - "$@";;
+    list) openssl aes-256-cbc -d -in "${target}" | tar -tf - "$@";;
+    create) tar -czf - "$@" | openssl aes-256-cbc -e -out "${target}";;
+    *) echo "unknown mode: [$mode]" >&2;;
+  esac
+
+}
+
+
+
+
 ssh_fingerprints () {
   find ${HOME}/.ssh -name '*rsa' | while read f; do
     echo `ssh-keygen -E md5  -lf ${f}` "($f)"
