@@ -102,6 +102,8 @@ function setup_alias () {
   git config -f $1 alias.fs "!git fetch --all && git status -sb && git diff --stat"
   git config -f $1 alias.fu "!git rev-parse --abbrev-ref  \$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD)@{upstream}"
 
+  # Most useful for catching up to an upstream master.
+  git config -f $1 alias.fmerge "merge --ff-only"
 
   # Various commit shortcuts
   git config -f $1 alias.ci "commit -a"
