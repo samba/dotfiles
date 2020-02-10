@@ -34,7 +34,7 @@ dotfiles:  ## Install the dotfiles
 	@echo "OK all done!"
 
 .PHONY: @sync_dotfiles
-@sync_dotfiles:
+@sync_dotfiles: prereq
 	rsync $(CURDIR)/dotfiles/ $(HOME)/ \
         --exclude ".git/" \
         --exclude ".osx" \
@@ -84,6 +84,14 @@ generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.
 	which python
 	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
 	python util/packages.py -i $< $(shell cat generated/roles.txt)> $@
+
+
+.PHONY: prereq
+prereq: generated/prereqs_installed.txt
+generated/prereqs_installed.txt: debian/prereq.sh generated/ 
+	date >> $@
+	which apt-get && bash debian/prereq.sh > $@
+
 
 .PHONY: backup
 backup: generated/backup.$(DATE).tar.gz  ## Backup archive of settings this might change.
