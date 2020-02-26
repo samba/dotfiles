@@ -117,7 +117,7 @@ status () {
           OK|PASS) printf -v result "(%s)" "$(generate_color_terms bold green fg ${keytext:-OK})";;
           ERR|ERROR) printf -v result "(%s)" "$(generate_color_terms bold red fg ${keytext:-ERROR})";;
           WARN) printf -v result "(%s)" "$(generate_color_terms bold yellow fg ${keytext:-WARN})";;
-          *) printf -v result "(%s)" "$(generate_color_terms bold purple fg ${keytext:-OPTARG})";;
+          *) printf -v result "(%s)" "$(generate_color_terms bold purple fg ${keytext:-${OPTARG}})";;
         esac
         ;;
       m) # Append the message text
@@ -129,21 +129,21 @@ status () {
 }
 
 
-fail(){
+_fail(){
   err=$1; shift 1;
   status  -t ERROR -m "$@" >&2
   exit $err
 }
 
-warn () {
+_warn () {
   status  -t ERROR -m "$@" >&2
 }
 
-info () {
+_info () {
   status  -t INFO -m "$@"  >&2
 }
 
-good () {
+_good () {
   status  -t OK -m "$@" >&2
 }
 
