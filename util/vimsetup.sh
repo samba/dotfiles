@@ -27,6 +27,7 @@ function do:vim:install_packaages () {
     gitclone "${HOME}/.vim/bundle/vim-openssl" "https://github.com/vim-scripts/openssl.vim.git"
     gitclone "${HOME}/.vim/bundle/vim-markdown" "https://github.com/tpope/vim-markdown.git"
 	gitclone "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
+	gitclone "${HOME}/.vim/bundle/vim-ps1" "https://github.com/PProvost/vim-ps1.git"
 	gitclone "${HOME}/.vim/bundle/vim-go" "https://github.com/fatih/vim-go.git"
 }
 
