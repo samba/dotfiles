@@ -233,6 +233,11 @@ if has('syntax')
 	syntax on
 	syntax sync minlines=256
 	set synmaxcol=800
+
+if has('autocmd')
+	nmap <Leader>ss :syn sync fromstart<CR>
+endif
+
 endif
 
 if has('spell')  " Some filetypes below trigger spelling activation
