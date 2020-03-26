@@ -1,9 +1,9 @@
-" Vim runtime configuration. 
+" Vim runtime configuration.
 " vim: foldmarker={{(,)}} foldmethod=marker
 
 " Commonly tuned customizations {{{
 
-colorscheme desert 
+colorscheme desert
 
 " colorscheme solarized
 " let g:solarized_termcolors=256
@@ -55,7 +55,7 @@ set shiftwidth=4  " number of spaces for each step of autoindent
 set expandtab     " spaces for tabs
 set shiftround    " round indentation operations to a multiple of shiftwidth
 
-set splitbelow   " Horizontal windows split below the current window 
+set splitbelow   " Horizontal windows split below the current window
 set splitright   " Vertical windows split right of the current window
 
 set backspace=eol,indent,start
@@ -67,7 +67,7 @@ set modeline     " Enable per-file configuration lines
 
 set regexpengine=1
 
-set formatoptions=qrn1  " sensible auto-format behavior 
+set formatoptions=qrn1  " sensible auto-format behavior
 " =}}}
 
 " Shortcuts, many toggling above behaviors {{{
@@ -114,7 +114,7 @@ inoremap <C-E> <ESC>$i
 " GUI settings {{{
 "
 if has("gui_running") " See :help guioptions
-  set guioptions-=T " Disable toolbar in GUI mode 
+  set guioptions-=T " Disable toolbar in GUI mode
   set guioptions+=aA " Enable autoselect mode; integrate VIMs buffers with OS paste system, etc
   set guifont=Inconsolata:h15
 endif
@@ -133,7 +133,7 @@ endif
 " }}} end GUI settings
 
 " GNU screen & terminal title handling {{{
-if has('title') 
+if has('title')
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
 
 
@@ -142,7 +142,7 @@ if has('title')
 
 	let g:screen_title = (compat_terminal && !apple_terminal)
 
-    if (g:screen_title) 
+    if (g:screen_title)
       set title
       " auto BufEnter * :set title | let &titlestring = &g:titlestring_template
       auto VimLeave * :set t_ts=k\
@@ -202,7 +202,7 @@ noremap <Leader>tex :20Lexplore %:h<CR>
 noremap <Leader>tn :tabnext<CR>
 noremap <Leader>tp :tabprev<CR>
 
-" if has('browse') or exists('+browse') 
+" if has('browse') or exists('+browse')
 " only if the browse flag is enabled at compile (not macOS)
 " Open a browser in CWD to select a file
 noremap <Leader>tw :browse tabnew .<CR>
@@ -219,7 +219,7 @@ nmap <Leader>List :set list!<CR>
 set nowrap " no wrapping of lines
 nmap <Leader>Wrap :set nowrap!<CR>
 
-" Display non-wrapping line-continues 
+" Display non-wrapping line-continues
 set listchars+=precedes:<,extends:<
 
 " Use this to override keymapping elsewhere if needed
@@ -229,7 +229,7 @@ nmap <Leader>ro :set invreadonly<CR>
 
 
 
-if has('syntax') 
+if has('syntax')
 	syntax on
 	syntax sync minlines=256
 	set synmaxcol=800
@@ -267,8 +267,8 @@ if has('cryptv')
 		set cryptmethod=blowfish
 	endif
 	if has('crypt-blowfish2')
-		set cryptmethod=blowfish2 
-	endif	
+		set cryptmethod=blowfish2
+	endif
 endif
 " }}}
 
@@ -335,13 +335,13 @@ if has('insert_expand')
 
 
 	set pumheight=12  " number of items shown in the popup menu
-	
+
 endif
 
 if has('wildmenu')
 	set wildmenu
 	set wildmode=list:longest,list:full
-	
+
 	set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
 	set wildignore+=.sw?,.bak       " vim swap files etc
 	set wildignore+=.git,.hg,.svn   " version control
@@ -367,9 +367,9 @@ hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
 
 " }}} end Completion menu
 
-" Language-specific (and filetype-specific) settings: {{{ 
+" Language-specific (and filetype-specific) settings: {{{
 
-if has('autocmd')  " Most of the per-file functionality requires autocmd. 
+if has('autocmd')  " Most of the per-file functionality requires autocmd.
 
 " Highlight unwanted spaces
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -445,7 +445,7 @@ if has('spell')
 au FileType markdown setlocal complete+=k spell
 au FileType gitcommit setlocal complete+=k spell
 au FileType text setlocal complete+=k spell
-endif 
+endif
 
 
 au FileType text setlocal textwidth=78
@@ -527,7 +527,7 @@ let g:netrw_banner    = 0
 
 " Hide dot files and the like by default. (reactivate via `gh`)
 let g:netrw_hide      = 1
-let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()  
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()
 
 " netrw windows should show an abbreviated path for statusline.
 if has('statusline') && has('autocmd')
@@ -536,7 +536,7 @@ endif
 
 
 " Netrw writes odd files when used in tree listing mode, combined with hidden
-" buffers. This attempts to mitigate the problem. See `nohidden` above. 
+" buffers. This attempts to mitigate the problem. See `nohidden` above.
 " See also: https://github.com/tpope/vim-vinegar/issues/13
 if has('autocmd')
 augroup netrw_buf_hidden_fix
@@ -548,7 +548,7 @@ augroup netrw_buf_hidden_fix
                 \|     set bufhidden=hide
                 \| endif
 
-augroup end	
+augroup end
 endif
 
 " END NetRW File Browser configuration =}}}
@@ -588,7 +588,7 @@ nnoremap <leader>a :cclose<CR>
 " }}} end quickfix
 
 
-" Use The Silver Searcher if present, because it's really fast. 
+" Use The Silver Searcher if present, because it's really fast.
 if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
