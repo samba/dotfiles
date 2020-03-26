@@ -142,7 +142,7 @@ function setup_alias () {
 
   # Semantically logical "list the things" aliases
   git config -f $1 alias.branches "branch -a"
-  git config -f $1 alias.tags "tags -l"
+  git config -f $1 alias.tags "tag -l"
   git config -f $1 alias.remotes "remote -v"
 
   # Append an ignore pattern to the appropriate .gitignore
