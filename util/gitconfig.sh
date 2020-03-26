@@ -101,6 +101,7 @@ function setup_alias () {
   git config -f $1 alias.pr "pull --autostash --rebase"
   git config -f $1 alias.fs "!git fetch --all && git status -sb && git diff --stat"
   git config -f $1 alias.fu "!git rev-parse --abbrev-ref  \$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD)@{upstream}"
+  git config -f $1 alias.fap "fetch --all --prune"
 
   # Most useful for catching up to an upstream master.
   git config -f $1 alias.fmerge "merge --ff-only"
