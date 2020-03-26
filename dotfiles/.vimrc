@@ -429,7 +429,53 @@ au FileType nginx setlocal noet
 au FileType go setlocal noet
 
 
-au FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 
+" Shortcuts and configuration for Go code files
+au FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4
+au FileType go nmap <buffer> <Leader>gr <Plug>(go-run)
+au FileType go nmap <buffer> <Leader>gb <Plug>(go-build)
+au FileType go nmap <buffer> <Leader>gta <Plug>(go-test)
+au FileType go nmap <buffer> <Leader>gtf <Plug>(go-test-func)
+au FileType go nmap <buffer> <Leader>gtc <Plug>(go-test-compile)
+au FileType go nmap <buffer> <Leader>gcv <Plug>(go-coverage)
+au FileType go nmap <buffer> <Leader>gcc <Plug>(go-cloverage-toggle)
+au FileType go nmap <buffer> <Leader>gl <Plug>(go-lint)
+au FileType go nmap <buffer> <Leader>gv <Plug>(go-vet)
+au FileType go nmap <buffer> <Leader>gdp <Plug>(go-deps)
+au FileType go nmap <buffer> <Leader>gdo <Plug>(go-doc)
+au FileType go nmap <buffer> <Leader>gds <Plug>(go-doc-split)
+
+" Go symbol navigation
+au FileType go nmap <buffer> <Leader>gs <Plug>(go-def)
+au FileType go nmap <buffer> <Leader>gds <Plug>(go-def-split)
+au FileType go nmap <buffer> <Leader>gdt <Plug>(go-def-tab)
+au FileType go nmap <buffer> <Leader>gds <Plug>(go-def-stack)
+au FileType go nmap <buffer> <Leader>gtx <Plug>(go-def-stack-clear)
+
+
+au FileType go nmap <buffer> <Leader>gti <Plug>(go-implements)
+au FileType go nmap <buffer> <Leader>grn <Plug>(go-rename)
+au FileType go nmap <buffer> <Leader>gca <Plug>(go-callees)
+au FileType go nmap <buffer> <Leader>gcr <Plug>(go-callers)
+
+au FileType go nmap <buffer> <Leader>gdc <Plug>(go-describe)
+au FileType go nmap <buffer> <Leader>gcs <Plug>(go-callstack)
+au FileType go nmap <buffer> <Leader>gfv <Plug>(go-freevars)
+au FileType go nmap <buffer> <Leader>gcp <Plug>(go-channelpeers)
+au FileType go nmap <buffer> <Leader>grf <Plug>(go-referrers)
+au FileType go nmap <buffer> <Leader>gpt <Plug>(go-pointsto)
+au FileType go nmap <buffer> <Leader>gml <Plug>(go-metalinter)
+au FileType go nmap <buffer> <Leader>gas <Plug>(go-alternate-split)
+au FileType go nmap <buffer> <Leader>gav <Plug>(go-alternate-vertical)
+
+" Calls :GoImport for the current package
+au FileType go nmap <buffer> <Leader>gi <Plug>(go-import)
+" Calls goimports (CLI) for the current package
+au FileType go nmap <buffer> <Leader>gim <Plug>(go-imports)
+
+" Generates an `if err != nil` clause
+au FileType go nmap <buffer> <Leader>gie <Plug>(go-iferr)
+
+
 
 " Let the enter key take me to navigate help files
 autocmd FileType help nmap <buffer> <CR> <C-]>
