@@ -31,6 +31,7 @@ dotfiles:  ## Install the dotfiles
 	$(MAKE) sshkeys
 	$(MAKE) @pythonconfig
 	$(MAKE) @vimconfig
+	$(MAKE) @gosetup
 	@echo "OK all done!"
 
 .PHONY: @sync_dotfiles
@@ -75,7 +76,7 @@ test: $(TEMP_TEST_DIR)  ## Populate a local temporary directory for testing.
 	HOME=$< $(MAKE) @vimconfig
 
 generated/:
-	mkdir $(@)
+	test -d $(@) || mkdir $(@)
 
 generated/roles.txt: generated/
 	echo "developer user-cli security network libs python media desktop" > $@
@@ -173,6 +174,11 @@ endif
 		while read p; do \
 			mkdir -p $$p; cp -v $(CURDIR)/generic/misc/usercustomize.py $$p/ ;\
 		done
+
+.PHONY: @gosetup
+@gosetup:
+	bash util/gosetup.sh
+
 
 # Setup my common Vim extensions
 .PHONY: @vimconfig
