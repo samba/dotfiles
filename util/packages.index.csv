@@ -110,3 +110,5 @@ apt-get,cloud,kubetail
 apt-get,cloud,kubectl
 apt-get,python,python3-minimal
 apt-get,python,python3-pip
+apt-get,user-cli,hfsprogs
+apt-get,user-cli,hfsplus
