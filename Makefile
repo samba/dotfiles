@@ -112,7 +112,7 @@ clean-backup:
 prefs: $(CACHE)/mac_prefs_auto  ## Configure OS preferences
 $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 	mkdir -p $(@D)
-	bash $^
+	bash $^ apply reset
 	touch -r $< $@
 
 .PHONY: @install_packages	
