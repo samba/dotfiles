@@ -90,15 +90,15 @@ __bash_files_import () {
   if test -d "${HOME}/Library/google-cloud-sdk"; then
       echo "${HOME}/Library/google-cloud-sdk/completion.bash.inc"
   fi
-   
-  
+
+
   if which brew >/dev/null; then
     echo $(brew --prefix)/etc/bash_completion
-  else 
+  else
     test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
-  fi  
+  fi
 
-  
+
   test -f "/etc/bash_completion" && echo "/etc/bash_completion"
   test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
   test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"

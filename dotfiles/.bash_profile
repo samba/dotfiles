@@ -81,14 +81,8 @@ fi
 
 
 
-# Collect the paths that actually exist for $PATH
-export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
 
-# Remove blanks from PATH
-export PATH="${PATH/::/:}"
-
-
-# Provide easier access to Go project paths 
+# Provide easier access to Go project paths
 test -d "${GOPATH}" && \
   export CDPATH=${CDPATH}:${GOPATH}/src/github.com:${GOPATH}/src/golang.org:${GOPATH}/src
 
@@ -102,7 +96,7 @@ __list_project_groups () {
 
 while read i; do
     test -d "$i" && export CDPATH="${CDPATH}:${i}"
-done < <(__list_project_groups) 
+done < <(__list_project_groups)
 
 
 
@@ -111,8 +105,15 @@ while read i; do  # load the associated includes...
 done < <(__login_includes)
 
 
+# Collect the paths that actually exist for $PATH
+# NB: this MUST run *after* the __login_includes() due to gcloud overrding path order
+export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
+
+# Remove blanks from PATH
+export PATH="${PATH/::/:}"
+
 # Sometimes Google AppEngine SDK hides elsewhere...
-export GOOGLE_APPENGINE_PATH="$(dirname $(which dev_appserver.py))/../platform/google_appengine/"
+export GOOGLE_APPENGINE_PATH="$(dirname "$(which dev_appserver.py)")/../platform/google_appengine/"
 
 
 unset __check_util_paths __login_includes  __list_project_groups

@@ -116,7 +116,7 @@ function setup_alias () {
   git config -f $1 alias.di "diff --diff-filter=AMCR"
   git config -f $1 alias.da "diff --abbrev --minimal -M -C -D -b"
   git config -f $1 alias.df "diff --stat"
-  
+
   # Logging with all the right details.
   git config -f $1 alias.lo "log --graph --oneline"
   git config -f $1 alias.lp "log -p"
@@ -131,7 +131,6 @@ function setup_alias () {
   git config -f $1 alias.fb "!f() { git branch -a --contains \$1; }; f"
   # ... tags containing commit:
   git config -f $1 alias.ft "!f() { git describe --always --contains \$1; }; f"
-  
 
   # log with full dates; relies on the logging alias above
   git config -f $1 alias.hist "!git l --date=iso"
