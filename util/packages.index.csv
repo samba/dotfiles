@@ -12,6 +12,7 @@ brew,developer,terminal-notifier,none
 brew,developer,bfg,none
 brew,developer,macdown,cask
 brew,developer,github,cask
+brew,developer,gh,none
 brew,developer,fork,cask
 brew,developer,visual-studio-code,cask
 brew,developer,dash,cask
