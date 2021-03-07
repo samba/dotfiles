@@ -124,7 +124,7 @@ function setup_alias () {
 
   # Search for commits...
   # ... containing source code changes like so:
-  git config -f $1 alias.fc "!f() { local p=\"\$1\"; shift; git log --pretty='format:${gitlogformat}' --decorate -E -G \"\$p\" \${@}; }; f" 
+  git config -f $1 alias.fc "!f() { local p=\"\$1\"; shift; git log --pretty='format:${gitlogformat}' --decorate -E -G \"\$p\" \${@}; }; f"
   # ... containing commit messages like so:
   git config -f $1 alias.fm "!f() { local p=\"\$1\"; shift; git log --pretty='format:${gitlogformat}' --decorate -E --grep=\"\$p\" \${@}; }; f"
   # ... branches containing commit:
