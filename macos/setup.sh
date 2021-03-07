@@ -49,7 +49,7 @@ install_python_base () {
 install_fonts () {
     # Powerline fonts
     requires brew || return $?
-    brew search --casks "/font-.*-for-powerline/" 2>/dev/null | tail -n +2 | xargs -t brew cask install
+    brew search --casks "/font-.*-for-powerline/" 2>/dev/null | tail -n +2 | xargs -t brew install
 }
 
 autostart_mysql () {

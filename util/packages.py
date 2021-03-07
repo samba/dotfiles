@@ -7,24 +7,31 @@ import csv
 
 from collections import namedtuple
 
-Command = namedtuple("Command", ["command", "packages"])
+Command = namedtuple("Command", ["command", "packages", "variant"])
 
 
 class CommandRender(object):
     args = None
     verb = "install"
     priority = 5
+    variant = None
 
     @classmethod
     def getRenderer(cls, cmd):
         for p in cls.__subclasses__():
-            if p.call == cmd.command:
+            if p.matchPackageSelector(cmd):
                 return p(cmd)
+        # else
+        raise TypeError("Unmatched package spec: %r", cmd)
+
+    @classmethod
+    def matchPackageSelector(cls, cmd):
+        return (cmd.command == cls.call) and (cmd.variant == cls.variant)
 
     def __init__(self, cmd):
         assert isinstance(cmd, Command)
         self.command = cmd
-    
+
     @property
     def executable(self):
         return self.command.command.split(" ")[0]
@@ -40,12 +47,14 @@ class CommandRender(object):
 
 class BrewRenderer(CommandRender):
     call = "brew"
-    args = "--display-items --force"
+    args = "--display-times --force"
     priority = 1
 
-class BrewCaskRenderer(CommandRender):
-    call = "brew cask"
-    priority = 0
+class BrewCaskRenderer(CommandRender):  # Must be derived directly for __subclasses__ to work above.
+    call = "brew"
+    variant = "cask"
+    args = "--cask --force"
+    priority = 0  # some of the other formulae of Brew depend on Cask-installed components, particularly Java
 
 
 class GoRender(CommandRender):
@@ -120,29 +129,39 @@ def parse_args(args):
 
 def queryCommands(indexFile, categories, packager):
     reader = csv.reader(open(indexFile))
-    #  repr(categories)
     commands = dict()
+
     for record in reader:
         if len(record) < 1:
             continue  # skip empty rows
         if record[0].startswith('#'):
             continue  # skip comment lines
-        cmd = record[0]
+
+        cmd = record[0]  # command name
+
+        # Filter out items not related to this packager
         if packager is not None and (packager != cmd):
             continue
+
+        # Filter out items that don't match these categories
         if len(categories) > 0 and record[1] not in categories:
             continue
 
+        # Command is tuple[package-manager, variant]
         cmd = (cmd, record[3] if len(record) > 3 else "none")
-        if cmd not in commands:
-            commands[cmd] = []
-        commands[cmd].append(record[2])
 
+        if cmd not in commands:
+            commands[cmd] = []  # a list of packages for this Command tuple to queue
+
+        commands[cmd].append(record[2])  # add the package for this Command tuple
+
+    # For all package lists for all relevant package managers
     for cmd, packages in commands.iteritems():
-        command = ("%s %s" % (cmd[0], cmd[1] if cmd[1] != "none" else ""))
+        # command = ("%s %s" % (cmd[0], "" if cmd[1] == "none" else cmd[1]))
         command = Command(
-            command=command.strip(),
-            packages=packages
+            command=cmd[0],
+            packages=packages,
+            variant=(None if cmd[1] == "none" else cmd[1])
         )
 
         yield CommandRender.getRenderer(command)
