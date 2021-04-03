@@ -115,7 +115,7 @@ $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 	bash $^ apply reset
 	touch -r $< $@
 
-.PHONY: @install_packages	
+.PHONY: @install_packages
 @install_packages: generated/packages.sh 
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh install

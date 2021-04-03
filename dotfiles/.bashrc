@@ -2,6 +2,8 @@
 # Configuration for interactive (non-login) shells
 # Settings applied here will not effect shells in embedded environments, e.g. VSCode
 
+echo "Running .bashrc ($SECONDS)" >&2
+
 export EDITOR=$(which vim nano | head -n 1)
 
 # Configure history backlog
@@ -44,7 +46,7 @@ shopt -s hostcomplete
 shopt -s checkhash;
 
 # Try not to exit before background jobs are done...
-shopt -s checkjobs 2>/dev/null 
+shopt -s checkjobs 2>/dev/null
 
 # Warn when there's mail pending.
 # shopt -s mailwarn;
@@ -53,10 +55,10 @@ shopt -s checkjobs 2>/dev/null
 shopt -s cdspell;
 
 # Attempt word expansion when performing filename completion
-shopt -s direxpand 2>/dev/null 
+shopt -s direxpand 2>/dev/null
 
 # Attempt to fix spelling errors in directory word expansion
-shopt -s dirspell 2>/dev/null 
+shopt -s dirspell 2>/dev/null
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob;
@@ -70,42 +72,25 @@ shopt -s cmdhist;
 # Allow user to edit a failed history substitution
 shopt -s histreedit;
 
-# Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
-test -e "$HOME/.ssh/config"  && complete -o "default" -o "nospace" \
-  -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" \
-  scp sftp ssh;
-
-
 
 __bash_files_import () {
-  
-  # Explicitly seeking these files is apparently faster than a dynamic search.
 
+  # Google Cloud completion
+  echo "${GCLOUD_ROOT}/completion.bash.inc"
 
-  if test -d /usr/local/Caskroom; then
-    echo "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc"
-  fi
-
-  # Google Cloud if installed via the web download (not Homebrew)
-  if test -d "${HOME}/Library/google-cloud-sdk"; then
-      echo "${HOME}/Library/google-cloud-sdk/completion.bash.inc"
-  fi
-
-
-  if which brew >/dev/null; then
+  if command -v brew >/dev/null; then
     echo $(brew --prefix)/etc/bash_completion
-  else
-    test -f "${HOME}/.bash_completion" && echo "${HOME}/.bash_completion"
   fi
 
-
-  test -f "/etc/bash_completion" && echo "/etc/bash_completion"
-  test -f "${HOME}/.bash_functions" && echo "${HOME}/.bash_functions"
-  test -f "${HOME}/.bash_aliases" && echo "${HOME}/.bash_aliases"
-  test -f "${HOME}/.bash_colors" && echo "${HOME}/.bash_colors"
-  test -f "${HOME}/.bash_prompt" && echo "${HOME}/.bash_prompt"
-  test -f "${HOME}/.bash_sshagent" && echo "${HOME}/.bash_sshagent"
-  test -f "${HOME}/.bashrc_local" && echo "${HOME}/.bashrc_local"
+  echo "/etc/bash_completion"
+  echo "${HOME}/.bash_completion"
+  echo "${HOME}/.bash_functions"
+  echo "${HOME}/.bash_aliases"
+  echo "${HOME}/.bash_colors"
+  echo "${HOME}/.bash_prompt"
+  echo "${HOME}/.bash_sshagent"
+  echo "${HOME}/.bash_gpgagent"
+  echo "${HOME}/.bashrc_local"
 
 }
 
@@ -115,5 +100,10 @@ while read f; do
 done < <(__bash_files_import)
 
 
+
+
 unset f
 unset __bash_files_import
+
+
+echo "Finished .bashrc ($SECONDS)" >&2

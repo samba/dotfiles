@@ -2,7 +2,7 @@
 # Configuration for login shells.
 # This will be executed in subshells too.
 
-# echo "Evaluating .bash_profile" >&2
+echo "Running .bash_profile ($SECONDS)" >&2
 
 if [ -x /usr/libexec/java_home ]; then
   export JAVA_HOME=`/usr/libexec/java_home -F 2>/dev/null`
@@ -13,7 +13,7 @@ export GOPATH=${HOME}/Projects/Go/
 
 # Startup script for Python
 export PYTHONSTARTUP=${HOME}/.pythonrc.py
-export PYTHON_USERCUSTOM=`python -c "import site; print site.getusersitepackages()"`
+export PYTHON_USERCUSTOM=$(python -c "import site; print site.getusersitepackages()")
 
 # Ruby's gem environment
 if test -d "${HOME}/.gem"; then
@@ -25,8 +25,17 @@ fi
 
 if test "$(echo '::' | sed -E 's/:+/:/' 2>/dev/null)" = ":"; then
   export SED_REGEXP_VARIANT='-E'
-else 
+else
   export SED_REGEXP_VARIANT='-R'
+fi
+
+if command -v pyenv >/dev/null; then
+  eval "$(pyenv init -)"
+fi
+
+if command -v gcloud >/dev/null; then
+  export GCLOUD_ROOT=$(gcloud info --format="value(installation.sdk_root)")
+  export GOOGLE_APPENGINE_PATH="${GCLOUD_ROOT}/platform/google_appengine/"
 fi
 
 
@@ -46,7 +55,7 @@ function __check_util_paths () {
   # PostgreSQL
   test -d /Applications/Postgres.app/ && \
     find /Applications/Postgres.app/ -type d -name bin
-  
+
   # Sublime Text
   test -d /Applications/Sublime\ Text.app/ && \
     find /Applications/Sublime\ Text.app/ -type d -name bin
@@ -57,40 +66,34 @@ function __check_util_paths () {
 
   test -d "${GOPATH}" && find "${GOPATH}" -maxdepth 3 -type d -name bin
 
-
-  # Google AppEngine
-  test -d /Applications/GoogleAppEngineLauncher.app/ && \
-    find /Applications/GoogleAppEngineLauncher.app/ -type d -name google_appengine
-
 }
 
 
 
 function __login_includes () {
 
-# GCloud can be installed in several locations, but we infer it from the available execution
-if which gcloud >/dev/null; then
-	GCLOUD_ROOT=$(gcloud info --format="value(installation.sdk_root)")
-	if test -d "${GCLOUD_ROOT}"; then
-		echo "${GCLOUD_ROOT}/path.bash.inc"
-	fi
-fi
+  # GCloud can be installed in several locations, but we infer it from the available execution
+  test -d "${GCLOUD_ROOT}" && echo "${GCLOUD_ROOT}/path.bash.inc"
 
 }
 
 
+# Collect the paths that actually exist for $PATH
+export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
+
+# Remove blanks from PATH
+export PATH="${PATH/::/:}"
 
 
-
-# Provide easier access to Go project paths
-test -d "${GOPATH}" && \
-  export CDPATH=${CDPATH}:${GOPATH}/src/github.com:${GOPATH}/src/golang.org:${GOPATH}/src
-
-
-__list_project_groups () {
+function __list_project_groups () {
     echo "${HOME}/Projects/"
     echo "${HOME}/Projects/Personal/"
     echo "${HOME}/Projects/Datacraft/"
+
+    # Provide easier access to Go project paths
+    echo "${GOPATH}/src/github.com"
+    echo "${GOPATH}/src/golang.org"
+    echo "${GOPATH}/src"
 }
 
 
@@ -104,21 +107,13 @@ while read i; do  # load the associated includes...
     test -f "$i" && source "$i"
 done < <(__login_includes)
 
-
-# Collect the paths that actually exist for $PATH
-# NB: this MUST run *after* the __login_includes() due to gcloud overrding path order
-export PATH="$(__check_util_paths | tr -s '\n' ':'):${PATH}"
-
-# Remove blanks from PATH
-export PATH="${PATH/::/:}"
-
-# Sometimes Google AppEngine SDK hides elsewhere...
-export GOOGLE_APPENGINE_PATH="$(dirname "$(which dev_appserver.py)")/../platform/google_appengine/"
-
-
 unset __check_util_paths __login_includes  __list_project_groups
+
+
+echo "Finished .bash_profile ($SECONDS)" >&2
 
 # Import interactive shell configuration
 if shopt -q login_shell || [[ $- == *i* ]]; then
   [ -f ~/.bashrc ] && source ~/.bashrc;
 fi
+

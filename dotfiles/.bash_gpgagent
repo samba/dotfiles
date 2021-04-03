@@ -2,12 +2,11 @@
 
 export GPG_ENV_FILE=${HOME}/.gnupg/.gpg-agent-info
 
-
 if [ \! -f "${GPG_ENV_FILE}" ] || [ \! -n "$(pgrep gpg-agent)" ]; then
     gpg-agent --daemon -s > "${GPG_ENV_FILE}"
 fi
 
-source "${GPG_ENV_FILE}" 
+source "${GPG_ENV_FILE}"
 export GPG_AGENT_INFO
 
 
