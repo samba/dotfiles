@@ -1,5 +1,6 @@
 # ~/.pythonrc
 
+from __future__ import print_function
 
 import atexit
 import datetime
@@ -22,7 +23,7 @@ try:
     # text wrapping using the history UP/DOWN methods.
     import readline
 except ImportError:
-    print "Module 'readline' not available."
+    print("Module 'readline' not available.")
     readline = None
 
 try:
@@ -129,7 +130,7 @@ class Prompt(object):
 
     @classmethod
     def _print(cls, text):
-            print str(cls(text)) + cls.CTRL_RESET
+            print(str(cls(text)) + cls.CTRL_RESET)
 
     @classmethod
     def term_supported(cls):
@@ -184,7 +185,7 @@ class Prompt(object):
         for n in dir(self):
             if (not (n.startswith('_'))) and (n[0].lower() == n[0]):
                 temp = getattr(self, n)
-                if isinstance(temp, basestring):
+                if isinstance(temp, str):
                     yield n, temp
 
     def __str__(self):
@@ -205,7 +206,7 @@ if __pyversion__ < (3, 4):
     enable_completion()
 
 
-if Prompt.interactive() is -1:
+if Prompt.interactive() == -1:
     Prompt._print('You are in <cyan>python <red>{pyversion}<reset>\n')
 
 
