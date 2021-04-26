@@ -36,13 +36,31 @@ class CommandRender(object):
     def executable(self):
         return self.command.command.split(" ")[0]
 
+    @property
+    def postinst(self):
+        for name, script in self.command.packages:
+            yield script
+
+    @property
+    def packages(self):
+        for name, script in self.command.packages:
+            yield name
+
+
+
     def __str__(self):
-        return "{condition} && {command} {verb} {args} {packages}".format(
+        fmt = "{condition} && {command} {verb} {args} {packages} {postinst}"
+
+        postinst = " && ".join("bash %s" % p for p in self.postinst if p)
+        postinst = (" && " + postinst) if postinst else "# no-postinst"
+
+        return fmt.format(
             condition=("which %s >/dev/null" % (self.executable,)),
             command=(self.command.command),
-            packages=(" ".join(self.command.packages)),
+            packages=(" ".join(list(self.packages))),
             verb=(self.verb if self.verb is not None else ""),
-            args=(self.args if self.args is not None else "")
+            args=(self.args if self.args is not None else ""),
+            postinst=postinst
         )
 
 class BrewRenderer(CommandRender):
@@ -69,7 +87,9 @@ class GoRender(CommandRender):
                 command=self.command,
                 verb=self.verb,
                 pkg=pkg
-            ) for pkg in self.command.packages
+            ) for pkg in self.packages
+        ] + [
+            ("bash %" % p for p in self.packages if p)
         ])
 
 
@@ -148,12 +168,17 @@ def queryCommands(indexFile, categories, packager):
             continue
 
         # Command is tuple[package-manager, variant]
-        cmd = (cmd, record[3] if len(record) > 3 else "none")
+        cmd = (cmd, 
+               record[3] if len(record) > 3 else "none")
 
         if cmd not in commands:
             commands[cmd] = []  # a list of packages for this Command tuple to queue
 
-        commands[cmd].append(record[2])  # add the package for this Command tuple
+        commands[cmd].append(
+            # add the package & post-install script for this Command tuple
+            (record[2], (record[4] if len(record) > 4 else None))
+        )
+
 
     # For all package lists for all relevant package managers
     for cmd, packages in commands.iteritems():
