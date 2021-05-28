@@ -110,6 +110,8 @@ unset __check_util_paths __login_includes  __list_project_groups
 
 
 
+source "$HOME/.cargo/env"
+
 
 # Import interactive shell configuration
 [ -z "$PS1" ] || source ~/.bashrc;

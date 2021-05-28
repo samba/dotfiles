@@ -59,6 +59,7 @@ brew,golang,go
 brew,golang,dep
 brew,golang,godep
 brew,python,python3
+brew,rust,rustup-init,none,util/setup_rust.sh
 pip,cloud,awscli
 pip,cloud,awslogs
 pip,cloud,google-api-python-client

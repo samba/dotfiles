@@ -77,7 +77,7 @@ generated/:
 	mkdir $(@)
 
 generated/roles.txt: generated/
-	echo "developer user-cli security network libs python media desktop" > $@
+	echo "developer user-cli security network libs python media desktop rust" > $@
 
 generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.txt
 	which python
