@@ -88,6 +88,7 @@ function __list_project_groups () {
     echo "${HOME}/Projects/"
     echo "${HOME}/Projects/Personal/"
     echo "${HOME}/Projects/Datacraft/"
+    echo "${HOME}/Projects/Mycelial/"
 
     # Provide easier access to Go project paths
     echo "${GOPATH}/src/github.com"
