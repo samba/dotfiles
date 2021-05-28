@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
-
 # Loads SSH keys in a sensible fashion
 
+# set -x
 
 ssh_agent_avail () {
-		test -z "$SSH_AGENT_PID" && return 1
-		test -r "$SSH_AUTH_SOCK" || return 1 
-		shopt -q login_shell || return 1
-		which ssh-add >/dev/null || return 1
+	# This is an interactive shell
+	shopt -q login_shell || return 1
+
+	# The agent PID is defined
+	test -z "$SSH_AGENT_PID" && return 1
+
+	# The agent is running
+	command ps -o command ${SSH_AGENT_ID} | tail -n 1 | grep 'ssh-agent'  || return 1
+
+	# The agent socket exists
+	test -r "$SSH_AUTH_SOCK" || return 1
+	
+	# The ssh-add program is available
+	command -v ssh-add >/dev/null || return 1
+
+}
+
+scan_known_keys () {
+	command -v ssh-add >/dev/null && ssh-add -l 2>/dev/null | \
+		grep -v 'has no identities' | cut -d ' ' -f 3
 }
 
 configure_ssh_agent () {
@@ -16,19 +32,26 @@ configure_ssh_agent () {
 
 	# Discover keys that are not already known
 	find "${HOME}/.ssh" -type f -name '*rsa' \
-		| grep -v -f <(ssh-add -l 2>/dev/null | cut -d ' ' -f 3) \
-		| xargs ssh-add -q -K 1>/dev/null   2>/dev/null
-
+		| grep -v -f <(scan_known_keys) \
+		| xargs ssh-add -q -K 1>/dev/null #  2>/dev/null
 
 	# List known keys
 	# ssh-add -l
 }
 
-if shopt -q login_shell; then
-	which ssh-agent >/dev/null && \
-		test -z "$SSH_AGENT_PID" && \
-		eval "$(ssh-agent -s 2>/dev/null)" 1>/dev/null
-	ssh_agent_avail && configure_ssh_agent
-	echo
-fi
+# Initialize the SSH agent if absent
+test -z "$SSH_AGENT_PID" && \
+  test ! -r "$SSH_AUTH_SOCK" && \
+  command -v ssh-agent >/dev/null && \
+  eval "$(ssh-agent -s 2>/dev/null)" 1>/dev/null
 
+
+# Load keys, etc... 
+# This is a bit slow due to filesystem scan, so it runs in the background.
+test -r "$SSH_AUTH_SOCK" && \
+  command -v ssh-add >/dev/null && \
+  configure_ssh_agent &
+
+
+
+# set +x

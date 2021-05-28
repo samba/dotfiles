@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Configuration for login shells.
+# Configuration for interactive login shells, or non-interactive with --login flag.
 # This will be executed in subshells too.
 
-echo "Running .bash_profile ($SECONDS)" >&2
 
 if [ -x /usr/libexec/java_home ]; then
   export JAVA_HOME=`/usr/libexec/java_home -F 2>/dev/null`
@@ -110,10 +109,8 @@ done < <(__login_includes)
 unset __check_util_paths __login_includes  __list_project_groups
 
 
-echo "Finished .bash_profile ($SECONDS)" >&2
+
 
 # Import interactive shell configuration
-if shopt -q login_shell || [[ $- == *i* ]]; then
-  [ -f ~/.bashrc ] && source ~/.bashrc;
-fi
+[ -z "$PS1" ] || source ~/.bashrc;
 

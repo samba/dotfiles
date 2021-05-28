@@ -2,8 +2,6 @@
 # Configuration for interactive (non-login) shells
 # Settings applied here will not effect shells in embedded environments, e.g. VSCode
 
-echo "Running .bashrc ($SECONDS)" >&2
-
 export EDITOR=$(which vim nano | head -n 1)
 
 # Configure history backlog
@@ -49,7 +47,7 @@ shopt -s checkhash;
 shopt -s checkjobs 2>/dev/null
 
 # Warn when there's mail pending.
-# shopt -s mailwarn;
+shopt -s mailwarn;
 
 # Autocorrect typos in path names when using `cd`
 shopt -s cdspell;
@@ -96,6 +94,7 @@ __bash_files_import () {
 
 
 while read f; do
+  # test -f "$f" && echo "## $f" && time source "$f"  # for timing/profiling
   test -f "$f" && source "$f"
 done < <(__bash_files_import)
 
@@ -104,6 +103,3 @@ done < <(__bash_files_import)
 
 unset f
 unset __bash_files_import
-
-
-echo "Finished .bashrc ($SECONDS)" >&2
