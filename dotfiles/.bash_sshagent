@@ -3,6 +3,8 @@
 
 # set -x
 
+test -f "${HOME}/.ssh/agent.sh" && source "${HOME}/.ssh/agent.sh"
+
 ssh_agent_avail () {
 	# This is an interactive shell
 	shopt -q login_shell || return 1
@@ -15,18 +17,29 @@ ssh_agent_avail () {
 
 	# The agent socket exists
 	test -r "$SSH_AUTH_SOCK" || return 1
-	
+
 	# The ssh-add program is available
 	command -v ssh-add >/dev/null || return 1
 
 }
 
+ssh_agent_list_known_keys () {
+    ssh-add -l | grep -v 'has no identities' 2>/dev/null
+}
+
+ssh_keys_empty () {
+    test "$(ssh_agent_list_known_keys | wc -l)" -eq 0
+}
+
+
 scan_known_keys () {
-	command -v ssh-add >/dev/null && ssh-add -l 2>/dev/null | \
-		grep -v 'has no identities' | cut -d ' ' -f 3
+	ssh_agent_list_known_keys | cut -d ' ' -f 3
 }
 
 configure_ssh_agent () {
+
+    echo "Loading SSH keys" >&2
+
 	# automatically add keychain-provided keys
 	ssh-add -q -A 1>/dev/null 2>/dev/null
 
@@ -35,9 +48,8 @@ configure_ssh_agent () {
 		| grep -v -f <(scan_known_keys) \
 		| xargs ssh-add -q -K 1>/dev/null #  2>/dev/null
 
-	# List known keys
-	# ssh-add -l
 }
+
 
 # Initialize the SSH agent if absent
 test -z "$SSH_AGENT_PID" && \
@@ -46,12 +58,11 @@ test -z "$SSH_AGENT_PID" && \
   eval "$(ssh-agent -s 2>/dev/null)" 1>/dev/null
 
 
-# Load keys, etc... 
+# Load keys, etc...
 # This is a bit slow due to filesystem scan, so it runs in the background.
 test -r "$SSH_AUTH_SOCK" && \
   command -v ssh-add >/dev/null && \
-  configure_ssh_agent &
-
+  ssh_keys_empty && configure_ssh_agent
 
 
 # set +x
