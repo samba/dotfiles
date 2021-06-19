@@ -76,7 +76,7 @@ class GoRender(CommandRender):
     def __str__(self):
         return "\n".join([
             "if {condition}; then {command.command} {verb} {pkg}; fi".format(
-                condition=("command -v %s >/dev/null" % (self.executable,)),
+                condition=("command -v %s >/dev/null" % (self.call,)),
                 command=self.command,
                 verb=self.verb,
                 pkg=pkg

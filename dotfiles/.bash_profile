@@ -63,6 +63,9 @@ function __check_util_paths () {
   test -d /Applications/GoogleAppEngineLauncher.app/ && \
     find /Applications/GoogleAppEngineLauncher.app/ -type d -name google_appengine
 
+  # Custom Go installation on Linux
+  test -d /usr/local/go/bin && echo /usr/local/go/bin
+
 }
 
 

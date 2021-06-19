@@ -6,8 +6,8 @@ fetch_command () {
     for k in curl wget; do
         command -v $k || continue
         case $k in
-            curl) echo "-s";;
-            wget) echo "-q -O -";;
+            curl) echo "-s"; break;;
+            wget) echo "-q -O -"; break;;
         esac
     done
 }
@@ -42,9 +42,23 @@ setup_repositories () {
 }
 
 
+_do_golang_installation () {
+    go_archive="go1.13.linux-amd64.tar.gz"
+    $(fetch_command) https://dl.google.com/go/${go_archive} > /tmp/${go_archive}
+    sudo tar -C /usr/local -xzf /tmp/${go_archive}
+}
+
+
 main () {
-case $1 in 
+case $1 in
     repos) setup_repositories "$0";;
+    install)
+        for role in ${2:-none}; do
+            case $role in
+                golang) _do_golang_installation;;
+            esac
+        done
+        ;;
 esac
 }
 

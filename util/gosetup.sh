@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Sets up the workspace structure I like for Go projects.
+
 set -euf -o pipefail
 
 fail () {
@@ -9,6 +11,6 @@ fail () {
 
 test -z "${GOPATH}" && fail 1 "Please define \$GOPATH environment"
 
-
 mkdir -p ${GOPATH}/{bin,src}
+
 

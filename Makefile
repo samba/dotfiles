@@ -10,8 +10,11 @@ SSH_CONFIG?=$(HOME)/.ssh/config
 SSHKEY_PASSWORD?=NOVALUE
 KEEP_CACHE?=FALSE
 PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
-DEBIAN?=$(shell test -f /etc/debian_release && echo "Debian")
+LINUX_DISTRO?=$(shell lsb_release -is)
+LINUX_RELEASE?=$(shell lsb_release -cs)
 TEMP_TEST_DIR?=$(CURDIR)/.tmp/test
+
+
 
 # SED_FLAG ?= $(shell test $$(echo "test" | sed -E 's@[a-z]@_@g') = "____" && echo "-E" || echo "-R")
 
@@ -79,7 +82,7 @@ generated/:
 	test -d $(@) || mkdir $(@)
 
 generated/roles.txt: generated/
-	echo "developer user-cli security network libs python media desktop" > $@
+	test -f $@ || echo "developer user-cli security network libs python media desktop" > $@
 
 generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.txt
 	which python
@@ -130,15 +133,21 @@ endif
 
 
 .PHONY: @install_packages
-@install_packages: generated/packages.sh @install_repositories
+@install_packages: generated/packages.sh generated/roles.txt @install_repositories
+	echo "$(SYSTEM) $(LINUX_DISTRO)"
 ifeq ($(SYSTEM),Darwin)
-	bash macos/setup.sh install
+	bash macos/setup.sh install "$$(cat generated/roles.txt)"
+endif
+ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
+	bash debian/setup.sh install "$$(cat generated/roles.txt)"
 endif
 	bash -x $<  # install packages
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh configure
 endif
-
+ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
+	bash debian/setup.sh configure
+endif
 
 
 gitbackup: $(CACHE)/restore_git.sh ## Stash the unique settings of my git config

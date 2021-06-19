@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Prepares a project directory as a Go code repository
+
+set -euf -o pipefail
+
+fail () {
+    echo "$2" >&2
+    exit $1
+}
+
+test $# -eq 1 || fail 1 "Please provide a directory to prepare as a Go project."
+test -d "$1" || fail 1 "Please provide a directory to prepare as a Go project."
+
+cd "$1"
+
+mkdir -p api api pkg cmd vendor web configs scripts build deployments test/data docs tools
+
+touch README.md
+

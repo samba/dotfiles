@@ -102,9 +102,11 @@ apt-get,media,handbrake-cli
 apt-get,webdev,closure-compiler
 apt-get,user-cli,silversearcher-ag
 apt-get,user-cli,jq
+apt-get,user-cli,keychain
 apt-get,network,transmission-cli
 apt-get,network,transmission-gtk
-apt-get,golang,golang-go
+# Go will be installed via a separate script, because Debian's version is too old :(
+# apt-get,golang,golang-go
 apt-get,cloud,kubectx
 apt-get,cloud,kubetail
 apt-get,cloud,kubectl
