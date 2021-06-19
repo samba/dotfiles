@@ -52,9 +52,15 @@ function prompt::command () {
 
 
     history -a >/dev/null;  # append history file.
-    
+
     # Virtual Studio Code doesn't like the status flags.
-    test -z "$VSCODE_CLI" || set_status=false
+    case "${TERM_PROGRAM}" in
+        vscode) set_status=false;;
+    esac
+
+    # Disable statusline if not supported
+    tput hs || set_status=false;
+
 
     if test ${set_status} = true; then
         if test -n "$STY"; then
