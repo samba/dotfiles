@@ -169,9 +169,6 @@ set rulerformat=%30(%n\ %Y\ %B\ %=\ %l,%c%V\ %P%)
 set laststatus=1
 
 
-set number " enable line numbering, and a toggle shortcut
-nmap <silent> <Leader>Number :set number!<CR>
-nmap <silent> <Leader>n :set number!<CR>
 
 
 " end VIM window structure }}}
@@ -226,6 +223,13 @@ set listchars+=precedes:<,extends:<
 " let mapleader=","
 " toggle readonly
 nmap <Leader>ro :set invreadonly<CR>
+
+
+set number " enable line numbering, and a toggle shortcut
+nmap <silent> <Leader>Number :set number!<CR>
+nmap <silent> <Leader>n :set number!<CR>
+
+
 
 
 
@@ -621,19 +625,32 @@ map <Leader>m :make<CR>
 " the very bottom (see :help :wincmd and :help ^WJ).
 autocmd FileType qf wincmd J
 
-" Close quickfix easily
-nnoremap <leader>a :cclose<CR>
+" In the quickfix window, <CR> is used to jump to the error under the
+" cursor, so undefine the mapping there.
+autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 
+" Open or Close quickfix easily
+nnoremap <leader>q :cwindow<CR>
 
+" Define an "Ag" search command for grepping with eag`
+command! -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+
+" start grep command  files (shortcut)
+nnoremap <Leader>G :Ag<space>
+
+" start built-in grep command
+nnoremap <Leader>g :vimgrep!<space>
+
+" grep word under cursor
+nnoremap <Leader>K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " Some useful quickfix shortcuts
 ":cc      see the current error
 ":cn      next error
 ":cp      previous error
 ":clist   list all errors
-" map <C-n> :cn<CR>
-" map <C-m> :cp<CR>
-
+nmap [q :cn<CR>
+nmap ]q :cp<CR>
 
 
 " }}} end quickfix
@@ -647,6 +664,30 @@ if executable('ag')
 endif
 
 
+" Within a buffer, add this file to the diff
+nmap <Leader>D :diffthis<CR>
+
+if &diff
+    set cursorline
+
+    " previous change
+    nmap ] ]c
+
+    " next change
+    nmap [ [c
+
+
+" diff mode: git merge shortcuts {{
+    nmap <leader>0 :diffput MERGE<CR>
+    nmap <leader>1 :diffget LOCAL<CR>
+    nmap <leader>2 :diffget BASE<CR>
+    nmap <leader>3 :diffget REMOTE<CR>
+" }}
+
+
+endif
+
+
 
 " }}} end Development environment
 
@@ -656,7 +697,6 @@ endif
 " Misc options & key mappings {{{
 " NOTE: lots of other key mappings are positioned in this file in their
 " relevant groups.
-
 
 
 if has('scrollbind')
