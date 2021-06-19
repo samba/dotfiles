@@ -614,6 +614,8 @@ endif
 
 " Development Environment {{{
 
+map <Leader>T :term bash<CR>
+
 " Shortcut to run any `make all` in the CWD
 map <Leader>m :make<CR>
 
