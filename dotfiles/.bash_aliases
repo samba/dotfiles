@@ -4,7 +4,7 @@
 if which ps >/dev/null && ps -L | tr -s ' ' '\n' | grep -q euser ; then
   # The GNU default mode...
   export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
-else 
+else
   # BSD ps doesn't support euser, etc.
   export PS_FORMAT="pid,ppid,state,%cpu,%mem,user,command"
   alias ps='ps -o $PS_FORMAT'

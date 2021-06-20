@@ -13,6 +13,7 @@ inspiration drawn heavily from a few other developers. A few of them:
 
 - [Mathias Bynens](https://github.com/mathiasbynens/dotfiles) 
 - [Jess Frazelle](https://github.com/jessfraz/dotfiles)
+- [Romain Lafourcade](https://gist.github.com/romainl/4b9f139d2a8694612b924322de1025ce)
 
 ### Bootstrap Installation
 
