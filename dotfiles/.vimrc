@@ -1,18 +1,51 @@
 " Vim runtime configuration.
-" vim: foldmarker={{(,)}} foldmethod=marker
+" vim: foldmarker={{(,)}} foldmethod=marker foldenable
 
 " Commonly tuned customizations {{{
 
-colorscheme desert
+colorscheme darkblue
 
 " colorscheme solarized
 " let g:solarized_termcolors=256
 " let g:solarized_termtrans=1
 
+" Adjustments to color scheme {{{
+
+function! FixWindowColors() abort
+
+  highlight! Normal ctermbg=none guibg=none
+  highlight! FoldColumn ctermbg=none guibg=DarkGrey
+  highlight! VertSplit ctermbg=none guibg=none
+  highlight! TabLineFill ctermbg=none guibg=none
+
+  highlight! StatusLine term=bold ctermbg=DarkGrey ctermfg=Black
+  highlight! StatusLineNC term=bold ctermbg=Black ctermfg=LightGrey
+
+  " statusline uses %2 for read-only or pending-edit status
+  highlight! User2 term=bold,inverse ctermfg=Red ctermbg=none
+
+  " statusline uses %3 for filename in window status
+  highlight! User3 term=bold ctermfg=LightGreen ctermbg=DarkGrey
+
+
+endfunction
+
+
+
+augroup MyColors
+  autocmd!
+  autocmd ColorScheme * call FixWindowColors()
+augroup END
+
+
+" }}}
+
+
+
 " This comes first, because we have mappings that depend on leader
 " With a map leader it's possible to do extra key combinations
 " i.e: <leader>w saves the current file
-" let mapleader = ","     " default: \  <backslach>
+" let mapleader = ","     " default: \  <backslash>
 " let g:mapleader = ","   " default: \  <backslash>
 
 " }}} end common customizations
@@ -159,11 +192,12 @@ set lazyredraw " don't update the screen when macros/etc running in background (
 
 " VIM's own window structure {{{
 "
-set fillchars+=vert:\:  " the vertical window barrier's character content
+set fillchars+=vert:│  " the vertical window barrier's character content
+" NB: this line character is inserted via `<ctrl-K>vv`, found via `:h digraph-table`
 
 set ruler
 set rulerformat=%30(%n\ %Y\ %B\ %=\ %l,%c%V\ %P%)
-" set statusline=[%n]\ %f\ -\ %m  " disabled (default)
+set statusline=[%n]\ %2*%M%R%H%1*\ %3*\ %f\ %0*\ %=%y\ %-14.(%l,%c%V%)\ %P
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
