@@ -635,10 +635,33 @@ autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 nnoremap <leader>q :cwindow<CR>
 
 " Define an "Ag" search command for grepping with eag`
-command! -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+command! -nargs=+ -complete=file_in_path -bar Ag silent! grep! <args>|cwindow|redraw!
+
+" Improved grep capabilities {{{
+" source: https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
+
+function! Grep(...) " faster, quieter execution of external grep
+	return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
+endfunction
+
+command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
+command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
+
+" Override default functions
+cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ? 'Grep'  : 'grep'
+cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
+
+" Automatically open the quickfix window when its content changes
+augroup quickfix
+	autocmd!
+	autocmd QuickFixCmdPost cgetexpr cwindow
+	autocmd QuickFixCmdPost lgetexpr lwindow
+augroup END
+
+" }}}
 
 " start grep command  files (shortcut)
-nnoremap <Leader>G :Ag<space>
+nnoremap <Leader>G :grep<space>
 
 " start built-in grep command
 nnoremap <Leader>g :vimgrep!<space>
@@ -657,10 +680,12 @@ nmap ]q :cp<CR>
 
 " }}} end quickfix
 
+" TODO: add "--hidden" argument for dotfiles or some other directories to
+" search hidden files.
 
 " Use The Silver Searcher if present, because it's really fast.
 if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
+  set grepprg=ag\ --vimgrep\ --nogroup\ --nocolor
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
   let g:ctrlp_use_caching = 0
 endif
