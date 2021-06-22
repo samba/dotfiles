@@ -74,10 +74,10 @@ function prompt::command () {
     fi
 
     # a null-title sequence for screen to interpret the live command
-    test -n "$STY" && printf "\033k\033\134"  
- 
+    test -n "$STY" && printf "\033k\033\134"
+
      # NB: this must exactly match screen's shelltitle command below.
-    local shelltitle_prefix="> "  
+    local shelltitle_prefix="> "
 
     # Initialize a generally compatible set of base colors & controls
     local bell='\[\a\]'
@@ -92,10 +92,10 @@ function prompt::command () {
     local orange='\[\e[01;33m\]' # looks like yellow.
     local cyan='\[\e[01;36m\]'
     local black='\[\e[01;30m\]'
-    local purple='\[\e[01;35m\]' 
+    local purple='\[\e[01;35m\]'
     local white='\[\e[01;37m\]'
     local violet='\[\e[01;35m\]'
-    
+
     if tput setaf 1 >/dev/null; then
         tput sgr0 # reset now
 
@@ -122,7 +122,7 @@ function prompt::command () {
 
     # fetch current Kubernetes context name
     local kube_context="$(which kubectl >/dev/null && kubectl config current-context 2>/dev/null)"
-  
+
     # color is red if error, green otherwise
     local error="\[\e[00;\$((${LAST_RETURN_CODE} ? 31 : 36 ))m\]"
 
@@ -140,7 +140,7 @@ function prompt::command () {
     )
 
     local template="%b %b %b %b %b\\n%b%b"
-    
+
     printf -v prompt "${template}" "${parts[@]}" "${reset}"
 
     export PS1="${prompt}${shelltitle_prefix}"
@@ -174,28 +174,28 @@ function prompt::git_status () {
     # Produce the branch name first
     local branch="$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD || echo "(unknown)")"
     template="${template//\$br/${branch}}"
-    
+
     # Staged changes
     if ! git diff --quiet --ignore-submodules --cached; then
         template="${template//\$sg/${changes_staged}}"
     else
         template="${template//\$sg/}"
     fi
- 
+
     # Unstaged changes
     if ! git diff-files --quiet --ignore-submodules --; then
         template="${template//\$ug/${changes_unstaged}}"
     else
         template="${template//\$ug/}"
     fi
-   
+
     # Untracked files
     if ! test -z "$(git ls-files --others --exclude-standard)"; then
         template="${template//\$ut/${files_untracked}}"
     else
         template="${template//\$ut/}"
     fi
-   
+
     # Stashed state
     if git rev-parse --verify refs/stash &>/dev/null; then
         template="${template//\$st/${changes_stashed}}"
@@ -231,7 +231,7 @@ function wtf () {
         "$(hostname -f)" \
         "$(pwd | sed "s@${HOME}@~@")" 
 
-    
+
 }
 
 
@@ -242,14 +242,13 @@ function prompt::basic () {
     export GIT_PROMPT="";
 }
 
-
-export PROMPT_COMMAND="LAST_RETURN_CODE=\$?; [[ $(type -t prompt::command) == "function" ]] &&  prompt::command"
+export PROMPT_COMMAND="LAST_RETURN_CODE=\$?; [[ \$(type -t 'prompt::command') == "function" ]] &&  prompt::command"
 export COLORTERM="$(prompt::color_hint | head -n 1)"
 
 
 if prompt::should_apply_color "${COLORTERM}"; then
     prompt::command # run now too, to correctly export PS1 from the start.
-    
+
     # Fix terminal identification as it effects color features of `tput`
     case "${TERM}" in 
         screen|xterm) # common short terminal names

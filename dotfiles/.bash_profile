@@ -2,7 +2,6 @@
 # Configuration for interactive login shells, or non-interactive with --login flag.
 # This will be executed in subshells too.
 
-
 if [ -x /usr/libexec/java_home ]; then
   export JAVA_HOME=`/usr/libexec/java_home -F 2>/dev/null`
 fi
@@ -105,16 +104,28 @@ done < <(__list_project_groups)
 
 
 while read i; do  # load the associated includes...
-    test -f "$i" && source "$i"
+    test -f "$i" && source "$i" || echo 'missing?' $i >&2
 done < <(__login_includes)
 
 unset __check_util_paths __login_includes  __list_project_groups
 
 
 
-source "$HOME/.cargo/env"
+test -f "$HOME/.cargo/env" && source "$HOME/.cargo/env"
 
 
-# Import interactive shell configuration
-[ -z "$PS1" ] || source ~/.bashrc;
+# Load runtime config for interactive terminals
+case "$-" in
+    *i*) source ~/.bashrc ;;
+esac
+
+# Terminal behavior on MacOS is a little weird.
+# case $(uname -s) in
+#     Darwin)
+#         shopt -q login_shell && \
+#             test -z "$PS1" && \
+#             source ~/.bashrc;;
+# esac
+
+
 

@@ -36,7 +36,7 @@ alias d='dirs -l -v'
 
 
 case `which hd` in
-  *hd) break ;; # it exists!
+  *hd) ;; # it exists!
   *) command -v hd > /dev/null || alias hd="hexdump -C" ;;
 esac
 
@@ -76,7 +76,7 @@ done
 
 case $(uname -s) in 
   Darwin)  ### Aliases that only make sense on a Mac.
-      
+
     if which lwp-request >/dev/null; then
       for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
         alias "$method"="lwp-request -m '$method'"
@@ -157,3 +157,5 @@ fi
 if [ "function" = "$(type -t __start_kubectl)" ]; then
   complete -F __start_kubectl k
 fi
+
+
