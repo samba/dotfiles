@@ -1,5 +1,6 @@
 .PHONY: dotfiles apps install prefs
 
+SHELL=/bin/bash
 DATE?=$(shell date +%Y-%m-%d_%H%M)
 DOCKER_TEST_IMAGE?=dotfiles_test:local
 CACHE?=$(HOME)/.cache
