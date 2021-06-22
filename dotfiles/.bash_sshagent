@@ -3,6 +3,10 @@
 
 # set -x
 
+# This script may get populated with commands for loading keys
+CURSOR_SCRIPT=${HOME}/.ssh/keycursor.sh
+
+
 test -f "${HOME}/.ssh/agent.sh" && source "${HOME}/.ssh/agent.sh"
 
 ssh_agent_avail () {
@@ -36,6 +40,33 @@ scan_known_keys () {
 	ssh_agent_list_known_keys | cut -d ' ' -f 3
 }
 
+mac_keychain_present () {
+    command security list-keychains >/dev/null 2>/dev/null </dev/null
+}
+
+
+# prompt template is "Enter passphrase for <filename>:"
+print_key_password () {
+	fname="$( echo "${@}" | sed 's@Enter passphrase for@@' | tr -d "[:space:]:" )"
+	test -f "$fname" && test -f "${fname}.password" && cat "${fname}.password"
+}
+
+
+write_printer_script () {
+	echo "#!/usr/bin/env bash" > ${1}
+	# NOTE: for future work, multiple functions can be passed here to populate the script.
+	type print_key_password | sed '/is a function/d' >> ${1}
+	echo "print_key_password \"\${@}\"" >> ${1}  # the main function call
+	chmod +x ${1}
+}
+
+
+list_unregistered_keys () {
+	find "${HOME}/.ssh" -type f -name '*rsa' \
+		| grep -v -f <(scan_known_keys)
+}
+
+
 configure_ssh_agent () {
 
     echo "Loading SSH keys" >&2
@@ -43,10 +74,16 @@ configure_ssh_agent () {
 	# automatically add keychain-provided keys
 	ssh-add -q -A 1>/dev/null 2>/dev/null
 
-	# Discover keys that are not already known
-	find "${HOME}/.ssh" -type f -name '*rsa' \
-		| grep -v -f <(scan_known_keys) \
-		| xargs ssh-add -q -K 1>/dev/null #  2>/dev/null
+	
+	if mac_keychain_present; then  # load keys on mac
+		list_unregistered_keys | \
+			xargs ssh-add -q -K 1>/dev/null 2>/dev/null
+	else # load keys on linux
+		write_printer_script ${CURSOR_SCRIPT}
+		list_unregistered_keys | while read i; do
+			DISPLAY=nothing:0 SSH_ASKPASS=${CURSOR_SCRIPT} setsid ssh-add "$i"
+		done
+	fi
 
 }
 

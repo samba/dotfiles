@@ -12,6 +12,16 @@ KEEP_CACHE?=FALSE
 PACKAGE_HANDLER?=$(shell bash util/systempackage.sh)
 TEMP_TEST_DIR?=$(CURDIR)/.tmp/test
 
+ifeq ($(SYSTEM),Linux)
+LINUX_DISTRO?=$(shell command lsb_release -is)
+LINUX_RELEASE?=$(shell command lsb_release -cs)
+else
+LINUX_DISTRO=none
+LINUX_RELEASE=none
+endif
+
+
+
 # SED_FLAG ?= $(shell test $$(echo "test" | sed -E 's@[a-z]@_@g') = "____" && echo "-E" || echo "-R")
 
 help: # borrowed from https://github.com/jessfraz/dotfiles/blob/master/Makefile
@@ -30,10 +40,12 @@ dotfiles:  ## Install the dotfiles
 	$(MAKE) sshkeys
 	$(MAKE) @pythonconfig
 	$(MAKE) @vimconfig
+	$(MAKE) @gosetup
+	$(MAKE) @rustsetup
 	@echo "OK all done!"
 
 .PHONY: @sync_dotfiles
-@sync_dotfiles:
+@sync_dotfiles: prereq
 	rsync $(CURDIR)/dotfiles/ $(HOME)/ \
         --exclude ".git/" \
         --exclude ".osx" \
@@ -72,18 +84,33 @@ test: $(TEMP_TEST_DIR)  ## Populate a local temporary directory for testing.
 	HOME=$< $(MAKE) @sync_dotfiles
 	HOME=$< $(MAKE) @pythonconfig
 	HOME=$< $(MAKE) @vimconfig
+	@echo "# now:  HOME=$< bash -il " >&2
 
 generated/:
-	mkdir $(@)
+	test -d $(@) || mkdir $(@)
 
-generated/roles.txt: generated/
-	echo "developer user-cli security network libs python media desktop rust" > $@
+.PHONY: roles
+roles: generated/roles.txt
+generated/roles.txt: util/packages.ini | generated/
+	test -f $@ || \
+		python2 util/packages.py -c $< -d > $@
+	touch -r $< $@
 
-generated/packages.sh: util/packages.index.csv util/packages.py generated/roles.txt
+.PHONY: packages
+packages: generated/packages.sh
+generated/packages.sh: generated/roles.txt util/packages.ini util/packages.py 
 	which python
 	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
-	python util/packages.py -i $< $(shell cat generated/roles.txt)> $@
+	python util/packages.py -c util/packages.ini $$(cat $<)> $@
 
+
+.PHONY: prereq
+prereq: generated/prereqs_installed.txt
+generated/prereqs_installed.txt: debian/prereq.sh generated/ 
+	date >> $@
+ifeq ($(LINUX_DISTRO),Debian)
+	which apt-get && bash debian/prereq.sh > $@
+endif
 
 .PHONY: backup
 backup: generated/backup.$(DATE).tar.gz  ## Backup archive of settings this might change.
@@ -92,17 +119,23 @@ generated/backup.$(DATE).tar.gz: generated/
 	cd ${HOME} && tar -czf $(PWD)/$@ \
 		--exclude=".git" \
 		--exclude=".vim/view/*" --exclude=".vim/swap/*" \
-		./.bash* \
-		./.gitconfig* \
+		$$(ls -1 ./.bash*) \
+		$$(ls -1 ./.gitconfig*) \
 		$$(test -f ./.inputrc && echo ./.inputrc) \
 		$$(test -f ./.psqlrc && echo ./.psqlrc) \
 		$$(test -f ./.pythonrc.py && echo ./.pythonrc.py) \
 		$$(test -f ./.screenrc && echo ./.screenrc) \
 		$$(test -f ./.config/htop/htoprc && echo ./.config/htop/htoprc) \
 		$$(test -f ./.vimrc && echo ./.vimrc) \
-		./.vim* \
-		./.ssh/config* \
-		./.ssh/id_rsa*
+		$$(test -d ./.vim && echo ./.vim*) \
+		$$(ls -1 ./.ssh/config*) \
+		$$(ls -1 ./.ssh/id_rsa*)
+
+
+
+.PHONY: import
+import:  ## Copy changes from live system into this working directory.
+	find ./dotfiles -type f -print | sed 's@$(PWD)/@@; s@./dotfiles/@@;' | while read df; do diff -q "$${HOME}/$${df}" "./dotfiles/$${df}"; test $$? -eq 1 || continue; cp -v "$${HOME}/$${df}" "./dotfiles/$${df}"; done
 
 
 clean-backup:
@@ -115,16 +148,29 @@ $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 	bash $^ apply reset
 	touch -r $< $@
 
+.PHONY: @install_respositories
+@install_repositories:
+ifeq ($(PACKAGE_HANDLER),apt-get)
+	sudo bash ./debian/setup.sh repos
+endif
+
+
 .PHONY: @install_packages
-@install_packages: generated/packages.sh 
+@install_packages: generated/packages.sh generated/roles.txt @install_repositories
+	echo "$(SYSTEM) $(LINUX_DISTRO)"
 ifeq ($(SYSTEM),Darwin)
-	bash macos/setup.sh install
+	bash macos/setup.sh install "$$(cat generated/roles.txt)"
+endif
+ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
+	bash debian/setup.sh install "$$(cat generated/roles.txt)"
 endif
 	bash -x $<  # install packages
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh configure
 endif
-
+ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
+	bash debian/setup.sh configure
+endif
 
 
 gitbackup: $(CACHE)/restore_git.sh ## Stash the unique settings of my git config
@@ -160,6 +206,16 @@ endif
 		while read p; do \
 			mkdir -p $$p; cp -v $(CURDIR)/generic/misc/usercustomize.py $$p/ ;\
 		done
+
+.PHONY: @gosetup
+@gosetup:
+	bash util/gosetup.sh
+
+.PHONY: @rustsetup
+@rustsetup:
+	bash util/rustsetup.sh
+
+
 
 # Setup my common Vim extensions
 .PHONY: @vimconfig

@@ -3,123 +3,18 @@
 
 import argparse
 import sys
-import csv
+import re
 
-from collections import namedtuple
+from configparser import ConfigParser
+from collections import OrderedDict
 
-Command = namedtuple("Command", ["command", "packages", "variant"])
-
-
-class CommandRender(object):
-    args = None
-    verb = "install"
-    priority = 5
-    variant = None
-
-    @classmethod
-    def getRenderer(cls, cmd):
-        for p in cls.__subclasses__():
-            if p.matchPackageSelector(cmd):
-                return p(cmd)
-        # else
-        raise TypeError("Unmatched package spec: %r", cmd)
-
-    @classmethod
-    def matchPackageSelector(cls, cmd):
-        return (cmd.command == cls.call) and (cmd.variant == cls.variant)
-
-    def __init__(self, cmd):
-        assert isinstance(cmd, Command)
-        self.command = cmd
-
-    @property
-    def executable(self):
-        return self.command.command.split(" ")[0]
-
-    @property
-    def postinst(self):
-        for name, script in self.command.packages:
-            yield script
-
-    @property
-    def packages(self):
-        for name, script in self.command.packages:
-            yield name
-
-
-
-    def __str__(self):
-        fmt = "{condition} && {command} {verb} {args} {packages} {postinst}"
-
-        postinst = " && ".join("bash %s" % p for p in self.postinst if p)
-        postinst = (" && " + postinst) if postinst else "# no-postinst"
-
-        return fmt.format(
-            condition=("which %s >/dev/null" % (self.executable,)),
-            command=(self.command.command),
-            packages=(" ".join(list(self.packages))),
-            verb=(self.verb if self.verb is not None else ""),
-            args=(self.args if self.args is not None else ""),
-            postinst=postinst
-        )
-
-class BrewRenderer(CommandRender):
-    call = "brew"
-    args = "--display-times --force"
-    priority = 1
-
-class BrewCaskRenderer(CommandRender):  # Must be derived directly for __subclasses__ to work above.
-    call = "brew"
-    variant = "cask"
-    args = "--cask --force"
-    priority = 0  # some of the other formulae of Brew depend on Cask-installed components, particularly Java
-
-
-class GoRender(CommandRender):
-    call = "go"
-    verb = "get"
-    priority = 10
-
-    def __str__(self):
-        return "\n".join([
-            "{condition} && {command.command} {verb} {pkg}".format(
-                condition=("which %s >/dev/null" % (self.executable,)),
-                command=self.command,
-                verb=self.verb,
-                pkg=pkg
-            ) for pkg in self.packages
-        ] + [
-            ("bash %" % p for p in self.packages if p)
-        ])
-
-
-class NodeRender(CommandRender):
-    call = "npm"
-    args = "-g"
-    priority = 10
-
-
-class DebianRender(CommandRender):
-    call = "apt-get"
-    args = "-y"
-    priority = 0
-
-
-class GCloudRender(CommandRender):
-    call = "gcloud"
-    verb = "components install"
-    priority = 8
-
-
-class EasyInstallRender(CommandRender):
-    call = "easy_install"
-    verb = None
-    priority = 7
-
-
-class PIPRender(CommandRender):
-    call = "pip"
-    priority = 8
+class MultiOrderedDict(OrderedDict):
+    def __setitem__(self, key, value):
+        if isinstance(value, list) and key in self:
+            self[key].extend(value)
+        else:
+            super(MultiOrderedDict, self).__setitem__(key, value)
+            # super().__setitem__(key, value) in Python 3
 
 
 def sort_commands(commands):
@@ -143,62 +38,125 @@ def parse_args(args):
     )
     parser.add_argument("category", action="append", nargs="*", type=str)
     parser.add_argument("-p", "--packager", action="store")
-    parser.add_argument("-i", "--index", action="store")
+    parser.add_argument("-c", "--config", action="store")
+    parser.add_argument("-d", "--defaults", action="store_const", 
+                        dest="mode",
+                        default="generate_packages", 
+                        const="list_profile_default")
     return parser.parse_args(args)
 
 
-def queryCommands(indexFile, categories, packager):
-    reader = csv.reader(open(indexFile))
-    commands = dict()
+def section_dict(config, name, cast=None):
+    result = dict()
+    for k, val in config.items(name):
+        if isinstance(val, (str, unicode)):
+            result[k] = "\n".join([ result.get(k, ""), val ])
+        else:
+            result[k] = val
+        
+    if callable(cast):
+        for k in result.keys():
+            result[k] = cast(result[k])
 
-    for record in reader:
-        if len(record) < 1:
-            continue  # skip empty rows
-        if record[0].startswith('#'):
-            continue  # skip comment lines
-
-        cmd = record[0]  # command name
-
-        # Filter out items not related to this packager
-        if packager is not None and (packager != cmd):
-            continue
-
-        # Filter out items that don't match these categories
-        if len(categories) > 0 and record[1] not in categories:
-            continue
-
-        # Command is tuple[package-manager, variant]
-        cmd = (cmd, 
-               record[3] if len(record) > 3 else "none")
-
-        if cmd not in commands:
-            commands[cmd] = []  # a list of packages for this Command tuple to queue
-
-        commands[cmd].append(
-            # add the package & post-install script for this Command tuple
-            (record[2], (record[4] if len(record) > 4 else None))
-        )
+    return result
 
 
-    # For all package lists for all relevant package managers
-    for cmd, packages in commands.iteritems():
-        # command = ("%s %s" % (cmd[0], "" if cmd[1] == "none" else cmd[1]))
-        command = Command(
-            command=cmd[0],
-            packages=packages,
-            variant=(None if cmd[1] == "none" else cmd[1])
-        )
 
-        yield CommandRender.getRenderer(command)
+def strip_whitespace(text):
+    return re.sub(r'\s+', ' ', text)
+
+
+def safe_command(command):
+    firstword = r'^([\w-]+)'
+    repl = r'command -v \1 >/dev/null && \1'
+    return re.sub(firstword, repl, command).strip()
+
+def generate_install(conf, profiles, packager):
+
+    installers = dict(conf.items("INSTALLERS"))
+    variants = dict(conf.items("VARIANTS"))
+    priority = dict((k, int(v)) for (k, v) in conf.items("PRIORITY"))
+    postinst = dict(conf.items("POSTINSTALL"))
+    execorder = []
+
+    # assign priority to each installer
+    for k in installers.keys():
+        execorder.append((k, priority.get(k, priority.get('default', 100))))
+    
+    # each installer in priority order
+    for inst, prio in sorted(execorder, key=lambda x: x[1]):
+        each = conf.getboolean(inst, "each_package", fallback=False)
+        template = str(installers.get(inst, "# none"))
+        cmds = set(variants.get(inst, inst).split(' ') + [inst])
+        cmds = [(template.replace("{handler}", c).strip()) for c in cmds]
+
+
+        cmds = [safe_command(c) for c in cmds]
+        
+
+        # the packages for this installer
+        # packages = section_dict(conf, inst)
+        # packages = ["\n".join(packages.get(k, [])) for k in profiles]
+        # packages = [strip_whitespace(str(k)) for k in packages]
+        packages = [conf.get(inst, k, fallback=[]) for k in profiles]
+        packages = filter(len, packages)
+
+        if each:
+            packages = flatten([re.split(r'\s+', k) for k in packages])
+        else:
+            packages = [strip_whitespace(' '.join(packages))]
+
+        # print >> sys.stderr, ("# " + repr([ inst, packages ]))
+
+
+        # A command for each variant with attendant packages
+
+        for pkgs in filter(len, packages):
+        
+            if not len(pkgs):
+                continue
+
+            if len(cmds) == 1:
+                yield cmds[0].replace("{packages}", pkgs).strip()
+
+            else:
+                cmds = reversed(cmds)  # alternates first
+                cmds = [c.replace("{packages}", pkgs).strip() for c in cmds]
+
+                yield " ||\\\n\t".join(
+                    ("{%s}" % (c) for c in cmds)
+                )
+
+
+    # postinst scripts for each profile selected
+    for p in profiles:
+        for k in re.split(r'\s+', postinst.get(p, "")):
+            if len(k):
+                yield "bash " + k # execute
+
 
 
 def main(args):
     args = parse_args(args)
     categories = flatten(args.category)
-    commands = queryCommands(args.index, categories, args.packager)
 
-    for instance in sort_commands(commands):
-        print str(instance)
+    conf = ConfigParser(strict=False, dict_type=MultiOrderedDict)
+    conf.read(args.config)
+
+
+    if len(categories) == 0:
+        categories = conf.items("PROFILES")
+        categories = [key for (key, val) in categories if val == "true"]
+
+
+    if args.mode == "generate_packages":
+        commands = generate_install(conf, categories, args.packager)
+        print "# This script is generated by packages.py"
+        print "set -euf -o pipefail"
+        print "\n".join(list(commands))
+    elif args.mode == "list_profile_default":
+        print "\n".join(list(categories))
+    
 
 if __name__ == '__main__':
     sys.exit(int(main(sys.argv[1:]) or 0))

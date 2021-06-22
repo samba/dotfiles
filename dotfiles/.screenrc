@@ -42,7 +42,7 @@ bind t screen -t '(h)top' bash -c "which htop > /dev/null && htop || top"
 bind R screen -t '# |root:' sudo -i
 
 
-bind X screen -t '$ |debug:' bash -x --login -i
+bind B screen -t '$ |debug:' bash -x --login -i
 
 
 
@@ -83,7 +83,8 @@ shelltitle "> |shell"
 # sets hardstatus = "<number> (<title>)"
 # NOTE: hostname may be inserted via shell components
 defhstatus "^Et"
-hardstatus lastline '%t'
+# hardstatus lastline '%t'
+hardstatus off
 
 # stat line at the bottom of each screen 
 # NOTE: the screen title is REMOVED here because it will be show in the hardstatus, i.e. terminal header.

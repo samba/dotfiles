@@ -35,7 +35,7 @@ function prompt::abbreviate_working_path () {
 
     # When operating over SSH, include hostname in title
     # NOTE: this assume this script is running remotely
-    [ -z "$SSH_TTY"] || workingpath="${HOSTNAME%%.*}:${workingpath}"
+    test -z "$SSH_TTY" || workingpath="${HOSTNAME%%.*}:${workingpath}"
 
     echo $workingpath
 }

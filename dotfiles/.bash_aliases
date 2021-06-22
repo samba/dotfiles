@@ -130,6 +130,9 @@ alias encrypt="openssl aes-256-cbc -e";
 alias decrypt="openssl aes-256-cbc -d";
 
 
+# Archival shortcuts
+alias squash="mksquashfs"
+
 # Kubernetes
 alias k='kubectl'
 alias kpo='kubectl get pods -o wide'

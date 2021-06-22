@@ -80,10 +80,10 @@ setup_git_osx_keychain () {
 main () {
 
     case $1 in
-        install)
+        install) # TODO: consider the roles ($2) in selecting which installations to run here.
             install_homebrew
             install_python_base
-            install_fonts 
+            install_fonts
             ;;
         configure)
             autostart_mysql

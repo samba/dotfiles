@@ -41,6 +41,11 @@ function setup_colors () {
   git config -f $1 color.branch.remote "green"
 }
 
+
+function get_gpg_signing_key () {
+  which gpg >/dev/null && gpg --list-keys "${1}" >/dev/null
+}
+
 function setup_tools () {
   local current_signing_key="$(git config -f $1 --get user.signingkey)"
   local current_signing_active="$(git config -f $1 --get commit.gpgsign)"
@@ -53,8 +58,7 @@ function setup_tools () {
   local actual_signing_key="${current_signing_key:-${GIT_SIGNING_KEY}}"
   local activate_config_signing=true
 
-  which gpg >/dev/null && gpg --list-keys "${actual_signing_key}" >/dev/null
-  test $? -eq 0 || activate_config_signing=false
+  get_gpg_signing_key "${actual_signing_key}" || activate_config_signing=false
 
   git config -f $1 user.signingkey "${actual_signing_key}"
   
