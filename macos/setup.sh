@@ -40,7 +40,6 @@ brew::notify () {
 
 install_python_base () {
     which pip && return 0
-    install_system_libs
     sudo easy_install pip
     sudo -H pip install --upgrade --ignore-installed six python-dateutil
 }
