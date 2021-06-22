@@ -5,7 +5,11 @@ import argparse
 import sys
 import re
 
-from configparser import ConfigParser
+try:
+    from ConfigParser import ConfigParser, NoOptionError
+except ImportError:
+    from configparser import ConfigParser, NoOptionError
+
 from collections import OrderedDict
 
 class MultiOrderedDict(OrderedDict):
@@ -15,10 +19,6 @@ class MultiOrderedDict(OrderedDict):
         else:
             super(MultiOrderedDict, self).__setitem__(key, value)
             # super().__setitem__(key, value) in Python 3
-
-
-def sort_commands(commands):
-    return sorted(commands, key=lambda s: s.priority)
 
 
 def flatten(*parts):
@@ -39,26 +39,11 @@ def parse_args(args):
     parser.add_argument("category", action="append", nargs="*", type=str)
     parser.add_argument("-p", "--packager", action="store")
     parser.add_argument("-c", "--config", action="store")
-    parser.add_argument("-d", "--defaults", action="store_const", 
+    parser.add_argument("-d", "--defaults", action="store_const",
                         dest="mode",
-                        default="generate_packages", 
+                        default="generate_packages",
                         const="list_profile_default")
     return parser.parse_args(args)
-
-
-def section_dict(config, name, cast=None):
-    result = dict()
-    for k, val in config.items(name):
-        if isinstance(val, (str, unicode)):
-            result[k] = "\n".join([ result.get(k, ""), val ])
-        else:
-            result[k] = val
-        
-    if callable(cast):
-        for k in result.keys():
-            result[k] = cast(result[k])
-
-    return result
 
 
 
@@ -66,9 +51,9 @@ def strip_whitespace(text):
     return re.sub(r'\s+', ' ', text)
 
 
-def safe_command(command):
+def safe_command(command, sudo=False):
     firstword = r'^([\w-]+)'
-    repl = r'command -v \1 >/dev/null && \1'
+    repl = r'command -v \1 >/dev/null && %s \1' % ("sudo" if sudo else "")
     return re.sub(firstword, repl, command).strip()
 
 def generate_install(conf, profiles, packager):
@@ -77,42 +62,53 @@ def generate_install(conf, profiles, packager):
     variants = dict(conf.items("VARIANTS"))
     priority = dict((k, int(v)) for (k, v) in conf.items("PRIORITY"))
     postinst = dict(conf.items("POSTINSTALL"))
+    packages = dict((k, conf.items(k)) for k in installers.keys())
     execorder = []
 
     # assign priority to each installer
     for k in installers.keys():
         execorder.append((k, priority.get(k, priority.get('default', 100))))
-    
+
+
+    for k, pkgs in packages.items():
+        stash = list()
+        for c, v in pkgs:
+            # NB: implicit removal of unselected profiles
+            if c in profiles:
+                vals = re.split(r'\s+', v)
+                stash.extend(vals)
+        packages[k] = stash
+
     # each installer in priority order
     for inst, prio in sorted(execorder, key=lambda x: x[1]):
-        each = conf.getboolean(inst, "each_package", fallback=False)
+
+        each = False
+        if conf.has_option(inst, "each_package"):
+            each = conf.getboolean(inst, "each_package")
+
+        use_sudo = False
+        if conf.has_option(inst, "use_sudo"):
+            use_sudo = conf.getboolean(inst, "use_sudo")
+
+
         template = str(installers.get(inst, "# none"))
         cmds = set(variants.get(inst, inst).split(' ') + [inst])
         cmds = [(template.replace("{handler}", c).strip()) for c in cmds]
 
+        cmds = [safe_command(c, use_sudo) for c in cmds]
 
-        cmds = [safe_command(c) for c in cmds]
-        
+        pkgs = packages.get(inst, [])
 
-        # the packages for this installer
-        # packages = section_dict(conf, inst)
-        # packages = ["\n".join(packages.get(k, [])) for k in profiles]
-        # packages = [strip_whitespace(str(k)) for k in packages]
-        packages = [conf.get(inst, k, fallback=[]) for k in profiles]
-        packages = filter(len, packages)
+        if not each:
+            pkgs = [strip_whitespace(' '.join(pkgs))]
 
-        if each:
-            packages = flatten([re.split(r'\s+', k) for k in packages])
-        else:
-            packages = [strip_whitespace(' '.join(packages))]
 
-        # print >> sys.stderr, ("# " + repr([ inst, packages ]))
-
+        print >> sys.stderr, ("# " + repr([ inst, use_sudo, pkgs]))
 
         # A command for each variant with attendant packages
 
-        for pkgs in filter(len, packages):
-        
+        for pkgs in filter(len, pkgs):
+
             if not len(pkgs):
                 continue
 
@@ -124,7 +120,7 @@ def generate_install(conf, profiles, packager):
                 cmds = [c.replace("{packages}", pkgs).strip() for c in cmds]
 
                 yield " ||\\\n\t".join(
-                    ("{%s}" % (c) for c in cmds)
+                    ("{ %s ; }" % (c) for c in cmds)
                 )
 
 
@@ -140,7 +136,11 @@ def main(args):
     args = parse_args(args)
     categories = flatten(args.category)
 
-    conf = ConfigParser(strict=False, dict_type=MultiOrderedDict)
+    try:
+        conf = ConfigParser(strict=False, dict_type=MultiOrderedDict)
+    except TypeError:
+        conf = ConfigParser(dict_type=MultiOrderedDict)
+
     conf.read(args.config)
 
 
@@ -156,7 +156,7 @@ def main(args):
         print "\n".join(list(commands))
     elif args.mode == "list_profile_default":
         print "\n".join(list(categories))
-    
+
 
 if __name__ == '__main__':
     sys.exit(int(main(sys.argv[1:]) or 0))
