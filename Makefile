@@ -119,8 +119,8 @@ generated/backup.$(DATE).tar.gz: generated/
 	cd ${HOME} && tar -czf $(PWD)/$@ \
 		--exclude=".git" \
 		--exclude=".vim/view/*" --exclude=".vim/swap/*" \
-		$$(ls -1 ./.bash*) \
-		$$(ls -1 ./.gitconfig*) \
+		$$(ls -1d ./.bash*) \
+		$$(ls -1d ./.gitconfig*) \
 		$$(test -f ./.inputrc && echo ./.inputrc) \
 		$$(test -f ./.psqlrc && echo ./.psqlrc) \
 		$$(test -f ./.pythonrc.py && echo ./.pythonrc.py) \
@@ -128,8 +128,8 @@ generated/backup.$(DATE).tar.gz: generated/
 		$$(test -f ./.config/htop/htoprc && echo ./.config/htop/htoprc) \
 		$$(test -f ./.vimrc && echo ./.vimrc) \
 		$$(test -d ./.vim && echo ./.vim*) \
-		$$(ls -1 ./.ssh/config*) \
-		$$(ls -1 ./.ssh/id_rsa*)
+		$$(ls -1d ./.ssh/config*) \
+		$$(ls -1d ./.ssh/id_rsa*)
 
 
 
