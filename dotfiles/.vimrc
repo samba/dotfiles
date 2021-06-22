@@ -4,6 +4,7 @@
 " Commonly tuned customizations {{{
 
 colorscheme darkblue
+" colorscheme delek
 
 " colorscheme solarized
 " let g:solarized_termcolors=256
@@ -13,19 +14,19 @@ colorscheme darkblue
 
 function! FixWindowColors() abort
 
-  highlight! Normal ctermbg=none guibg=none
-  highlight! FoldColumn ctermbg=none guibg=DarkGrey
-  highlight! VertSplit ctermbg=none guibg=none
-  highlight! TabLineFill ctermbg=none guibg=none
+  highlight! Normal ctermbg=NONE guibg=NONE
+  highlight! FoldColumn ctermbg=NONE guibg=DarkGrey
+  highlight! VertSplit ctermbg=NONE guibg=NONE
+  highlight! TabLineFill ctermbg=NONE guibg=NONE
 
-  highlight! StatusLine term=bold ctermbg=DarkGrey ctermfg=Black
-  highlight! StatusLineNC term=bold ctermbg=Black ctermfg=LightGrey
+  highlight! StatusLineNC term=bold ctermbg=NONE ctermfg=LightGrey
+  highlight! StatusLine term=bold ctermbg=Black ctermfg=DarkGreen
 
   " statusline uses %2 for read-only or pending-edit status
-  highlight! User2 term=bold,inverse ctermfg=Red ctermbg=none
+  highlight! User2 term=bold,inverse ctermfg=Red ctermbg=NONE
 
   " statusline uses %3 for filename in window status
-  highlight! User3 term=bold ctermfg=LightGreen ctermbg=DarkGrey
+  highlight! User3 term=bold cterm=underline gui=underline ctermfg=LightGreen ctermbg=Black
 
 
 endfunction
@@ -196,8 +197,10 @@ set fillchars+=vert:│  " the vertical window barrier's character content
 " NB: this line character is inserted via `<ctrl-K>vv`, found via `:h digraph-table`
 
 set ruler
-set rulerformat=%30(%n\ %Y\ %B\ %=\ %l,%c%V\ %P%)
-set statusline=[%n]\ %2*%M%R%H%1*\ %3*\ %f\ %0*\ %=%y\ %-14.(%l,%c%V%)\ %P
+set rulerformat=%30([%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
+
+" statusline overrides rulerformat
+set statusline=[%n]\ %3*\ %f\ %0*\ %2*%M%R%H%1*%0*\ %=%y\ %-14.(%l,%c%V%)\ %P
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
