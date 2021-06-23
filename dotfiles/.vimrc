@@ -123,7 +123,7 @@ nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Fast saving
-nmap <leader>w :w!<cr>
+nmap <leader>w :x!<cr>
 
 " Toggling a few active behaviors
 nmap <leader>Tabs :setlocal et! autoindent! et? ai?<CR>
@@ -133,7 +133,7 @@ nmap <leader>Spell :setlocal spell! spell?<CR>
 nnoremap <leader><space> :nohlsearch<CR>
 
 " toggles paste mode
-nmap <Leader>P :set paste!<CR>
+nmap <Leader>P :set paste! paste?<CR>
 
 " insert a dot character  (•)
 imap <Leader>dot <C-V>u2022
@@ -254,7 +254,7 @@ noremap <Leader>tp :tabprev<CR>
 " if has('browse') or exists('+browse')
 " only if the browse flag is enabled at compile (not macOS)
 " Open a browser in CWD to select a file
-noremap <Leader>tw :browse tabnew .<CR>
+noremap <Leader>tw :browse aboveleft vsplit .<CR>
 " endif
 
 
@@ -263,10 +263,10 @@ noremap <Leader>tw :browse tabnew .<CR>
 " Text display, wrapping and annotation {{{
 
 " toggle non-printing characters
-nmap <Leader>List :set list!<CR>
+nmap <Leader>List :set list! list?<CR>
 
 set nowrap " no wrapping of lines
-nmap <Leader>Wrap :set nowrap!<CR>
+nmap <Leader>Wrap :set nowrap! wrap?<CR>
 
 " Display non-wrapping line-continues
 set listchars+=precedes:<,extends:<
@@ -274,12 +274,11 @@ set listchars+=precedes:<,extends:<
 " Use this to override keymapping elsewhere if needed
 " let mapleader=","
 " toggle readonly
-nmap <Leader>ro :set invreadonly<CR>
+nmap <Leader>ro :set invreadonly readonly?<CR>
 
 
 set number " enable line numbering, and a toggle shortcut
-nmap <silent> <Leader>Number :set number!<CR>
-nmap <silent> <Leader>n :set number!<CR>
+nmap <silent> <Leader>n :set number! number?<CR>
 
 
 
@@ -780,11 +779,11 @@ endif
 
 if has('scrollbind')
     " toggle synchronous scrolling of windows
-    nmap <Leader>sb :set scrollbind!<CR>
+    nmap <Leader>sb :set scrollbind! scrollbind?<CR>
 endif
 
 " toggles auto-changedir in Ex mode?
-nmap <Leader>CD :set invacd<CR>
+nmap <Leader>CD :set invacd acd?<CR>
 
 
 " replace all dot characters
