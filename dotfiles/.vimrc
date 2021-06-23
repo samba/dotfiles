@@ -108,7 +108,13 @@ set modeline     " Enable per-file configuration lines
 
 set regexpengine=1
 
-set formatoptions=qrn1  " sensible auto-format behavior
+" Reformats text in comments and text
+" `gq` formats multiple (selected) lines
+" `gw` formats lines but returns the cursor to its original position
+set formatoptions=qrncjp1  " sensible auto-format behavior
+
+
+
 " =}}}
 
 " Shortcuts, many toggling above behaviors {{{
