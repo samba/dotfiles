@@ -228,6 +228,14 @@ set nohidden                    " NB: the netrw handling of tree lists doesn't p
 " Swap timer: milliseconds and bytes to wait idle before writing swap
 set updatetime=30000 updatecount=100
 
+" Flip vertically split windows to horizontal
+nmap <leader>fv <C-W>t <C-W>K
+
+" Flip horizontally split windows to vertical
+nmap <leader>fh <C-W>t <C-W>H
+
+" Toggle window positioning (rotate)
+nmap <leader>fr <C-W>R
 
 " File buffer navigation
 nmap <Leader>n :next<CR>
