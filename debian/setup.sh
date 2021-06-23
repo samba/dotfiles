@@ -4,10 +4,9 @@ set -xeuf -o pipefail
 
 fetch_command () {
     for k in curl wget; do
-        command -v $k || continue
-        case $k in
-            curl) echo "-s"; break;;
-            wget) echo "-q -O -"; break;;
+	case "$(basename "$(command -v $k)")" in
+            curl) echo "$k -s"; return 0;;
+            wget) echo "$k -q -O -"; return 0;;
         esac
     done
 }
