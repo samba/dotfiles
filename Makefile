@@ -210,7 +210,7 @@ endif
 
 .PHONY: @gosetup
 @gosetup:
-	bash util/gosetup.sh
+	eval $$(grep "export GOPATH" ~/.bash_profile) && bash util/gosetup.sh
 
 .PHONY: @rustsetup
 @rustsetup:

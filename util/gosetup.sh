@@ -9,7 +9,7 @@ fail () {
     exit $1
 }
 
-test -z "${GOPATH}" && fail 1 "Please define \$GOPATH environment"
+test -z "${GOPATH-}" && fail 1 "Please define \$GOPATH environment"
 
 mkdir -p ${GOPATH}/{bin,src}
 
