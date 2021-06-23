@@ -712,13 +712,13 @@ augroup END
 " }}}
 
 " start grep command  files (shortcut)
-nnoremap <Leader>G :grep<space>
+nnoremap <Leader>G :Grep<space>
 
 " start built-in grep command
 nnoremap <Leader>g :vimgrep!<space>
 
 " grep word under cursor
-nnoremap <Leader>K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap <Leader>K :Grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " Some useful quickfix shortcuts
 ":cc      see the current error
@@ -731,12 +731,11 @@ nmap ]q :cp<CR>
 
 " }}} end quickfix
 
-" TODO: add "--hidden" argument for dotfiles or some other directories to
-" search hidden files.
 
 " Use The Silver Searcher if present, because it's really fast.
+" NB: --hidden lets `ag` also search "dot files"
 if executable('ag')
-  set grepprg=ag\ --vimgrep\ --nogroup\ --nocolor
+  set grepprg=ag\ --vimgrep\ --nogroup\ --nocolor\ --hidden
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
   let g:ctrlp_use_caching = 0
 endif
