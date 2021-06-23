@@ -17,10 +17,17 @@ function! FixWindowColors() abort
   highlight! Normal ctermbg=NONE guibg=NONE
   highlight! FoldColumn ctermbg=NONE guibg=DarkGrey
   highlight! VertSplit ctermbg=NONE guibg=NONE
+
+  highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
   highlight! TabLineFill ctermbg=NONE guibg=NONE
+
+
 
   highlight! StatusLineNC term=bold ctermbg=NONE ctermfg=LightGrey
   highlight! StatusLine term=bold ctermbg=Black ctermfg=DarkGreen
+  highlight! StatusLineTerm ctermbg=Black ctermfg=LightRed
+  highlight! StatusLineTermNC ctermbg=NONE ctermfg=DarkRed
+
 
   " statusline uses %2 for read-only or pending-edit status
   highlight! User2 term=bold,inverse ctermfg=Red ctermbg=NONE
@@ -651,7 +658,7 @@ endif
 
 " Development Environment {{{
 
-map <Leader>T :term bash<CR>
+map <Leader>T :botright terminal ++close ++rows=10<CR>
 
 " Shortcut to run any `make all` in the CWD
 map <Leader>m :make<CR>
