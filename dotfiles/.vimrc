@@ -392,15 +392,20 @@ set suffixes+=.in,.a,.bak,.swp,.pyc
 
 if has('insert_expand')
 	" set completeopt=menu,menuone,,preview,noinsert,noselect
-	set completeopt=menu,menuone,longest,noinsert,noselect
 	set complete=.,w,b,u,t,i,d
+    set completeopt=menu,menuone,preview,longest,noinsert,noselect
 
+    " Use the popup mode
+    " set completeopt+=popup
+    set completepopup=align:item,height:10,width:60,highlight:InfoPopup
 
 	" enable autocomplete
 	set omnifunc=syntaxcomplete#Complete
 
+    set pumheight=12  " number of items shown in the popup menu
 
-	set pumheight=12  " number of items shown in the popup menu
+    " automatically close the preview window on completion
+    autocmd CompleteDone * pclose
 
 endif
 
@@ -423,9 +428,9 @@ endif
 
 
 " Setup color/style for completion menu {{{
-hi Pmenu cterm=none ctermfg=black ctermbg=DarkGreen
-hi PmenuSel cterm=none ctermfg=Green ctermbg=black
-hi PmenuSbar cterm=bold ctermfg=none ctermbg=Green
+hi Pmenu cterm=NONE ctermfg=DarkGreen ctermbg=Black
+hi PmenuSel cterm=bold ctermfg=Green ctermbg=black
+hi PmenuSbar cterm=NONE ctermfg=NONE ctermbg=Green
 hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
 " }}}
 
@@ -458,7 +463,7 @@ endif
 " Autocompletion functions, if available...
 autocmd FileType sql set omnifunc=sqlcomplete#Complete
 autocmd FileType ruby set omnifunc=rubycomplete#Complete
-" autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType python set omnifunc=pythoncomplete#Complete
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
