@@ -414,6 +414,27 @@ if has('insert_expand')
 
 endif
 
+" Easy tab completion
+" via https://github.com/garybernhardt/dotfiles/blob/main/.vimrc
+" let g:tab_complete_effect = "\<c-x>\<c-o>"
+let g:tab_complete_effect = "\<c-p>"
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col
+        return "\<tab>"
+    endif
+
+    let char = getline('.')[col - 1]
+    if char =~ '\k'
+        " There's an identifier before the cursor, so complete the identifier.
+        return g:tab_complete_effect
+    else
+        return "\<tab>"
+    endif
+endfunction
+inoremap <expr> <tab> InsertTabWrapper()
+inoremap <s-tab> <c-n>
+
 if has('wildmenu')
 	set wildmenu
 	set wildmode=list:longest,list:full
