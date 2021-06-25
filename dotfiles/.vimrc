@@ -199,6 +199,10 @@ if has('title')
     endif
 endif
 
+if has('termguicolors')
+    set termguicolors  " use true-color mode
+endif
+
 set ttyfast    " optimize for fast terminal connectionss
 set lazyredraw " don't update the screen when macros/etc running in background (not command)
 
