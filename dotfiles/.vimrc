@@ -626,10 +626,10 @@ let g:sh_maxlines=1000
 
 " Show tree navigation in Explorer mode
 let g:netrw_liststyle = 3
-let g:netrw_preview   = 1
+let g:netrw_preview   = 0
 let g:netrw_winsize   = 80
-let g:netrw_altv      = &spr
-
+let g:netrw_altv      = &splitright
+let g:netrw_alto      = &splitbelow
 
 " Open files from Explorer view in a new window, split horizontally
 let g:netrw_browse_split = 2
