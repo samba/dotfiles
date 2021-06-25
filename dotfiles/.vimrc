@@ -481,7 +481,7 @@ augroup filetypedetect
 augroup END
 
 " Markdown, YAML and some others need real tabs.
-au FileType markdown setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
+au FileType markdown setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4 formatoptions+=t
 au FileType yaml setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 au FileType cpp setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 au FileTYpe json setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
@@ -565,7 +565,7 @@ au FileType text setlocal complete+=k spell
 endif
 
 
-au FileType text setlocal textwidth=78
+au FileType text setlocal textwidth=78 formatoptions+=t
 
 " Python {{{
 " We want consistent spacing in Python, and not tabs.
@@ -600,14 +600,17 @@ endif  " end if has('autocmd') above
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'shell=sh']
 
 " For the vim-markdown plugin
+let g:vim_markdown_math = 1
 let g:vim_markdown_conceal = 0
+let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_toc_autofit = 1
 let g:vim_markdown_folding_disabled = 0
 let g:vim_markdown_follow_anchor = 1
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_toml_frontmatter = 1
 let g:vim_markdown_json_frontmatter = 1
-
+let g:vim_markdown_no_extensions_in_markdown = 1
+let g:vim_markdown_edit_url_in = 'tab'  " options: tab, vsplit, hsplit, current
 
 " For the vim terraform plugin
 let g:terraform_fmt_on_safe = 1
