@@ -256,15 +256,16 @@ nmap <Leader>b :Qbuffers <CR> :copen <CR>
 
 
 " Tab navigation shortcuts
-" noremap <Leader>tex :tabe %:h<CR>  " (disabled) open a new explorer in CWD
-noremap <Leader>tex :20Lexplore %:h<CR>
-noremap <Leader>tn :tabnext<CR>
-noremap <Leader>tp :tabprev<CR>
+noremap <Leader>tex :35Lexplore %:h<CR>
+
+" default: `gt` and `gT` switch to next and previous tabs (respectively)
+" noremap <Leader>tn :tabnext<CR>
+" noremap <Leader>tp :tabprev<CR>
 
 " if has('browse') or exists('+browse')
 " only if the browse flag is enabled at compile (not macOS)
 " Open a browser in CWD to select a file
-noremap <Leader>tw :browse aboveleft vsplit .<CR>
+noremap <Leader>tw :browse aboveleft 35vsplit .<CR>
 " endif
 
 
