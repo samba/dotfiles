@@ -106,7 +106,7 @@ set nocursorline
 
 set modeline     " Enable per-file configuration lines
 
-set regexpengine=1
+set regexpengine=0
 
 " Reformats text in comments and text
 " `gq` formats multiple (selected) lines
