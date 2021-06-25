@@ -144,7 +144,7 @@ nmap <Leader>P :set paste! paste?<CR>
 " insert a dot character  (•)
 imap <Leader>dot <C-V>u2022
 
-" CTRL-U in insert mode deletes a lot.	Use CTRL-G u to first break undo,
+" CTRL-U in insert mode deletes a lot.    Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
 inoremap <C-U> <C-G>u<C-U>
 
@@ -184,10 +184,10 @@ if has('title')
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
 
 
-	let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
-	let compat_terminal =  (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "xterm")
+    let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
+    let compat_terminal =  (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "xterm")
 
-	let g:screen_title = (compat_terminal && !apple_terminal)
+    let g:screen_title = (compat_terminal && !apple_terminal)
 
     if (g:screen_title)
       set title
@@ -300,15 +300,15 @@ nmap <silent> <Leader>n :set number! number?<CR>
 
 
 if has('syntax')
-	syntax on
-	syntax sync minlines=256
-	set synmaxcol=800
+    syntax on
+    syntax sync minlines=256
+    set synmaxcol=800
 
 if has('autocmd')
-	nmap <Leader>ss :syn sync fromstart<CR>
+    nmap <Leader>ss :syn sync fromstart<CR>
 endif
 
-endif
+endif  " end syntax
 
 if has('spell')  " Some filetypes below trigger spelling activation
     set spelllang=en
@@ -338,12 +338,12 @@ filetype plugin indent on " restore filetype sensibility
 
 " Encryption settings {{{
 if has('cryptv')
-	if has('crypt-blowfish')
-		set cryptmethod=blowfish
-	endif
-	if has('crypt-blowfish2')
-		set cryptmethod=blowfish2
-	endif
+    if has('crypt-blowfish')
+        set cryptmethod=blowfish
+    endif
+    if has('crypt-blowfish2')
+        set cryptmethod=blowfish2
+    endif
 endif
 " }}}
 
@@ -364,15 +364,15 @@ if has('folding')
     nnoremap  <silent>  <space> :execute 'silent! normal! za'.(foldlevel('.')?'':'l')<cr>
 
     " toggles Presentation mode (e.g. for use in conferences)
-	" TODO: switch this to some automatic function...
+    " TODO: switch this to some automatic function...
     nmap <leader>R :set foldmethod=syntax foldcolumn=0 foldenable! number!<CR>
 
-	" Automatic save of folds, so that you dont have to type everytime
-	" :mkview to save and :loadview to restore folds
-	if has('autocmd')
-		autocmd BufWinLeave * silent! mkview
-		autocmd BufWinEnter * silent! loadview
-	endif
+    " Automatic save of folds, so that you dont have to type everytime
+    " :mkview to save and :loadview to restore folds
+    if has('autocmd')
+        autocmd BufWinLeave * silent! mkview
+        autocmd BufWinEnter * silent! loadview
+    endif
 
 endif
 
@@ -400,16 +400,16 @@ set suffixes+=.in,.a,.bak,.swp,.pyc
 
 
 if has('insert_expand')
-	" set completeopt=menu,menuone,,preview,noinsert,noselect
-	set complete=.,w,b,u,t,i,d
+    " set completeopt=menu,menuone,,preview,noinsert,noselect
     set completeopt=menu,menuone,preview,longest,noinsert,noselect
+    set complete=.,w,b,u,t,i,d
 
     " Use the popup mode
     " set completeopt+=popup
     set completepopup=align:item,height:10,width:60,highlight:InfoPopup
 
-	" enable autocomplete
-	set omnifunc=syntaxcomplete#Complete
+    " enable autocomplete
+    set omnifunc=syntaxcomplete#Complete
 
     set pumheight=12  " number of items shown in the popup menu
 
@@ -439,21 +439,23 @@ endfunction
 inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
 
-if has('wildmenu')
-	set wildmenu
-	set wildmode=list:longest,list:full
 
-	set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
-	set wildignore+=.sw?,.bak       " vim swap files etc
-	set wildignore+=.git,.hg,.svn   " version control
-	set wildignore+=.DS_Store       " macOS, how tiresome
-	set wildignore+=migrations      " Django migrations code (generated)
-	set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg  " images
-	set wildignore+=go/pkg          " Go packages
-	set wildignore+=go/bin          " Go binaries
-	set wildignore+=go/bin-vagrant  " Go vagrant files
-	set wildignore+=*.pyc           " Python byte code
-	set wildignore+=*.orig          " Git's merge resolution cache
+
+if has('wildmenu')
+    set wildmenu
+    set wildmode=list:longest,list:full
+
+    set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
+    set wildignore+=.sw?,.bak       " vim swap files etc
+    set wildignore+=.git,.hg,.svn   " version control
+    set wildignore+=.DS_Store       " macOS, how tiresome
+    set wildignore+=migrations      " Django migrations code (generated)
+    set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg  " images
+    set wildignore+=go/pkg          " Go packages
+    set wildignore+=go/bin          " Go binaries
+    set wildignore+=go/bin-vagrant  " Go vagrant files
+    set wildignore+=*.pyc           " Python byte code
+    set wildignore+=*.orig          " Git's merge resolution cache
 endif
 
 
@@ -486,10 +488,10 @@ autocmd BufReadPost quickfix match ExtraWhitespace "^$"
 
 " Sensible per-language defaults.
 if has('folding')
-	autocmd FileType python setlocal noet foldenable foldmethod=indent
-	autocmd FileType javascript setlocal foldenable foldmethod=indent
-	autocmd FileType html setlocal foldenable foldmethod=indent
-	autocmd FileType help set foldcolumn=0 nonumber foldenable foldmethod=marker "no foldcolumn for help files
+    autocmd FileType python setlocal noet foldenable foldmethod=indent
+    autocmd FileType javascript setlocal foldenable foldmethod=indent
+    autocmd FileType html setlocal foldenable foldmethod=indent
+    autocmd FileType help set foldcolumn=0 nonumber foldenable foldmethod=marker "no foldcolumn for help files
 endif
 
 " Autocompletion functions, if available...
@@ -738,7 +740,7 @@ command! -nargs=+ -complete=file_in_path -bar Ag silent! grep! <args>|cwindow|re
 " source: https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
 
 function! Grep(...) " faster, quieter execution of external grep
-	return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
+    return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
 endfunction
 
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
@@ -750,9 +752,9 @@ cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'L
 
 " Automatically open the quickfix window when its content changes
 augroup quickfix
-	autocmd!
-	autocmd QuickFixCmdPost cgetexpr cwindow
-	autocmd QuickFixCmdPost lgetexpr lwindow
+    autocmd!
+    autocmd QuickFixCmdPost cgetexpr cwindow
+    autocmd QuickFixCmdPost lgetexpr lwindow
 augroup END
 
 " }}}
