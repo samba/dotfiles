@@ -226,7 +226,7 @@ set laststatus=1
 " Tab, Window, and Buffer navigation {{{=
 "
 " Buffer handling - these are performance improvements.
-set switchbuf=useopen           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
+set switchbuf=useopen,usetab,split,newtab,uselast           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
 
 set nohidden                    " NB: the netrw handling of tree lists doesn't play well with hidden buffers; it ends up writing odd `NetrwTreeListing` files. See related autocmd below.
 "set hidden                      "hid:   allows opening a new buffer in place of an existing one without first saving the existing one
@@ -248,7 +248,11 @@ nmap <Leader>n :next<CR>
 nmap <Leader>p :prev<CR>
 
 " Easy buffer selection
-nmap <Leader>b :ls<CR>:b<Space>
+" nmap <Leader>b :ls<CR>:b<Space>
+
+" Populates the quickfix list with current buffers
+command! Qbuffers call setqflist(map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), '{"bufnr":v:val}'), 'r')
+nmap <Leader>b :Qbuffers <CR> :copen <CR>
 
 
 " Tab navigation shortcuts
@@ -451,6 +455,8 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
 
+" disable whitespace highlights in quickfix list
+autocmd BufReadPost quickfix match ExtraWhitespace "^$"
 
 " Sensible per-language defaults.
 if has('folding')
