@@ -3,6 +3,7 @@
 
 " Commonly tuned customizations {{{
 
+
 colorscheme darkblue
 " colorscheme delek
 
@@ -400,12 +401,11 @@ set suffixes+=.in,.a,.bak,.swp,.pyc
 
 
 if has('insert_expand')
-    " set completeopt=menu,menuone,,preview,noinsert,noselect
     set completeopt=menu,menuone,preview,longest,noinsert,noselect
     set complete=.,w,b,u,t,i,d
 
     " Use the popup mode
-    " set completeopt+=popup
+    set completeopt+=popup
     set completepopup=align:item,height:10,width:60,highlight:InfoPopup
 
     " enable autocomplete
@@ -420,9 +420,7 @@ endif
 
 " Easy tab completion
 " via https://github.com/garybernhardt/dotfiles/blob/main/.vimrc
-" let g:tab_complete_effect = "\<c-x>\<c-o>"
-let g:tab_complete_effect = "\<c-p>"
-function! InsertTabWrapper()
+function! InsertTabWrapper(key)
     let col = col('.') - 1
     if !col
         return "\<tab>"
@@ -431,12 +429,18 @@ function! InsertTabWrapper()
     let char = getline('.')[col - 1]
     if char =~ '\k'
         " There's an identifier before the cursor, so complete the identifier.
-        return g:tab_complete_effect
+        return a:key
     else
         return "\<tab>"
     endif
 endfunction
-inoremap <expr> <tab> InsertTabWrapper()
+
+" Regular tab-completion tries exisitng words in the codebase
+inoremap <expr> <tab> InsertTabWrapper("\<c-p>")
+
+" Ctrl-O completion uses omni-complete
+inoremap <expr> <c-o> InsertTabWrapper("\<c-x>\<c-o>")
+
 inoremap <s-tab> <c-n>
 
 
