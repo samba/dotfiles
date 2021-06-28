@@ -85,24 +85,21 @@ function gitgo() {
 }
 
 
-gofind () {
-  # Paths to search
-  (
-    test -d /go && echo "/go"
-    test -z "$GOPATH" || (echo "${GOPATH/:/\\n}" | sed 's@$@/src@')
-    test -d ~/Projects && echo "${HOME}/Projects"
-  ) | sed 's@//@/@' | xargs -I {} find -L {} -type d -name '*.git' \
-    | egrep -v -e "/(vendor|node_modules|dep|.*cache.*)/?" \
-    | sed 's@/.git$@@' \
-    | sort -u
-
-}
-
 
 function gd () { # shortcut for hopping into project directories
-  local scan=$(test $# -gt 0  && echo "grep $@" || echo "cat")
-  local foundpath=$(gofind | $scan | head -n 1)
+  local foundpath=$(gofind $@ | head -n 1)
   test -d ${foundpath} && pushd ${foundpath}
+}
+
+function gofind () { # search Go project directories
+  test -z "$(go env GOPATH)" && echo "Required: set \$GOPATH to an existing directory."
+  go env GOPATH | tr -s ':' '\n' | \
+    xargs -I {} find -L {} -type d -mindepth 2 -maxdepth 5 -name "*.git" -path "**/$@/*" \
+      -a -not -path "**/vendor/*" \
+      -a -not -path "**/node_modules/*" \
+      -a -not -path "**/dep/*" \
+      -a -not -path "*cache*" \
+      | sed 's@/.git$@@' | sort -u
 }
 
 
