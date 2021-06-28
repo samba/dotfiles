@@ -61,7 +61,8 @@ shell -${SHELL} # this may cause problems with key interpretation, e.g. backspac
 # terminal sharing 
 multiuser on # so I can attach from multiple points.
 
-# The title escape sequence should 
+# The title escape sequence should override the automatic title
+# NB: this is not supported on MacOS' version of screen at this time
 defdynamictitle on
 
 # Use a default name of ">" but try to read command title when possible.
@@ -89,7 +90,7 @@ hardstatus off
 # stat line at the bottom of each screen 
 # NOTE: the screen title is REMOVED here because it will be show in the hardstatus, i.e. terminal header.
 # caption string "%{= dd}%?%F%{+b ..}%?%{+ .y}%3n%{-} %{+ .g}%h%{-} %?%{+ .y}[%f]%{-}%? %?%u%? %= %x %?%?%{+ .b}[%t]%?%{-} %{+ .g}%H%{-} %{+ .y}%l%{-} %{+ .g}%0c:%s%{-}"
-caption string "%{-s}%{+b bW} %{+ bY}%0c:%s%{-} %{+ bB}%n%{-} %{+ bM}%t%{-} %= %{+ bG}%h%{-} %{+ bG}%l%{-} "
+caption string "%{-s}%{+b bW} %{+ bY}%0c:%s%{-} %{+ bG}%n%{-} %{+ bM}%t%{-} %= %{+ bG}%h%{-} %{+ bG}%l%{-} "
 caption always
 # caption top  # not supported in 4.06?
 

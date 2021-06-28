@@ -41,6 +41,50 @@ function prompt::abbreviate_working_path () {
 }
 
 
+set_status () {
+
+    local has_status=false
+    tput hs && has_status=true
+
+    # NB: this gets inherited by VSCode and others when called from screen
+    # test -n "$STY" && has_status=true
+
+    case $TERM in
+        screen*) has_status=true;;
+    esac
+
+    test 'true' = "${has_status}" && {
+        printf '\x1B_%s\x1B\\' "${status_message}";  # screen status
+        # echo "(set status)" >&2
+    }
+}
+
+set_title () {
+
+    local in_screen=false
+
+    # NB: this is (incorrectly) inherited in VScode environment when called from screen
+    # test -n "$STY" && in_screen=true
+
+    case $TERM in
+        screen*) in_screen=true;;
+    esac
+
+
+    if [ "$in_screen" = "true" ]; then # in screen
+        # essentially similar to https://vim.fandom.com/wiki/Automatically_set_screen_title
+        printf '\033k%s\033\\' "${status_message}"  # screen title
+        # echo "(set title for screen)" >&2
+    else
+        # This is normally interpreted as the shell title, in terminal emulators
+        # like xterm, iTerm2, etc
+        printf "\033]0;%s\007" "${status_message}"
+        # echo "(set title for term $TERM)" >&2
+    fi
+
+}
+
+
 # Provides ${PROMPT_COMMAND}
 # Redefines PS1 as needed.
 # NB: this command is executed by PROMPT_COMMAND, which provides LAST_RETURN_CODE
@@ -48,35 +92,17 @@ function prompt::command () {
 
     local set_status=true
     local status_message="$(prompt::abbreviate_working_path)"
-    local shell_title=""
 
 
     history -a >/dev/null;  # append history file.
 
-    # Virtual Studio Code doesn't like the status flags.
-    case "${TERM_PROGRAM}" in
-        vscode) set_status=false;;
-    esac
-
-    # Disable statusline if not supported
-    tput hs || set_status=false;
-
-
-    if test ${set_status} = true; then
-        if test -n "$STY"; then
-            printf "\x1B_%s\x1B\\" "${status_message}"  # screen hardstatus
-            printf "\033k%s\033\\" "${status_message}"
-        else
-            # This is normally interpreted as the shell title, in terminal emulators
-            # like xterm, iTerm2, etc
-            printf "\033]0;%s\007" "${status_message}"
-        fi
-    fi
+    set_title "${status_message}"
+    set_status "${status_message}"
 
     # a null-title sequence for screen to interpret the live command
     test -n "$STY" && printf "\033k\033\134"
 
-     # NB: this must exactly match screen's shelltitle command below.
+    # NB: this must exactly match screen's shelltitle command below.
     local shelltitle_prefix="> "
 
     # Initialize a generally compatible set of base colors & controls
@@ -143,7 +169,8 @@ function prompt::command () {
 
     printf -v prompt "${template}" "${parts[@]}" "${reset}"
 
-    export PS1="${prompt}${shelltitle_prefix}"
+
+    export PS1="${prompt}${shelltitle_prefix-}"
     export PS2="${yellow}>${reset} "
     export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
     export PS4="${blue}+${reset} "
