@@ -120,7 +120,7 @@ generated/backup.$(DATE).tar.gz: generated/
 	cd ${HOME} && tar -czf $(PWD)/$@ \
 		--exclude=".git" \
 		--exclude=".vim/view/*" --exclude=".vim/swap/*" \
-		$$(ls -1 ./.bash* || exit 0) \
+		$$(ls -1d ./.bash* || exit 0) \
 		$$(ls -1 ./.gitconfig* || exit 0) \
 		$$(test -f ./.inputrc && echo ./.inputrc) \
 		$$(test -f ./.psqlrc && echo ./.psqlrc) \
@@ -128,7 +128,7 @@ generated/backup.$(DATE).tar.gz: generated/
 		$$(test -f ./.screenrc && echo ./.screenrc) \
 		$$(test -f ./.config/htop/htoprc && echo ./.config/htop/htoprc) \
 		$$(test -f ./.vimrc && echo ./.vimrc) \
-		$$(test -d ./.vim && echo ./.vim*) \
+		$$(test -d ./.vim && echo './.vim*') \
 		$$(ls -1 ./.ssh/config* || exit 0) \
 		$$(ls -1 ./.ssh/id_rsa* || exit 0)
 
