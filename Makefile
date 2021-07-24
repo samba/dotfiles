@@ -55,10 +55,14 @@ dotfiles:  ## Install the dotfiles
         --exclude "*.txt" \
         -arvh --no-perms --no-links
 
+
+$(SSH_CONFIG): dotfiles/.ssh/config.published Makefile
+	mkdir -p $$(dirname $@)
+	grep -q "config.published" $@ || \
+		echo "Include ~/.ssh/config.published" >>$@
+
 .PHONY: @setup_config
-@setup_config: $(HOME)/.gitconfig
-	grep -q "config.published" $(SSH_CONFIG) || \
-		echo "Include ~/.ssh/config.published" >>$(SSH_CONFIG)
+@setup_config: $(HOME)/.gitconfig $(SSH_CONFIG)
 	mkdir -p $(HOME)/.ssh/keys $(HOME)/.ssh/sock
 	chmod 0700 $(HOME)/.ssh
 
