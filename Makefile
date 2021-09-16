@@ -172,6 +172,7 @@ endif
 	bash -x $<  # install packages
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh configure
+	bash macos/setup_fonts.sh
 endif
 ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
 	bash debian/setup.sh configure
