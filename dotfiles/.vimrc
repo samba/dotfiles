@@ -725,6 +725,7 @@ endif
 
 " Development Environment {{{
 
+" Opens a terminal at the bottom of the screen
 map <Leader>T :botright terminal ++close ++rows=10<CR>
 
 " Shortcut to run any `make all` in the CWD
@@ -788,6 +789,10 @@ nnoremap <Leader>K :Grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 nmap [q :cn<CR>
 nmap ]q :cp<CR>
 
+
+" Similar navigation for location list
+nmap [l :ln<CR>
+nmap ]l :lp<CR>
 
 " }}} end quickfix
 
