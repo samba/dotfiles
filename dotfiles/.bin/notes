@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+NOTESDIR=${HOME}/Notes
+
+mkdir -p "${NOTESDIR}"
+
+_grep () {
+    command -v ag && return 0
+    command -v grep && return 0
+    return 1
+}
+
+template () {
+cat <<EOF
+---
+Title: ${@}
+Date: $(date "+%Y-%m-%d")
+---
+
+
+EOF
+}
+
+search () {
+    $(_grep) $@ -R ${NOTESDIR}
+}
+
+
+slug () {
+    tr -C -s '[:alnum:]' '-' | tr -s '[:upper:]' '[:lower:]' | sed 's@-$@@'
+}
+
+title_to_filename () {
+    fname="$(echo $@ | slug)"
+    fname="${NOTESDIR}/${fname%%.md}.md"
+    echo "$fname"
+}
+
+
+create () {
+    fname="$(title_to_filename "$@")"
+    test -f "$fname" || template "$@" > "$fname"
+    if test -t 0; then
+        vim $fname
+    else
+        cat >> "$fname"  # copy stdin to the file
+    fi
+}
+
+
+
+
+
+
+print_help () {
+cat <<EOF
+Usage: ${0} <action> [<title>]
+
+Actions:
+ - list       Lists all notes in the directory: ${NOTESDIR}  (title text is not used)
+ - search     Searches all notes in the directory for the provided text (<title>)
+ - today      Opens an automatically-generated note with today's date, possibly already existing.
+ - create     Creates a new note with the provided <title>, populating it initially with a template if it does not exist.
+ - edit       same as create, but fails when the note does not already exist.
+ - open       (same as edit)
+EOF
+}
+
+
+
+
+
+
+mode=${1:-generic}
+test $# -eq 0 || shift 1
+
+case $mode in
+    generic)             vim --ttyfail -x "${NOTESDIR}" ;;
+    list)                ls -l "${NOTESDIR}" ;;
+    search)              search "$@" ;;
+    today)               create "$(date "+%Y-%m-%d") Daily notes";;
+    edit|create|open)    edit "$@";;
+    *)                   print_help;;
+esac
+
+# vim: ft=bash
