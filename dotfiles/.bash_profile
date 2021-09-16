@@ -31,6 +31,9 @@ if command -v pyenv >/dev/null; then
   eval "$(pyenv init -)"
 fi
 
+test -d "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" && \
+  export GCLOUD_ROOT="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+
 if command -v gcloud >/dev/null; then
   export GCLOUD_ROOT=$(gcloud info --format="value(installation.sdk_root)")
   export GOOGLE_APPENGINE_PATH="${GCLOUD_ROOT}/platform/google_appengine/"
