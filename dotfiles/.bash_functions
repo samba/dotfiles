@@ -205,6 +205,9 @@ macdown() {  # Application shortcut
     "$(mdfind kMDItemCFBundleIdentifier=com.uranusjr.macdown | head -n1)/Contents/SharedSupport/bin/macdown" $@
 }
 
+brew_cask_upgrade () {
+    brew upgrade $(brew outdated --cask --greedy --quiet)
+}
 
 # Simple calculator
 # copied from https://github.com/jessfraz/dotfiles/blob/master/.functions
