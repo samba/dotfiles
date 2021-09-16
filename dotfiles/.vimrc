@@ -332,14 +332,16 @@ filetype off " required before pathogen
 
 execute pathogen#infect()
 execute pathogen#helptags()
-execute diff#bind()
+
 execute modelines#bind()
 execute comments#bind()
 
+
+" moved diff-mode and git merge improvements to .vim/autoload/diff.vim
+execute diff#bind()
+
 filetype plugin indent on " restore filetype sensibility
 
-" Some plugins I deploy via dotfiles...
-" execute comments#MapSlash() " TODO
 
 " Encryption settings {{{
 if has('cryptv')
@@ -796,30 +798,6 @@ if executable('ag')
   set grepprg=ag\ --vimgrep\ --nogroup\ --nocolor\ --hidden
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
   let g:ctrlp_use_caching = 0
-endif
-
-
-" Within a buffer, add this file to the diff
-nmap <Leader>D :diffthis<CR>
-
-if &diff
-    set cursorline
-
-    " previous change
-    nmap ] ]c
-
-    " next change
-    nmap [ [c
-
-
-" diff mode: git merge shortcuts {{
-    nmap <leader>0 :diffput MERGE<CR>
-    nmap <leader>1 :diffget LOCAL<CR>
-    nmap <leader>2 :diffget BASE<CR>
-    nmap <leader>3 :diffget REMOTE<CR>
-" }}
-
-
 endif
 
 
