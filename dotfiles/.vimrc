@@ -231,7 +231,11 @@ set laststatus=1
 " Tab, Window, and Buffer navigation {{{=
 "
 " Buffer handling - these are performance improvements.
-set switchbuf=useopen,usetab,split,newtab,uselast           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
+set switchbuf=useopen,usetab,split,newtab           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
+
+if v:version > 801
+    set switchbuf+=uselast
+endif
 
 set nohidden                    " NB: the netrw handling of tree lists doesn't play well with hidden buffers; it ends up writing odd `NetrwTreeListing` files. See related autocmd below.
 "set hidden                      "hid:   allows opening a new buffer in place of an existing one without first saving the existing one
@@ -405,8 +409,10 @@ if has('insert_expand')
     set complete=.,w,b,u,t,i,d
 
     " Use the popup mode
-    set completeopt+=popup
-    set completepopup=align:item,height:10,width:60,highlight:InfoPopup
+    if has('&completepopup')
+        set completeopt+=popup
+        set completepopup=align:item,height:10,width:60,highlight:InfoPopup
+    endif
 
     " enable autocomplete
     set omnifunc=syntaxcomplete#Complete
