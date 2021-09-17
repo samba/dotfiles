@@ -10,8 +10,10 @@ fi
 export GOPATH=${HOME}/Projects/Go/
 
 # Startup script for Python
-export PYTHONSTARTUP=${HOME}/.pythonrc.py
-export PYTHON_USERCUSTOM=$(python -c "import site; print site.getusersitepackages()")
+if command -v python 2>/dev/null >/dev/null; then
+  export PYTHONSTARTUP=${HOME}/.pythonrc.py
+  export PYTHON_USERCUSTOM=$(command python -c "import site; print site.getusersitepackages()")
+fi
 
 # Ruby's gem environment
 if test -d "${HOME}/.gem"; then
@@ -112,9 +114,6 @@ done < <(__login_includes)
 
 unset __check_util_paths __login_includes  __list_project_groups
 
-
-
-test -f "$HOME/.cargo/env" && source "$HOME/.cargo/env"
 
 
 # Load runtime config for interactive terminals

@@ -263,7 +263,7 @@ function wtf () {
 
 
 function prompt::basic () {
-    printf -v PS1 '\\t \u@\h \W \j \$ ';
+    printf -v PS1 '\\t \\u@\\h \W \j \$ ';
     export PS1;
     export PROMPT_COMMAND="";
     export GIT_PROMPT="";

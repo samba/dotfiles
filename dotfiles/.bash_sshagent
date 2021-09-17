@@ -69,7 +69,7 @@ list_unregistered_keys () {
 
 configure_ssh_agent () {
 
-    echo "Loading SSH keys" >&2
+    # echo "Loading SSH keys" >&2
 
 	# automatically add keychain-provided keys
 	ssh-add -q -A 1>/dev/null 2>/dev/null

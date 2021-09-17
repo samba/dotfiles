@@ -101,3 +101,8 @@ done < <(__bash_files_import)
 
 unset f
 unset __bash_files_import
+
+# NB: rustup likes to override this test
+test -f "$HOME/.cargo/env" && . "$HOME/.cargo/env"
+
+
