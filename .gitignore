@@ -6,3 +6,4 @@ generated/
 .vscode
 .tmp
 *.backup
+private
