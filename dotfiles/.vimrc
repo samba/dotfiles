@@ -50,13 +50,11 @@ let g:solarized_termtrans=1
 function! FixWindowColors() abort
 
   highlight! Normal ctermbg=NONE guibg=NONE
-  highlight! FoldColumn ctermbg=NONE guibg=DarkGrey
+  highlight! FoldColumn ctermbg=NONE guibg=NONE
   highlight! VertSplit ctermbg=NONE guibg=NONE
 
   highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
   highlight! TabLineFill ctermbg=NONE guibg=NONE
-
-
 
   highlight! StatusLineNC term=bold ctermbg=NONE ctermfg=LightGrey
   highlight! StatusLine term=bold ctermbg=Black ctermfg=DarkGreen
@@ -74,12 +72,10 @@ function! FixWindowColors() abort
 endfunction
 
 
-"
-"augroup MyColors
-"  autocmd!
-"  autocmd ColorScheme * call FixWindowColors()
-"augroup END
-
+augroup MyColors
+  autocmd!
+  autocmd ColorScheme * call FixWindowColors()
+augroup END
 
 " }}}
 
@@ -219,13 +215,15 @@ if has('title')
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
 
 
+    let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
+    let xterm = (matchstr(&term, "xterm", 0) == "xterm")
     let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
-    let compat_terminal =  (matchstr(&term, "screen", 0) == "screen" || matchstr(&term, "xterm", 0) == "xterm")
 
-    let g:screen_title = (compat_terminal && !apple_terminal)
-
-    if (g:screen_title)
+    if ((gnu_screen || xterm))
       set title
+    end
+
+    if (gnu_screen)
       " auto BufEnter * :set title | let &titlestring = &g:titlestring_template
       auto VimLeave * :set t_ts=k\
       set t_ts=k
