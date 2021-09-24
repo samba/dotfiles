@@ -1,15 +1,49 @@
 " Vim runtime configuration.
-" vim: foldmarker={{(,)}} foldmethod=marker foldenable
+
+
+" Plugin handling and related extensions {{{=
+"
+" exists(...) fails to detect this method's presence, so we just call it.
+" In environments where it fails, user can comment it out.
+
+filetype off " required before pathogen
+
+execute pathogen#infect()
+execute pathogen#helptags()
+
+execute modelines#bind()
+execute comments#bind()
+
+
+" moved diff-mode and git merge improvements to .vim/autoload/diff.vim
+execute diff#bind()
+
+filetype plugin indent on " restore filetype sensibility
+
+" =}}}
+
+
+" Encryption settings {{{
+if has('cryptv')
+    if has('crypt-blowfish')
+        set cryptmethod=blowfish
+    endif
+    if has('crypt-blowfish2')
+        set cryptmethod=blowfish2
+    endif
+endif
+" }}}
+
 
 " Commonly tuned customizations {{{
 
 
-colorscheme darkblue
+" colorscheme darkblue
 " colorscheme delek
 
-" colorscheme solarized
-" let g:solarized_termcolors=256
-" let g:solarized_termtrans=1
+colorscheme solarized
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
 
 " Adjustments to color scheme {{{
 
@@ -40,11 +74,11 @@ function! FixWindowColors() abort
 endfunction
 
 
-
-augroup MyColors
-  autocmd!
-  autocmd ColorScheme * call FixWindowColors()
-augroup END
+"
+"augroup MyColors
+"  autocmd!
+"  autocmd ColorScheme * call FixWindowColors()
+"augroup END
 
 
 " }}}
@@ -321,41 +355,6 @@ endif
 
 
 " }}}
-
-
-" Plugin handling and related extensions {{{=
-"
-" exists(...) fails to detect this method's presence, so we just call it.
-" In environments where it fails, user can comment it out.
-
-filetype off " required before pathogen
-
-execute pathogen#infect()
-execute pathogen#helptags()
-
-execute modelines#bind()
-execute comments#bind()
-
-
-" moved diff-mode and git merge improvements to .vim/autoload/diff.vim
-execute diff#bind()
-
-filetype plugin indent on " restore filetype sensibility
-
-
-" Encryption settings {{{
-if has('cryptv')
-    if has('crypt-blowfish')
-        set cryptmethod=blowfish
-    endif
-    if has('crypt-blowfish2')
-        set cryptmethod=blowfish2
-    endif
-endif
-" }}}
-
-" =}}}
-
 
 " Code folding defaults {{{==
 
@@ -837,3 +836,4 @@ endfunction
 
 
 
+" vim: set foldmarker={{{,}}} foldmethod=marker foldenable

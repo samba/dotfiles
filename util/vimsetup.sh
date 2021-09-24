@@ -29,6 +29,7 @@ function do:vim:install_packaages () {
 	gitclone "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
 	gitclone "${HOME}/.vim/bundle/vim-ps1" "https://github.com/PProvost/vim-ps1.git"
 	gitclone "${HOME}/.vim/bundle/vim-go" "https://github.com/fatih/vim-go.git"
+    gitclone "${HOME}/.vim/bundle/solarized" "git://github.com/altercation/vim-colors-solarized.git"
 }
 
 function main () {
