@@ -208,7 +208,7 @@ endif
 # Install the Python usercustomize.py at the correct location. 
 .PHONY: @pythonconfig
 @pythonconfig:
-	which python && python -c "import site; print site.getusersitepackages()" | \
+	which python3 && python3 -c "import site; print(site.getusersitepackages())" | \
 		while read p; do \
 			mkdir -p $$p; cp -v $(CURDIR)/generic/misc/usercustomize.py $$p/ ;\
 		done
