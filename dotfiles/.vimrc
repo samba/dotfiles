@@ -37,16 +37,9 @@ endif
 
 " Commonly tuned customizations {{{
 
-
-" colorscheme darkblue
-" colorscheme delek
-
-colorscheme solarized
-let g:solarized_termcolors=256
-let g:solarized_termtrans=1
-
 " Adjustments to color scheme {{{
 
+" TODO: adapt these colors for solarized theme
 function! FixWindowColors() abort
 
   highlight! Normal ctermbg=NONE guibg=NONE
@@ -72,14 +65,25 @@ function! FixWindowColors() abort
 endfunction
 
 
-augroup MyColors
-  autocmd!
-  autocmd ColorScheme * call FixWindowColors()
-augroup END
+"augroup MyColors
+"  autocmd!
+"  autocmd ColorScheme * call FixWindowColors()
+"augroup END
 
 " }}}
 
 
+" colorscheme darkblue
+" colorscheme delek
+
+" set t_Co=256
+" set background=dark
+if !has('gui_running')
+    let g:solarized_termcolors=&t_Co
+    let g:solarized_termtrans=1
+endif
+
+colorscheme solarized
 
 " This comes first, because we have mappings that depend on leader
 " With a map leader it's possible to do extra key combinations
@@ -210,15 +214,21 @@ endif
 
 " }}} end GUI settings
 
+
+let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
+let xterm = (matchstr(&term, "xterm", 0) == "xterm")
+let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
+
+" NB: when using GNU screen or another terminal over SSH, it should not use
+" true-color mode
+if has('termguicolors') && (!gnu_screen) && (!xterm)
+    set termguicolors  " use true-color mode
+endif
+
+
 " GNU screen & terminal title handling {{{
 if has('title')
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
-
-
-    let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
-    let xterm = (matchstr(&term, "xterm", 0) == "xterm")
-    let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
-
     if ((gnu_screen || xterm))
       set title
     end
@@ -232,11 +242,7 @@ if has('title')
     endif
 endif
 
-if has('termguicolors')
-    set termguicolors  " use true-color mode
-endif
-
-set ttyfast    " optimize for fast terminal connectionss
+set ttyfast    " optimize for fast terminal connections
 set lazyredraw " don't update the screen when macros/etc running in background (not command)
 
 " }}}
@@ -691,6 +697,10 @@ let g:netrw_banner    = 0
 " Hide dot files and the like by default. (reactivate via `gh`)
 let g:netrw_hide      = 1
 let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()
+
+
+" Highlight files correctly in netrw
+let g:netrw_special_syntax = 1
 
 " netrw windows should show an abbreviated path for statusline.
 if has('statusline') && has('autocmd')
