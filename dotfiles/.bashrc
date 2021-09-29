@@ -47,7 +47,10 @@ shopt -s checkhash;
 shopt -s checkjobs 2>/dev/null
 
 # Warn when there's mail pending.
+export MAIL=/var/mail/${USER}
+export MAILCHECK=30
 shopt -s mailwarn;
+
 
 # Autocorrect typos in path names when using `cd`
 shopt -s cdspell;
