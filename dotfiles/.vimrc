@@ -835,6 +835,10 @@ endif
 nmap <Leader>CD :set invacd acd?<CR>
 
 
+" shortcut for changing directory to a current file's location
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+
+
 " replace all dot characters
 function! StripDots()
  execute ":s/^\%U2022/- /"
