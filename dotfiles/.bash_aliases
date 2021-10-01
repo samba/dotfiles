@@ -77,13 +77,16 @@ done
 case $(uname -s) in 
   Darwin)  ### Aliases that only make sense on a Mac.
 
-    if which lwp-request >/dev/null; then
+    if command -v lwp-request >/dev/null; then
       for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
         alias "$method"="lwp-request -m '$method'"
       done
       unset method
     fi
 
+    # Use the correct config for MacOS' supported versions of screen
+    test -f ~/.screenrc.macos && \
+        alias screen="screen -c ~/.screenrc.macos"
 
     # Settings control for MacOS
     alias plist="/usr/libexec/PlistBuddy"
