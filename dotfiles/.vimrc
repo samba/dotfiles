@@ -696,6 +696,8 @@ let g:netrw_browse_split = 2
 " Hide the netrw banner.
 let g:netrw_banner    = 0
 
+
+
 " Hide dot files and the like by default. (reactivate via `gh`)
 let g:netrw_hide      = 1
 let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()
@@ -850,4 +852,4 @@ endfunction
 
 
 
-" vim: set foldmarker={{{,}}} foldmethod=marker foldenable
+" vim: foldmarker={{{,}}} foldmethod=marker foldenable
