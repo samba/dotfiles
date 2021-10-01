@@ -180,13 +180,13 @@ defhstatus "^Et"
 hardstatus off
 
 # stat line at the bottom of each screen 
-caption string "%{-s}%{+d dd} %{+ dy}%0c:%s%{-} %{+d dm}%?%F%{+b}%?%n%{-}%{-b} %{+b dg}%?%F%{+b}%?%t%{-}%{-b} %= %{+ dB}%h%{-} %{+ dy}%H%{-} %{+d dg}%l%{-} "
+caption string "%{-s}%{+d dd} %{+ dy}%0c:%s%{-} %{+ dm}%?%F %{bu km}%?n%{-bu}%{-} %{+ dg}%?%F%{bu kg}%?%t%{-}%{-bu} %{d dd} %= %{+ dB}%h%{-} %{+ dy}%H%{-} %{+d dg}%l%{-} "
 caption always
 # caption top  # not supported in 4.06?
 
 # configure the window list, via C-A "
-windowlist title "%{+u .y}Num%{-} %{+u .b}Flags%{-} %{+u .g}Title%{-}%{-} %= %{+u b}Hardstatus%{-}"
-windowlist string "%{.kk}%{+ .y}%3n%{- .y} %{+ .B}%f%{- .B} %{+ .g}%t%{- .g} %{kk} %= %?%F%{+ .w}(focus)%?  %{+ .B}%h%{- .B}"
+windowlist title "%{+u .y}Num%{-} %{+u .b}Flags%{-} %{+u .g}Title%{-}%{-} %= %{+u y}Hardstatus%{-}"
+windowlist string "%{.dk}%{+ .y}%3n%{- .y} %{+ .B}%f%{- .B} %{+ .g}%t%{- .g} %{.k} %= %?%F%{+ .w}(focus)%?  %{+ .y}%h%{-}"
 
 # Ensure that resizes won't shrink any window beyond usability
 focusminresize 10 10
