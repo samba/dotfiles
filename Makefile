@@ -140,7 +140,12 @@ generated/backup.$(DATE).tar.gz: generated/
 
 .PHONY: import
 import:  ## Copy changes from live system into this working directory.
-	find ./dotfiles -type f -print | sed 's@$(PWD)/@@; s@./dotfiles/@@;' | while read df; do diff -q "$${HOME}/$${df}" "./dotfiles/$${df}"; test $$? -eq 1 || continue; cp -v "$${HOME}/$${df}" "./dotfiles/$${df}"; done
+	find ./dotfiles -type f -print | sed 's@$(PWD)/@@; s@./dotfiles/@@;' | \
+		while read df; do \
+			diff -q "$${HOME}/$${df}" "./dotfiles/$${df}"; \
+			test $$? -eq 1 || continue; \
+			cp -v "$${HOME}/$${df}" "./dotfiles/$${df}"; \
+		done
 
 
 clean-backup:
