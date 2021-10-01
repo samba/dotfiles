@@ -15,7 +15,7 @@ function! GenerateModeline ()
   if(&foldmethod == 'marker')
     let l:config = printf('%s foldmarker=%s', l:config, &foldmarker)
   endif
-  return printf(&commentstring, " vim: set " . l:config)
+  return printf(&commentstring, " vim: " . l:config)
 endfunction
 
 function! WriteModeline (line)
