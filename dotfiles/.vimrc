@@ -84,8 +84,12 @@ augroup END
 " set background=dark
 if !has('gui_running')
     let g:solarized_termcolors=&t_Co
-    let g:solarized_termtrans=1
 endif
+
+
+let g:solarized_termtrans=1  " I often use transparent terminals :)
+let g:solarized_contrast='high' " I prefer slightly higher contrast
+
 
 colorscheme solarized
 
