@@ -1,6 +1,15 @@
 " Vim runtime configuration.
 
 
+" Leader {{{
+ 
+" This comes first, because we have mappings that depend on leader
+" With a map leader it's possible to do extra key combinations
+" i.e: <leader>w saves the current file
+" let mapleader = ","     " default: \  <backslash>
+" let g:mapleader = ","   " default: \  <backslash>
+" }}}
+
 " Plugin handling and related extensions {{{=
 "
 " exists(...) fails to detect this method's presence, so we just call it.
@@ -35,40 +44,35 @@ endif
 " }}}
 
 
-" Commonly tuned customizations {{{
+" Color scheme {{{
 
-" Adjustments to color scheme {{{
+" Fine-tuning {{{
 
-" TODO: adapt these colors for solarized theme
 function! FixWindowColors() abort
 
-  highlight! Normal ctermbg=NONE guibg=NONE
-  highlight! FoldColumn ctermbg=NONE guibg=NONE
-  highlight! VertSplit ctermbg=NONE guibg=NONE
+  " Some solarized colors need higher contrast for me 
+  highlight! StatusLine ctermbg=Black " NB: this is inverted
+  highlight! StatusLineTerm ctermbg=LightGrey
+  highlight! StatusLineTermNC ctermbg=DarkGrey
 
-  highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
-  highlight! TabLineFill ctermbg=NONE guibg=NONE
 
-  highlight! StatusLineNC term=bold ctermbg=NONE ctermfg=LightGrey
-  highlight! StatusLine term=bold ctermbg=Black ctermfg=DarkGreen
-  highlight! StatusLineTerm ctermbg=Black ctermfg=LightRed
-  highlight! StatusLineTermNC ctermbg=NONE ctermfg=DarkRed
-
+  " highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
+  " highlight! TabLineFill ctermbg=NONE guibg=NONE
 
   " statusline uses %2 for read-only or pending-edit status
-  highlight! User2 term=bold,inverse ctermfg=Red ctermbg=NONE
-
+  highlight! User2 ctermfg=DarkRed
+  
   " statusline uses %3 for filename in window status
-  highlight! User3 term=bold cterm=underline gui=underline ctermfg=LightGreen ctermbg=Black
+  highlight! User3 ctermfg=Blue 
 
 
 endfunction
 
-
-"augroup MyColors
-"  autocmd!
-"  autocmd ColorScheme * call FixWindowColors()
-"augroup END
+"
+augroup MyColors
+  autocmd!
+  autocmd ColorScheme * call FixWindowColors()
+augroup END
 
 " }}}
 
@@ -84,12 +88,6 @@ if !has('gui_running')
 endif
 
 colorscheme solarized
-
-" This comes first, because we have mappings that depend on leader
-" With a map leader it's possible to do extra key combinations
-" i.e: <leader>w saves the current file
-" let mapleader = ","     " default: \  <backslash>
-" let g:mapleader = ","   " default: \  <backslash>
 
 " }}} end common customizations
 
@@ -256,7 +254,7 @@ set ruler
 set rulerformat=%30([%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
 
 " statusline overrides rulerformat
-set statusline=[%n]\ %3*\ %f\ %0*\ %2*%M%R%H%1*%0*\ %=%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+set statusline=[%n]\ %2*\ %M%R%H%1*\ %3*%f\ %0*\ %=%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
@@ -733,7 +731,7 @@ endif
 " Development Environment {{{
 
 " Opens a terminal at the bottom of the screen
-map <Leader>T :botright terminal ++close ++rows=10<CR>
+map <Leader>T :botright terminal ++close ++rows=10 bash<CR>
 
 " Shortcut to run any `make all` in the CWD
 map <Leader>m :make<CR>
