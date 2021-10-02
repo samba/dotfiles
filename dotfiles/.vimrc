@@ -148,11 +148,6 @@ set hlsearch      " highlight search matches
 set showmatch matchtime=5  " Show matching parens, brackets, etc (for 5 seconds)
 
 
-if has('smartindent') " sensible defaults. note that many filetypes tune this below.
-    set autoindent smartindent
-endif
-
-
 set tabstop=4     " number of spaces that a tab in a file will render
 set shiftwidth=4  " number of spaces for each step of autoindent
 set expandtab     " spaces for tabs
@@ -164,7 +159,8 @@ set splitright   " Vertical windows split right of the current window
 set backspace=eol,indent,start
 
 set nocursorcolumn
-set nocursorline
+" set nocursorline
+set cursorline
 
 set modeline     " Enable per-file configuration lines
 
@@ -174,6 +170,11 @@ set regexpengine=0
 " `gq` formats multiple (selected) lines
 " `gw` formats lines but returns the cursor to its original position
 set formatoptions=qrncjp1  " sensible auto-format behavior
+
+
+if has('smartindent') " sensible defaults. note that many filetypes tune this below.
+    set autoindent smartindent
+endif
 
 
 
