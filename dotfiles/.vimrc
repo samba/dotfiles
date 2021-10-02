@@ -43,8 +43,15 @@ if has('cryptv')
 endif
 " }}}
 
+let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
+let xterm = (matchstr(&term, "xterm", 0) == "xterm")
+let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
+let colors256 = (matchstr($COLORTERM, "256color") == "256color")
+
+
 
 " Color scheme {{{
+
 
 " Fine-tuning {{{
 
@@ -65,10 +72,13 @@ function! FixWindowColors() abort
   " statusline uses %3 for filename in window status
   highlight! User3 ctermfg=Blue 
 
+  " statusline for terminal uses %4 for command name
+  highlight! User4 cterm=bold ctermfg=Black ctermbg=Magenta
+
 
 endfunction
 
-"
+" NB: this must be configured before the colorscheme is declared (below)
 augroup MyColors
   autocmd!
   autocmd ColorScheme * call FixWindowColors()
@@ -76,22 +86,36 @@ augroup END
 
 " }}}
 
+set background=dark  " necessary for correct colors in MacOS screen (>=4.8.0)
 
-" colorscheme darkblue
-" colorscheme delek
 
-" set t_Co=256
-" set background=dark
+" Correctly define available colors based on current terminal environment
+if colors256
+    set t_Co=256
+endif
+
+" NB: when using GNU screen or another terminal over SSH, it should not use
+" true-color mode
+if has('termguicolors') && (!gnu_screen) && (!xterm)
+    set termguicolors  " use true-color mode
+endif
+
+" Solarized tuning {{{
 if !has('gui_running')
     let g:solarized_termcolors=&t_Co
 endif
 
-
 let g:solarized_termtrans=1  " I often use transparent terminals :)
 let g:solarized_contrast='high' " I prefer slightly higher contrast
 
+" }}}
+
 
 colorscheme solarized
+
+" colorscheme darkblue
+" colorscheme delek
+
 
 " }}} end common customizations
 
@@ -215,17 +239,6 @@ if has('mouse')
 endif
 
 " }}} end GUI settings
-
-
-let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
-let xterm = (matchstr(&term, "xterm", 0) == "xterm")
-let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
-
-" NB: when using GNU screen or another terminal over SSH, it should not use
-" true-color mode
-if has('termguicolors') && (!gnu_screen) && (!xterm)
-    set termguicolors  " use true-color mode
-endif
 
 
 " GNU screen & terminal title handling {{{
@@ -741,6 +754,13 @@ map <Leader>T :botright terminal ++close ++rows=10 bash<CR>
 
 " Shortcut to run any `make all` in the CWD
 map <Leader>m :make<CR>
+
+" Override terminal's statusline
+if has('autocmd')
+augroup test | au!
+    autocmd TerminalWinOpen * setlocal statusline=[%n]\ %4*\ %f\ %0*\ %=\ (%{winnr()})
+augroup end
+endif
 
 
 " QuickFix configuration & shortcuts {{{
