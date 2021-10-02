@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Several syntax elements in this file are specifically chosen to break the
-# use of this script (as is) shells other than bash. I figure I can do away
-# with some of the safeguards for scripts I maintain only personally.
+# use of this script (as is) shells for other than bash. I figure I can do
+# away with some of the safeguards for scripts I maintain only personally.
 
+export DO_SET_TITLE=true
+export DO_SET_STATUS=true
 
 function prompt::color_hint () {
     # echo "TERM is ${TERM}" >&2
@@ -42,65 +44,61 @@ function prompt::abbreviate_working_path () {
 
 
 set_status () {
-
-    local has_status=false
-    tput hs && has_status=true
-
-    # NB: this gets inherited by VSCode and others when called from screen
-    # test -n "$STY" && has_status=true
-
-    case $TERM in
-        screen*) has_status=true;;
-    esac
-
-    test 'true' = "${has_status}" && {
-        printf '\x1B_%s\x1B\\' "${status_message}";  # screen status
-        # echo "(set status)" >&2
-    }
+    printf '\x1B_%s\x1B\\' "${@}";  # screen status
 }
 
 set_title () {
 
-    local in_screen=false
-
-    # NB: this is (incorrectly) inherited in VScode environment when called from screen
-    # test -n "$STY" && in_screen=true
-
     case $TERM in
-        screen*) in_screen=true;;
+        screen*)
+            # essentially similar to https://vim.fandom.com/wiki/Automatically_set_screen_title
+            printf '\033k%s\033\\' "${@}"  # screen title
+            ;;
+        *)
+            # This is normally interpreted as the shell title, in terminal emulators
+            # like xterm, iTerm2, etc
+            printf "\033]0;%s\007" "${@}"
+            ;;
     esac
-
-
-    if [ "$in_screen" = "true" ]; then # in screen
-        # essentially similar to https://vim.fandom.com/wiki/Automatically_set_screen_title
-        printf '\033k%s\033\\' "${status_message}"  # screen title
-        # echo "(set title for screen)" >&2
-    else
-        # This is normally interpreted as the shell title, in terminal emulators
-        # like xterm, iTerm2, etc
-        printf "\033]0;%s\007" "${status_message}"
-        # echo "(set title for term $TERM)" >&2
-    fi
 
 }
 
+term_is_screen () {
+    test -n "$STY" && [[ "$TERM" =~ ^screen ]]
+}
+
+
+term_has_title () {
+    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ ^(xterm|urxvt|rxvt|screen) ]] 
+}
+
+term_has_status () {
+    [ "$DO_SET_STATUS" = "true" ] && (term_is_screen || tput hs)
+}
 
 # Provides ${PROMPT_COMMAND}
 # Redefines PS1 as needed.
 # NB: this command is executed by PROMPT_COMMAND, which provides LAST_RETURN_CODE
 function prompt::command () {
 
-    local set_status=true
     local status_message="$(prompt::abbreviate_working_path)"
+
+    # a null-title sequence for screen to interpret the live command
+    local title_trigger="\[\033k\033\134\]"
 
 
     history -a >/dev/null;  # append history file.
 
-    set_title "${status_message}"
-    set_status "${status_message}"
+    # In screen, I prefer to use hardstatus instead of title, as I let shelltitle feature instruct screen on the running program.
+    if term_is_screen; then
+        term_has_status && set_status "${status_message}"
+    else
+        term_has_title && set_title "${status_message}"
+    
+        # remove the title sequence if not in screen.
+        title_trigger=""
+    fi
 
-    # a null-title sequence for screen to interpret the live command
-    test -n "$STY" && printf "\033k\033\134"
 
     # NB: this must exactly match screen's shelltitle command below.
     local shelltitle_prefix="> "
@@ -170,7 +168,7 @@ function prompt::command () {
     printf -v prompt "${template}" "${parts[@]}" "${reset}"
 
 
-    export PS1="${prompt}${shelltitle_prefix-}"
+    export PS1="${title_trigger}${prompt}${shelltitle_prefix-}"
     export PS2="${yellow}>${reset} "
     export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
     export PS4="${blue}+${reset} "
@@ -296,4 +294,6 @@ fi
 
 # Override manual title spec on first run.
 # NB: keep this consistent with the shelltitle directive in .screenrc
-test -n "$STY" && screen -X shelltitle '> |shell'
+term_is_screen && screen -X shelltitle '> |shell'
+
+
