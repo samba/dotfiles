@@ -1,13 +1,8 @@
 # Notes
 
+## Known issues
 
-## Progress on Overhaul
-
-- [x] Separate dotfiles from app installation & setup
-- [x] Support linux variant for apps
-- [x] Support dotfiles as generic (i.e. all platforms)
-- [x] Streamline & focus shell config (etc)
-- [x] Script setup of dynamic environment (e.g. exports for Java)
+ None at this time... ?
 
 ## Interesting references:
 
