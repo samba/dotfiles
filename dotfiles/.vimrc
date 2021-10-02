@@ -127,6 +127,7 @@ colorscheme solarized
 set backupdir=$HOME/.vim/backup    " backup files location
 set directory=$HOME/.vim/swap      " swap files location
 set tags=./tags,$HOME/.vim/tags    " you probably want to add more to these later.
+set path=$PWD/**
 
 " Where to find dictionary words?
 " NB this can effect completion settings later.
@@ -776,6 +777,22 @@ autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 
 " Open or Close quickfix easily
 nnoremap <leader>q :cwindow<CR>
+
+
+" Simplify finding files in working path. {{{
+let s:default_path = escape(&path, '\ ') " store default value of 'path'
+
+" Always add the current file's directory to the path and tags list if not
+" already there. Add it to the beginning to speed up searches.
+autocmd BufRead *
+      \ let s:tempPath=escape(escape(expand("%:p:h"), ' '), '\ ') |
+      \ exec "set path-=".s:tempPath |
+      \ exec "set path-=".s:default_path |
+      \ exec "set path^=".s:tempPath |
+      \ exec "set path^=".s:default_path
+
+
+" }}}
 
 " Define an "Ag" search command for grepping with eag`
 command! -nargs=+ -complete=file_in_path -bar Ag silent! grep! <args>|cwindow|redraw!
