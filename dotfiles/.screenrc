@@ -4,10 +4,8 @@
 #   http://companionway.net/files/utils/sample.screenrc
 #   https://gist.github.com/yoshikaw/5604167
 
-# Load system default. (This doesn't fly on Mac OS X.)
-# source /etc/screenrc
 
-# Some automatically started windows 
+# Some automatically started windows
 screen -t '(h)top' 0 bash -c "command -v htop > /dev/null && htop || top"
 screen 1 bash
 screen 2 bash
@@ -20,14 +18,14 @@ maxwin 20
 # lots of history
 defscrollback 50000
 
-# detach on hangup. 
+# detach on hangup.
 autodetach on
 
 # If a window goes unresponsive, don't block the whole session waiting for it.
 nonblock on
 
 # use C-\  instead of C-a for screen control char
-# escape \034\034 
+# escape \034\034
 
 # use C-[ instead of C-a - this also matches the ESC key in many systems.
 # escape ^[x
@@ -60,9 +58,9 @@ startup_message off
 defutf8 on
 
 activity "Activity in #%n %t (%f) at %c"
-bell "Bell in #%n %t (%f) at %c^G"
-vbell_msg "Bell on #%n %t (%f)"
-vbellwait 0
+bell "Bell on #%n %t (%f) at %c: %h ^G"
+vbell_msg "Bell on #%n %t (%f) %h"
+vbellwait 0.5
 vbell off
 
 
@@ -80,7 +78,7 @@ bind s
 # bind v screen vim --servername vim  # this doesn't work on Mac anyway.
 bind t screen -t '(h)top' bash -c "command -v htop > /dev/null && htop || top"
 bind R screen -t '# |root:' sudo -i
-bind J screen -t '$ |debug:' bash -x -l -i
+bind B screen -t '$ |debug:' bash -x -l -i
 
 
 
@@ -144,21 +142,27 @@ bind -c layout 5 eval 'layout select 5'
 bind -c layout 6 eval 'layout select 6'
 bind -c layout 7 eval 'layout select 7'
 bind -c layout 8 eval 'layout select 8'
-bind -c layout 9 eval 'layout select 9' 
+bind -c layout 9 eval 'layout select 9'
 
 # each window should be a login shell...
 # deflogin on # this one fails on Mac OS X
 shell -${SHELL} # this may cause problems with key interpretation, e.g. backspace
 
-# terminal sharing 
+# terminal sharing
 multiuser on # so I can attach from multiple points.
 
 # The title escape sequence should override the automatic title
-# NB: this is not supported on MacOS' version of screen at this time
 defdynamictitle on
 
 # Use a default name of ">" but try to read command title when possible.
 shelltitle "> |shell"
+
+
+# battery status
+backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do printf '%d%%; %s\n' $(cat \"\$i/capacity\") $(cat \"\$i/status\"); break; done"
+
+# free memory status
+backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$4/\$2)) }'"
 
 # The following flags can be applied in hardstatus and caption declarations.
 # %t = title of the current window
@@ -173,20 +177,15 @@ shelltitle "> |shell"
 # %s = window size
 
 
-# sets hardstatus = "<number> (<title>)"
-# NOTE: hostname may be inserted via shell components
-defhstatus "^Et"
-# hardstatus lastline '%t'
-hardstatus off
+hardstatus string "%{d dd} %?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+d .g}%l%{-} %{+ .y}%0c:%s%{-} "
+hardstatus alwaysfirstline
 
-# stat line at the bottom of each screen 
-caption string "%{-s}%{+d dd} %{+ dy}%0c:%s%{-} %{+ dm}%?%F %{bu km}%?%n%{-bu}%{-} %{+ dg}%?%F%{bu kg}%?%t%{-}%{-bu} %{d dd} %= %{+ dB}%h%{-} %{+ dy}%H%{-} %{+d dg}%l%{-} "
-caption always
-# caption top  # not supported in 4.06?
+caption string "%{d dd}%?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-}"
+caption top splitonly
 
-# configure the window list, via C-A "
-windowlist title "%{+u .y}Num%{-} %{+u .b}Flags%{-} %{+u .g}Title%{-}%{-} %= %{+u y}Hardstatus%{-}"
-windowlist string "%{.dk}%{+ .y}%3n%{- .y} %{+ .B}%f%{- .B} %{+ .g}%t%{- .g} %{.k} %= %?%F%{+ .w}(focus)%?  %{+ .y}%h%{-}"
+# configure the window list
+windowlist title "%{.K.}%{+b .y}Num%{-} %{+b .b}Flags%{-} %3=   %{+b .g}Title%{-} %= %{+b .y}Hardstatus%{-}%{-.K.}"
+windowlist string "%{.dk}%{+ .y}%3n%{-} %{+ .B}%f%{- .B} %3= %?%F%{+ .w}>%{- .w}%: %? %{+ .g}%t%{- .w} %{ddd} %= %{+ .y}%h%{- .y}"
 
 # Ensure that resizes won't shrink any window beyond usability
 focusminresize 10 10
@@ -196,7 +195,7 @@ layout autosave on
 
 # Layout 0: just the usual.
 layout new 0:single
-select 1
+select 0
 
 
 # Layout 1: split vertically, one large on top and small on bottom.
@@ -208,7 +207,7 @@ select 1
 # |                       |
 # +-----------------------+
 layout new 2:hsplit
-select 1
+# select 1 # TODO: reenable this when shell config stops beeping
 split
 resize -l 50%
 focus down
@@ -228,20 +227,20 @@ focus top
 # +--------------+--------+
 layout new 1:vsplit2
 split -v
-select 1
+# select 1 # TODO: reenable this when shell config stops beeping
 resize -l 80%
 resize -l 60 min
 focus right
 resize -l 20 min
 resize -l 50%
-select 2
+# select 2 # TODO: reenable this when shell config stops beeping
 split
 focus down
 select 0
 focus left
 
 
-
-layout show
+layout select single
+# layout show
 
 # vim: foldmethod=marker foldenable ft=screen
