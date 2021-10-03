@@ -63,8 +63,6 @@ attrcolor d -d  # remove underline? (removes "dim" attribute from default)
 defmousetrack on
 
 
-
-
 # Filename for the paste buffer
 bufferfile screen.buf
 

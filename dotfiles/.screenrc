@@ -1,14 +1,19 @@
 # screen runtime configuration
-# see also: 
-#   http://www.delhage.se/.screenrc 
+# see also:
+#   http://www.delhage.se/.screenrc
 #   http://companionway.net/files/utils/sample.screenrc
 #   https://gist.github.com/yoshikaw/5604167
 
+# NB: this requires features of screen in versions >= 4.8.0
+
 
 # Some automatically started windows
-screen -t '(h)top' 0 bash -c "command -v htop > /dev/null && htop || top"
-screen 1 bash
-screen 2 bash
+screen -t 'htop' 0 htop -H 2 --sort-key=PERCENT_CPU
+
+# working shells...
+# These are disabled for now until I fix my shell config to stop beeping automatically. See "TODO" below.
+# screen 1 bash
+# screen 2 bash
 
 
 
@@ -159,10 +164,10 @@ shelltitle "> |shell"
 
 
 # battery status
-backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do printf '%d%%; %s\n' $(cat \"\$i/capacity\") $(cat \"\$i/status\"); break; done"
+backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do test -d \"\$i\" && printf '%d%%; %s\n' $(cat \"\$i/capacity\") $(cat \"\$i/status\"); break; done"
 
 # free memory status
-backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$4/\$2)) }'"
+backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$7/\$2)) }'"
 
 # The following flags can be applied in hardstatus and caption declarations.
 # %t = title of the current window
