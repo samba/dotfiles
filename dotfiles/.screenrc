@@ -15,6 +15,13 @@ screen -t 'htop' 0 htop -H 2 --sort-key=PERCENT_CPU
 # screen 1 bash
 # screen 2 bash
 
+# for launching some of the stuff I use most
+# bind v screen vim --servername vim  # this doesn't work on Mac anyway.
+bind t screen -t 'htop' htop -H 2 --sort-key=PERCENT_CPU
+bind R screen -t '# |root:' sudo -i
+bind B screen -t '$ |debug:' bash -x -l -i
+bind M screen -t 'dmesg' sudo dmesg -L -w -HkuxdeT
+bind I screen -t 'iostat' sudo iostat -pyzx 10
 
 
 # limit the total number of windows created
@@ -58,7 +65,7 @@ defmousetrack on
 # Filename for the paste buffer
 bufferfile screen.buf
 
-# altscreen on
+altscreen on
 startup_message off
 defutf8 on
 
@@ -78,13 +85,6 @@ bind ^Q
 bind q
 bind ^S
 bind s
-
-# for launching some of the stuff I use most
-# bind v screen vim --servername vim  # this doesn't work on Mac anyway.
-bind t screen -t '(h)top' bash -c "command -v htop > /dev/null && htop || top"
-bind R screen -t '# |root:' sudo -i
-bind B screen -t '$ |debug:' bash -x -l -i
-
 
 
 # set C-a <space> to show the window list
@@ -182,15 +182,15 @@ backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$7/
 # %s = window size
 
 
-hardstatus string "%{d dd} %?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+d .g}%l%{-} %{+ .y}%0c:%s%{-} "
+hardstatus string "%{d dd}%{+d} %{+ .m}%n%{-} %{+ .g}%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+d .g}%l%{-} %{+ .y}%0c:%s%{-} "
 hardstatus alwaysfirstline
 
 caption string "%{d dd}%?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-}"
 caption top splitonly
 
 # configure the window list
-windowlist title "%{.K.}%{+b .y}Num%{-} %{+b .b}Flags%{-} %3=   %{+b .g}Title%{-} %= %{+b .y}Hardstatus%{-}%{-.K.}"
-windowlist string "%{.dk}%{+ .y}%3n%{-} %{+ .B}%f%{- .B} %3= %?%F%{+ .w}>%{- .w}%: %? %{+ .g}%t%{- .w} %{ddd} %= %{+ .y}%h%{- .y}"
+windowlist title "%{.k.}%{+b .y}Num%{-} %{+b .b}Flags%{-} %{+b .g}Title%{-} %= %{+b .y}Hardstatus%{-}%{-.K.}"
+windowlist string "%{.dk}%{+ .y}%3n%{-}%{-bs} %3= %{+ .B}%f%{- .B} %?%F%{+ .w}>%{- .w}%: %? %{+ .g}%t%{- .w} %{ddd} %= %{+ .y}%h%{- .y}"
 
 # Ensure that resizes won't shrink any window beyond usability
 focusminresize 10 10
