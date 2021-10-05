@@ -49,15 +49,16 @@ termcapinfo xterm*|linux*|rxvt*|Eterm* OP
 
 # Allow mac mouse scrolling to play nice.
 # cf. http://slaptijack.com/system-administration/mac-os-x-terminal-and-gnu-screen-scrollback/
+# TODO: fix this? not working presently
 termcapinfo xterm* ti@:te@
 
 # Force 256 color handling properly
 attrcolor b ".I"
-# termcapinfo xterm* 'Co#256:AB=\E[48;5;%dm:AF=\E38;5;%dm'
 defbce "on"
 
-
-attrcolor d -d  # remove underline? (removes "dim" attribute from default)
+# remove underline? (removes "dim" attribute from default)
+# https://superuser.com/questions/189498/gnu-screen-affects-the-display-of-my-terminal
+attrcolor d -d
 
 # switch window focus with mouse clicks
 defmousetrack on
@@ -66,7 +67,7 @@ defmousetrack on
 # Filename for the paste buffer
 bufferfile screen.buf
 
-# altscreen on
+altscreen on
 startup_message off
 defutf8 on
 
@@ -192,15 +193,15 @@ backtick 2 5 5 bash -c "memory_pressure | grep 'free percentage' | cut -d ':' -f
 # %s = window size
 
 
-hardstatus string "%{d dd} %?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+d .g}%l%{-} %{+ .y}%0c:%s%{-} "
+hardstatus string "%{d dd}%{+d} %{+ .m}%n%{-} %{+ .g}%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+d .g}%l%{-} %{+ .y}%0c:%s%{-} "
 hardstatus alwaysfirstline
 
 caption string "%{d dd}%?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-}"
 caption top splitonly
 
 # configure the window list
-windowlist title "%{.K.}%{+b .y}Num%{-} %{+b .b}Flags%{-} %3=   %{+b .g}Title%{-} %= %{+b .y}Hardstatus%{-}%{-.K.}"
-windowlist string "%{.dk}%{+ .y}%3n%{-} %{+ .B}%f%{- .B} %3= %?%F%{+ .w}>%{- .w}%: %? %{+ .g}%t%{- .w} %{ddd} %= %{+ .y}%h%{- .y}"
+windowlist title "%{.k.}%{+b .y}Num%{-} %{+b .b}Flags%{-} %{+b .g}Title%{-} %= %{+b .y}Hardstatus%{-}%{-.K.}"
+windowlist string "%{.dk}%{+ .y}%3n%{-}%{-bs} %3= %{+ .B}%f%{- .B} %?%F%{+ .w}>%{- .w}%: %? %{+ .g}%t%{- .w} %{ddd} %= %{+ .y}%h%{- .y}"
 
 # Ensure that resizes won't shrink any window beyond usability
 focusminresize 10 10
