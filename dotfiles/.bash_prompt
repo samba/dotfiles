@@ -6,6 +6,11 @@
 export DO_SET_TITLE=true
 export DO_SET_STATUS=true
 
+# Stores the exit code of the last command, for later use.
+export PROMPT_COMMAND="LAST_RETURN_CODE=\$?; [[ \$(type -t 'prompt::command') == "function" ]] && prompt::command"
+
+
+
 function prompt::color_hint () {
     # echo "TERM is ${TERM}" >&2
     case "$TERM" in
@@ -69,39 +74,22 @@ term_is_screen () {
 
 
 term_has_title () {
-    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ ^(xterm|urxvt|rxvt|screen) ]] 
+    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ ^(xterm|urxvt|rxvt|screen) ]]
 }
 
 term_has_status () {
     [ "$DO_SET_STATUS" = "true" ] && (term_is_screen || tput hs)
 }
 
-# Provides ${PROMPT_COMMAND}
-# Redefines PS1 as needed.
-# NB: this command is executed by PROMPT_COMMAND, which provides LAST_RETURN_CODE
-function prompt::command () {
 
-    local status_message="$(prompt::abbreviate_working_path)"
-
-    # a null-title sequence for screen to interpret the live command
-    local title_trigger="\[\033k\033\134\]"
-
-
-    history -a >/dev/null;  # append history file.
-
-    # In screen, I prefer to use hardstatus instead of title, as I let shelltitle feature instruct screen on the running program.
-    if term_is_screen; then
-        term_has_status && set_status "${status_message}"
-    else
-        term_has_title && set_title "${status_message}"
-    
-        # remove the title sequence if not in screen.
-        title_trigger=""
-    fi
-
+function prompt::generate_ps1 () {
 
     # NB: this must exactly match screen's shelltitle command below.
     local shelltitle_prefix="> "
+    local status_message_func="prompt::abbreviate_working_path"
+
+    # this is used to demark intentionally space-prefixed segments
+    local space=" "
 
     # Initialize a generally compatible set of base colors & controls
     local bell='\[\a\]'
@@ -121,7 +109,6 @@ function prompt::command () {
     local violet='\[\e[01;35m\]'
 
     if tput setaf 1 >/dev/null; then
-        tput sgr0 # reset now
 
         # The following start with a commonly compatible color code, followed
         # by a more specific color for terminals that support it. Normally
@@ -144,35 +131,54 @@ function prompt::command () {
     fi
 
 
+    local title=""
+
+    # In screen, I prefer to use hardstatus instead of title, as I let shelltitle feature instruct screen on the running program.
+    if term_is_screen; then
+        term_has_status && printf -v title '$(%s "$(%s)")' "set_status" ${status_message_func}
+    else
+        term_has_title&& printf -v title '$(%s "$(%s)")' "set_title" ${status_message_func}
+    fi
+
+
     # fetch current Kubernetes context name
-    local kube_context="$(which kubectl >/dev/null && kubectl config current-context 2>/dev/null)"
+    local kube_context='$(command -v kubectl >/dev/null && kubectl config current-context 2>/dev/null)'
 
     # color is red if error, green otherwise
-    local error="\[\e[00;\$((${LAST_RETURN_CODE} ? 31 : 36 ))m\]"
+    local error='\[\e[00;$((${LAST_RETURN_CODE} ? 31 : 36 ))m\]'
 
     # Git status (branch {untracked}{staged}{unstaged}{stashed})
-    local gitfmt="${green}\$br${red}\$ut${orange}\$sg${blue}\$ug${violet}\$st${reset}"
-    local gitstat="$(prompt::git_status "${gitfmt}")"
+    local gitfmt="${green}%br${red}%ut${orange}%sg${yellow}%ug${violet}%st${reset}"
+    local gitexec
+
+    printf -v gitexec '$(prompt::git_status "%b")' "${gitfmt}${space}"
 
     declare -a parts=(
-        "${bell}${error}\\\\t"           # timestamp
-        "${default}\j"                   # background jobs
-        "${blue}\W"                      # current directory
-        "${gitstat}"                     # git context
-        "${orange}${kube_context}"       # kubernetes context
-        "${error}\$"             # prompt ending
+        "${title}"  # title text for screen;  the title escape sequence is in prompt::command
+        "${bell}${error}\\\\t"                     # timestamp
+        "${space}${default}\j"                     # background jobs
+        "${space}${blue}\W${space}"                # current directory
+        "${gitexec}"                               # git context
+        "${cyan}${kube_context}${space}"           # kubernetes context
+        "\\\n"                                     # newline
+        "${error}\$${reset}${shelltitle_prefix-}"  # prompt ending
     )
 
-    local template="%b %b %b %b %b\\n%b%b"
+    local template='%b%b%b%b%b%b%b%b'
 
-    printf -v prompt "${template}" "${parts[@]}" "${reset}"
+    printf "export PS1='${template}'\n" "${parts[@]}"
+
+    echo "export PS2='${yellow}>${reset}${space}'"
+    echo "export PS3='>${space}'" # PS3 doesn't get expanded like 1, 2 and 4
+    echo "export PS4='${blue}+${reset}${space}'"
+    echo tput sgr0 # reset now
+}
 
 
-    export PS1="${title_trigger}${prompt}${shelltitle_prefix-}"
-    export PS2="${yellow}>${reset} "
-    export PS3='> ' # PS3 doesn't get expanded like 1, 2 and 4
-    export PS4="${blue}+${reset} "
-
+# Provides ${PROMPT_COMMAND}
+function prompt::command () {
+    history -a >/dev/null;  # append history file.
+    term_is_screen && printf "\033k\033\134"  # enables screen's `shelltitle` sense
 }
 
 
@@ -180,13 +186,13 @@ function prompt::command () {
 function prompt::git_status () {
     # This expects any color aspects to be embedded in the incoming template.
 
-    local template="${1:-"\$br:\$ug\$sg\$st\$ut"}"
+    local template="${1:-"%br:%ug%sg%st%ut"}"
 
     # Symbols used to represent state.
     local changes_staged="+"
     local changes_unstaged="!"
     local files_untracked="?"
-    local changes_stashed="\$"
+    local changes_stashed="%"
 
     which git >/dev/null 2>/dev/null || return 1
 
@@ -198,34 +204,34 @@ function prompt::git_status () {
 
     # Produce the branch name first
     local branch="$(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD || echo "(unknown)")"
-    template="${template//\$br/${branch}}"
+    template="${template//%br/${branch}}"
 
     # Staged changes
     if ! git diff --quiet --ignore-submodules --cached; then
-        template="${template//\$sg/${changes_staged}}"
+        template="${template//%sg/${changes_staged}}"
     else
-        template="${template//\$sg/}"
+        template="${template//%sg/}"
     fi
 
     # Unstaged changes
     if ! git diff-files --quiet --ignore-submodules --; then
-        template="${template//\$ug/${changes_unstaged}}"
+        template="${template//%ug/${changes_unstaged}}"
     else
-        template="${template//\$ug/}"
+        template="${template//%ug/}"
     fi
 
     # Untracked files
     if ! test -z "$(git ls-files --others --exclude-standard)"; then
-        template="${template//\$ut/${files_untracked}}"
+        template="${template//%ut/${files_untracked}}"
     else
-        template="${template//\$ut/}"
+        template="${template//%ut/}"
     fi
 
     # Stashed state
     if git rev-parse --verify refs/stash &>/dev/null; then
-        template="${template//\$st/${changes_stashed}}"
+        template="${template//%st/${changes_stashed}}"
     else
-        template="${template//\$st/}"
+        template="${template//%st/}"
     fi
 
     echo "${template}"
@@ -244,7 +250,7 @@ function wtf () {
     local red='\e[01;31m'
     local cyan='\e[01;36m'
     local black='\e[01;30m'
-    local purple='\e[01;35m' 
+    local purple='\e[01;35m'
     local white='\e[01;37m'
     local violet='\e[01;35m'
 
@@ -254,7 +260,7 @@ function wtf () {
     printf "${usercolor}%s${reset}@${green}%s${reset}:${blue}%s${reset}\n" \
         "$(echo ${USER:-$(whoami)})" \
         "$(hostname -f)" \
-        "$(pwd | sed "s@${HOME}@~@")" 
+        "$(pwd | sed "s@${HOME}@~@")"  # TODO: simplify this with plain bash, no sed
 
 
 }
@@ -264,18 +270,16 @@ function prompt::basic () {
     printf -v PS1 '\\t \\u@\\h \W \j \$ ';
     export PS1;
     export PROMPT_COMMAND="";
-    export GIT_PROMPT="";
 }
 
-export PROMPT_COMMAND="LAST_RETURN_CODE=\$?; [[ \$(type -t 'prompt::command') == "function" ]] &&  prompt::command"
 export COLORTERM="$(prompt::color_hint | head -n 1)"
 
 
 if prompt::should_apply_color "${COLORTERM}"; then
-    prompt::command # run now too, to correctly export PS1 from the start.
+    eval $(prompt::generate_ps1)
 
     # Fix terminal identification as it effects color features of `tput`
-    case "${TERM}" in 
+    case "${TERM}" in
         screen|xterm) # common short terminal names
         case "${COLORTERM}" in
             truecolor|*-256color) # color is supported
@@ -290,6 +294,7 @@ if prompt::should_apply_color "${COLORTERM}"; then
 else
      prompt::basic
 fi
+
 
 
 # Override manual title spec on first run.
