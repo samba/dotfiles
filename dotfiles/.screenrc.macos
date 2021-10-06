@@ -47,10 +47,10 @@ termcapinfo xterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
 # set these terminals up to be 'optimal' instead of vt100
 termcapinfo xterm*|linux*|rxvt*|Eterm* OP
 
-# Allow mac mouse scrolling to play nice.
+# Allow mac mouse scrolling to scroll in screen's scrollback buffer.
+# NB: this breaks mouse scrolling in vim.
 # cf. http://slaptijack.com/system-administration/mac-os-x-terminal-and-gnu-screen-scrollback/
-# TODO: fix this? not working presently
-termcapinfo xterm* ti@:te@
+# termcapinfo xterm* ti@:te@
 
 # Force 256 color handling properly
 attrcolor b ".I"
