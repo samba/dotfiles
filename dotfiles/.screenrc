@@ -182,7 +182,7 @@ backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$7/
 # %s = window size
 
 
-hardstatus string "%{d dd}%{+d} %{+ .m}%n%{-} %{+ .g}%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+d .g}%l%{-} %{+ .y}%0c:%s%{-} "
+hardstatus string "%{d dd}%{-d} %{+ .m}%n%{-} %{+ .g}%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .K}%1`%?%{-} %{+ .r}%2`%?%{-} %{+ .g}%l%{-} %{+ .y}%0c:%s%{-} "
 hardstatus alwaysfirstline
 
 caption string "%{d dd}%?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-}"
