@@ -1,0 +1,12 @@
+
+
+set folder = ~/.mail
+set spoolfile = "+inbox"
+set record = "+sent"
+set trash = "+trash"
+set postponed = "+drafts"
+
+
+
+
+
