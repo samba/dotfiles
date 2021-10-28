@@ -1,0 +1,29 @@
+#!/bin/bash
+# Generates GIF images of video clips.
+# This is work-in-progress, but works well enough for prototype.
+# Future improvements:
+# - smarter CLI flag handling
+# - document call arguments
+# - allow selection of segment by timeslice
+
+
+# TODO
+# -t 3  # 3 seconds output
+# -ss 30  # skips first 30 seconds
+
+
+# For compression, fewer FPS is better, but we don't want it to look too chunky
+FPS="fps=12"
+
+# Don't scale the image
+# SCALE=",scale=320:-1:flags=lanczos"
+SCALE=""
+
+# Use a smartly calculated pallete, that gets reused for all frames
+# PALETTE=",split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5"
+PALETTE=",split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=floyd_steinberg"
+
+
+# OK go.
+ffmpeg -i "${1}" -vf "${FPS}${SCALE}${PALETTE}" -gifflags +transdiff -y  -loop 0 "${2}"
+
