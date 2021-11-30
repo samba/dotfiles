@@ -5,11 +5,11 @@ set -euf -o pipefail
 function get_package_handler () {
 case $(uname -s) in 
     Darwin)
-        which brew
+        which brew 2>/dev/null
         echo "none"  # this is a failure
         ;;
     Linux)
-        which -a apt-get rpm 
+        which -a apt-get rpm pacman 2>/dev/null
         ;;
     *)
         echo "Unsupported system" >&2;;

@@ -114,7 +114,9 @@ prereq: generated/prereqs_installed.txt
 generated/prereqs_installed.txt: debian/prereq.sh generated/ 
 	date >> $@
 ifeq ($(LINUX_DISTRO),Debian)
-	which apt-get && bash debian/prereq.sh > $@
+	command -v apt-get 2>/dev/null && bash debian/prereq.sh > $@
+else ifeq ($(LINUX_DISTRO),Arch)
+	command -v pacman 2>/dev/null && bash arch/prereq.sh >$@
 endif
 
 .PHONY: backup
