@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+# function _which is defined in .bash_functions
 
-if which ps >/dev/null && ps -L | tr -s ' ' '\n' | grep -q euser ; then
+if _which ps >/dev/null && ps -L | tr -s ' ' '\n' | grep -q euser ; then
   # The GNU default mode...
   export PS_FORMAT="pid,ppid,state,%cpu,%mem,euser:15,command"
 else
@@ -12,7 +13,7 @@ fi
 
 
 if ls --color >/dev/null 2>/dev/null ; then  # GNU/Linux
-  which dircolors >/dev/null && eval "$(dircolors -b)"
+  _which dircolors >/dev/null && eval "$(dircolors -b)"
   export LS_OPTIONS="--color=auto"
 else # MacOS or some BSD
   export LS_OPTIONS="-G"
@@ -35,22 +36,22 @@ alias j='jobs -l'
 alias d='dirs -l -v'
 
 
-case `which hd` in
+case $(_which hd) in
   *hd) ;; # it exists!
   *) command -v hd > /dev/null || alias hd="hexdump -C" ;;
 esac
 
-case `which md5sum md5` in
+case $(_which md5sum md5) in
   *md5) alias md5sum="md5 -r";; # BSD/OS X compatibility with Linux environs
 esac
 
 
-if which xclip >/dev/null; then
-  test -x "$(which pbcopy)" || alias pbcopy='xclip -selection clipboard'
-  test -x "$(which pbpaste)" || alias pbpaste='xclip -selection clipboard -o'
+if _which xclip >/dev/null; then
+  test -x "$(_which pbcopy)" || alias pbcopy='xclip -selection clipboard'
+  test -x "$(_which pbpaste)" || alias pbpaste='xclip -selection clipboard -o'
 fi
 
-if which vim >/dev/null; then
+if _which vim >/dev/null; then
     # Shortcut for encrypted VIM sessions
     alias xvim='vim -xn'
     alias notes='vim ~/Notes'
@@ -74,7 +75,7 @@ for f in $( # Some useful built-ins from Apple
 done
 
 
-case $(uname -s) in 
+case $(uname -s) in
   Darwin)  ### Aliases that only make sense on a Mac.
 
 
@@ -155,7 +156,7 @@ function kshell () {
 }
 
 # Shortcuts to enable local runs of GitLab CI configuration
-if which docker >/dev/null && which gitlab-runner >/dev/null; then
+if _which docker >/dev/null && _which gitlab-runner >/dev/null; then
     alias grun="gitlab-runner exec docker"
 fi
 

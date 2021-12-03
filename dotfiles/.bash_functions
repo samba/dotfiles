@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+function _which() {
+    ct=0
+    for i; do
+        command -v $i 2>/dev/null && ct=$((ct + 1))
+    done
+    test $ct -gt 0
+}
+
 
 function http () {
   # usage: http POST "http://example.com/uri" "{\"test\":true}"
@@ -27,12 +35,12 @@ function http () {
         ${prgm} --method="${verb}" --body-data "${body}" -O - "${URL}"
       ;;
     esac
-  done < <(which -a curl wget | head -n 1)
+  done < <(_which curl wget | head -n 1)
 
 }
 
 function myip () {
-  if which dig >/dev/null ; then
+  if _which dig >/dev/null ; then
     echo "public:" "$(dig +short myip.opendns.com @resolver1.opendns.com)"
   else
     echo "public:" "$(http GET "https://api.ipify.org")"
@@ -41,12 +49,15 @@ function myip () {
   case $(uname -s) in
     Darwin)
 
-      if which ifconfig >/dev/null && which ipconfig >/dev/null ; then
+      if _which ifconfig >/dev/null && _which ipconfig >/dev/null ; then
         while read iface; do
           local ipaddr=$(ipconfig getifaddr ${iface})
           test -z "${ipaddr}" || echo "${iface}: ${ipaddr}"
         done < <(ifconfig -a | egrep -o '^[a-z0-9]+(?::)' | tr -d ':')
       fi
+
+    ;;
+    # TODO:  equivalent linux reporting of all interfaces 
   esac
 
 
@@ -105,7 +116,7 @@ function gofind () { # search Go project directories
 
 
 function cdiff () { # color diff via vim, whee!
-  if which vim >/dev/null; then
+  if _which vim >/dev/null; then
     $(which diff) -U 3 -w -N $@ | vim -c 'set syntax=diff' -R -
   else
     $(which diff) -U 3 -wN "$@"
@@ -124,7 +135,7 @@ function cview () {
 remove_path_exec() {
     local sarg="${SED_REGEXP_VARIANT:--R}"
     for ex; do
-        pexec="$(dirname $(which "${ex}"))"
+        pexec="$(dirname $(_which "${ex}"))"
         export PATH="$(echo "$PATH" | sed $sarg "s@(:${pexec}|${pexec}:|^${pexec}$)@@")"
     done
 }
