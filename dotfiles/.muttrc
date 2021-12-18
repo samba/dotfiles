@@ -2,12 +2,12 @@
 
 set editor="${EDITOR}"
 
+# Local user mail
+source "~/.mutt/localuser"
+folder-hook $folder 'source ~/.mutt/localuser'
+
 # System mail
 set folder = /var/spool/mail
 set mbox = "+${USER}"
 
-
-# Local user mail
-source "~/.mutt/localuser"
-folder-hook $folder 'source ~/.mutt/localuser'
 

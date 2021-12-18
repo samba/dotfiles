@@ -135,6 +135,10 @@ alias encrypt="openssl aes-256-cbc -e";
 alias decrypt="openssl aes-256-cbc -d";
 
 
+if command -v mutt >/dev/null; then
+    alias lmail='mutt -f ${MAIL}'
+fi
+
 # Archival shortcuts
 alias squash="mksquashfs"
 
@@ -149,7 +153,6 @@ alias ktail='kubectl log -f'
 function kshell () {
     kubectl run shell-${USER} --rm -i --tty --image busybox -- /bin/sh
 }
-
 
 # Shortcuts to enable local runs of GitLab CI configuration
 if which docker >/dev/null && which gitlab-runner >/dev/null; then
