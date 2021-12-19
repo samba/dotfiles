@@ -104,9 +104,9 @@ generated/roles.txt: util/packages.ini | generated/
 .PHONY: packages
 packages: generated/packages.sh
 generated/packages.sh: generated/roles.txt util/packages.ini util/packages.py 
-	which python
+	which python3
 	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
-	python util/packages.py -c util/packages.ini $$(cat $<)> $@
+	python3 util/packages.py -c util/packages.ini $$(cat $<)> $@
 
 
 .PHONY: prereq
