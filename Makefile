@@ -164,6 +164,11 @@ ifeq ($(PACKAGE_HANDLER),apt-get)
 	sudo bash ./debian/setup.sh repos
 endif
 
+# Ensure that any newly installed Go binary is reachable
+export PATH := $(PATH):/usr/local/go/bin/
+export GOPATH := ${HOME}/Go/
+export GO111MODULE := on
+
 
 .PHONY: @install_packages
 @install_packages: generated/packages.sh generated/roles.txt @install_repositories
@@ -174,7 +179,7 @@ endif
 ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
 	bash debian/setup.sh install "$$(cat generated/roles.txt)"
 endif
-	bash -x $<  # install packages
+	bash -x $<  # install packages via generated/packages.sh
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh configure
 	bash macos/setup_fonts.sh

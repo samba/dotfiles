@@ -55,6 +55,8 @@ function __check_util_paths () {
   test -d "/usr/local/mysql/bin" && echo /usr/local/mysql/bin
   test -d "/usr/local/bin" && echo /usr/local/bin
 
+  # If Go is installed custom
+  test -d "/usr/local/go/bin" && echo /usr/local/go/bin
 
   # PostgreSQL
   test -d /Applications/Postgres.app/ && \

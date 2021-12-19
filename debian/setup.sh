@@ -41,12 +41,6 @@ setup_repositories () {
 }
 
 
-_do_golang_installation () {
-    go_archive="go1.13.linux-amd64.tar.gz"
-    $(fetch_command) https://dl.google.com/go/${go_archive} > /tmp/${go_archive}
-    sudo tar -C /usr/local -xzf /tmp/${go_archive}
-}
-
 
 main () {
 case $1 in
@@ -54,7 +48,7 @@ case $1 in
     install)
         for role in ${2:-none}; do
             case $role in
-                golang) _do_golang_installation;;
+                golang) bash ${PWD}/util/gosetup.sh install ;;
             esac
         done
         ;;
