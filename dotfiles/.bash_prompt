@@ -194,7 +194,7 @@ function prompt::git_status () {
     local files_untracked="?"
     local changes_stashed="%"
 
-    which git >/dev/null 2>/dev/null || return 1
+    command -v git >/dev/null 2>/dev/null || return 1
 
     # It's a valid git directory, and not ".git"
     test "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" || return 1
