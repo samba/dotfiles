@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-
 if command -v rustup-init; then
 
     rustup-init -yq

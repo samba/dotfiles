@@ -42,6 +42,6 @@ _do_golang_installation () {
 
 }
 
-case $1 in
+case "${1-}" in
     install) _do_golang_installation ;;
 esac
