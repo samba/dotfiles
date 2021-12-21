@@ -6,7 +6,7 @@ set -euf -o pipefail
 # https://github.com/jessfraz/dotfiles/blob/master/.gitconfig
 
 # This is my default signing key. You probably want to change it.
-# If your git config also provides a signing key ID, it will 
+# If your git config also provides a signing key ID, it will
 # take precedence, and this setting will have no effect..
 export GIT_SIGNING_KEY="7ACE561D"
 
@@ -18,7 +18,7 @@ function setup_whitespace () {
 
 function setup_colors () {
   # From `git config --help`
-  # The basic colors accepted are normal, black, red, green, yellow, blue, magenta, cyan and white. 
+  # The basic colors accepted are normal, black, red, green, yellow, blue, magenta, cyan and white.
   # The first color given is the foreground; the second is the background.
   # Colors may also be specified as numbers 0 through 255, or #aabbcc for 24-bit terminals.
 
@@ -52,7 +52,15 @@ function setup_tools () {
 
   git config -f $1 core.editor vim
   git config -f $1 merge.tool vimdiff
-  git config -f $1 credential.helper osxkeychain
+
+  CREDENTIAL_HELPER=none
+
+  case $(uname -s) in
+      Linux) CREDENTIAL_HELPER=store ;;
+      Darwin) CREDENTIAL_HELPER=osxkeychain ;;
+  esac
+
+  git config -f $1 credential.helper $CREDENTIAL_HELPER
   git config -f $1 gpg.program "gpg"
 
   local actual_signing_key="${current_signing_key:-${GIT_SIGNING_KEY}}"
@@ -61,7 +69,7 @@ function setup_tools () {
   get_gpg_signing_key "${actual_signing_key}" || activate_config_signing=false
 
   git config -f $1 user.signingkey "${actual_signing_key}"
-  
+
   # Explicitly disable signing commits, unless the user already has it active.
   git config -f $1 commit.gpgsign ${current_signing_active:-${activate_config_signing}}
 }
