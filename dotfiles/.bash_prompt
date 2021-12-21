@@ -54,17 +54,15 @@ set_status () {
 
 set_title () {
 
-    case $TERM in
-        screen*)
-            # essentially similar to https://vim.fandom.com/wiki/Automatically_set_screen_title
-            printf '\033k%s\033\\' "${@}"  # screen title
-            ;;
-        *)
-            # This is normally interpreted as the shell title, in terminal emulators
-            # like xterm, iTerm2, etc
-            printf "\033]0;%s\007" "${@}"
-            ;;
-    esac
+    # Set screen title
+    # essentially similar to https://vim.fandom.com/wiki/Automatically_set_screen_title
+    test -n "$STY" &&
+        printf '\033k%s\033\\' "${@}" &&
+        screen -X eval "at \\# title $@" "shelltitle $@"
+
+    # This is normally interpreted as the shell title, in terminal emulators
+    # like xterm, iTerm2, etc
+    printf "\033]0;%s\007" "${@}"
 
 }
 
@@ -74,7 +72,7 @@ term_is_screen () {
 
 
 term_has_title () {
-    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ ^(xterm|urxvt|rxvt|screen) ]]
+    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ (xterm|urxvt|rxvt|screen) ]]
 }
 
 term_has_status () {
@@ -132,13 +130,14 @@ function prompt::generate_ps1 () {
 
 
     local title=""
+    local status=""
 
     # In screen, I prefer to use hardstatus instead of title, as I let shelltitle feature instruct screen on the running program.
-    if term_is_screen; then
-        term_has_status && printf -v title '$(%s "$(%s)")' "set_status" ${status_message_func}
-    else
-        term_has_title&& printf -v title '$(%s "$(%s)")' "set_title" ${status_message_func}
-    fi
+    term_is_screen && term_has_status && printf -v status '$(%s "$(%s)")' "set_status" ${status_message_func}
+
+
+    # Set terminal title, i.e. the tab text on gnome-terminal, or Terminal.app
+    term_has_title && printf -v title '$(%s "$(%s)")' "set_title" ${status_message_func}
 
 
     # fetch current Kubernetes context name
@@ -154,7 +153,7 @@ function prompt::generate_ps1 () {
     printf -v gitexec '$(prompt::git_status "%b")' "${gitfmt}${space}"
 
     declare -a parts=(
-        "${title}"  # title text for screen;  the title escape sequence is in prompt::command
+        "${title}${status}"  # title text for screen;  the title escape sequence is in prompt::command
         "${bell}${error}\\\\t"                     # timestamp
         "${space}${default}\j"                     # background jobs
         "${space}${blue}\W${space}"                # current directory
