@@ -98,7 +98,7 @@ generated/:
 roles: generated/roles.txt
 generated/roles.txt: util/packages.ini | generated/
 	test -f $@ || \
-		python2 util/packages.py -c $< -d > $@
+		python3 util/packages.py -c $< -d > $@
 	touch -r $< $@
 
 .PHONY: packages
