@@ -40,6 +40,12 @@ if has('cryptv')
     if has('crypt-blowfish2')
         set cryptmethod=blowfish2
     endif
+
+    " Disable swap, undo and viminfo for built-in crypto
+    if len(&key) > 0
+        set noundofile noswapfile viminfo=
+    endif
+
 endif
 " }}}
 
