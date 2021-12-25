@@ -119,9 +119,15 @@ unset __check_util_paths __login_includes  __list_project_groups
 
 
 # Load runtime config for interactive terminals
+SHOULD_LOAD_BASHRC=no
 case "$-" in
-    *i*) source ~/.bashrc ;;
+    *i*) SHOULD_LOAD_BASHRC=yes ;;
 esac
+
+test -t 1 && SHOULD_LOAD_BASHRC=yes
+
+test ${SHOULD_LOAD_BASHRC} = 'yes' && source ~/.bashrc
+
 
 # Terminal behavior on MacOS is a little weird.
 # case $(uname -s) in
