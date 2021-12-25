@@ -160,12 +160,12 @@ xtar () {
   OPTIND=0
 
   while getopts f:xtch flag "${@}"; do
-    case "$flag" in 
+    case "$flag" in
       f) target="$OPTARG";;
       c) mode="create";;
       x) mode="extract";;
       t) mode="list";;
-      h) 
+      h)
         echo -e "\txtar -c -f <filename> [paths] -- <tar options> # create an encrypted archive " >&2; 
         echo -e "\txtar -x -f <filename> [paths] -- -C ./target/  # extract an encrypted archive " >&2;
         echo -e "\txtar -t -f <filename> [paths]                  # list contents of an encrypted archive " >&2;  
@@ -233,4 +233,7 @@ function calc() {
 }
 
 
-
+function gen_passwd () {
+    openssl rand -base64 64 | tr -d '\n'
+    echo
+}
