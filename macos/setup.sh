@@ -83,6 +83,13 @@ main () {
             install_homebrew
             install_python_base
             install_fonts
+
+            for role in ${2:-none}; do
+                case $role in
+                   productivity)  bash ${PWD}/util/install_rclone.sh ;;
+                esac
+            done
+
             ;;
         configure)
             autostart_mysql
