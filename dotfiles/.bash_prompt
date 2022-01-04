@@ -58,7 +58,7 @@ set_title () {
     # essentially similar to https://vim.fandom.com/wiki/Automatically_set_screen_title
     test -n "$STY" &&
         printf '\033k%s\033\\' "${@}" &&
-        screen -X eval "at \\# title \"$@\"" "shelltitle \"$@\""
+        screen -X eval "at \\# title \"$@\"" "shelltitle \"> |shell:$@\""
 
     # This is normally interpreted as the shell title, in terminal emulators
     # like xterm, iTerm2, etc
