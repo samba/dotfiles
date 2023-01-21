@@ -74,7 +74,7 @@ term_is_screen () {
 
 
 term_has_title () {
-    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ (xterm|urxvt|rxvt|screen) ]]
+    [ "$DO_SET_TITLE" = "true" ] && [[ "$TERM" =~ (xterm|urxvt|rxvt|screen) ]] && [[ -z "${VIM_TERMINAL:-}" ]]
 }
 
 term_has_status () {
