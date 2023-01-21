@@ -5,6 +5,8 @@
 
 export DO_SET_TITLE=true
 export DO_SET_STATUS=true
+export BELL_ALL=0
+
 
 # Stores the exit code of the last command, for later use.
 export PROMPT_COMMAND="LAST_RETURN_CODE=\$?; [[ \$(type -t 'prompt::command') == "function" ]] && prompt::command"
@@ -143,8 +145,9 @@ function prompt::generate_ps1 () {
     # fetch current Kubernetes context name
     local kube_context='$(command -v kubectl >/dev/null && kubectl config current-context 2>/dev/null)'
 
-    # color is red if error, green otherwise
+    # color is red if error, cyan otherwise  (red=31, cyan=36)
     local error='\[\e[00;$((${LAST_RETURN_CODE} ? 31 : 36 ))m\]'
+
 
     # Git status (branch {untracked}{staged}{unstaged}{stashed})
     local gitfmt="${green}%br${red}%ut${orange}%sg${yellow}%ug${violet}%st${reset}"
@@ -154,7 +157,7 @@ function prompt::generate_ps1 () {
 
     declare -a parts=(
         "${title}${status}"  # title text for screen;  the title escape sequence is in prompt::command
-        "${bell}${error}\\\\t"                     # timestamp
+        "${error}\\\\t"                            # timestamp w/ error color
         "${space}${default}\j"                     # background jobs
         "${space}${blue}\W${space}"                # current directory
         "${gitexec}"                               # git context
@@ -178,6 +181,8 @@ function prompt::generate_ps1 () {
 function prompt::command () {
     history -a >/dev/null;  # append history file.
     term_is_screen && printf "\033k\033\134"  # enables screen's `shelltitle` sense
+    test ${LAST_RETURN_CODE} -eq 0 || tput bel  # bell on error
+    test ${BELL_ALL} -gt 0 && tput bel # bell if always set
 }
 
 
