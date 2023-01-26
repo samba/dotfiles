@@ -9,10 +9,10 @@ fi
 # Golang
 export GOPATH=${HOME}/Projects/Go/
 
-# Startup script for Python
+# Startup script for Python 3+
 if command -v python 2>/dev/null >/dev/null; then
   export PYTHONSTARTUP=${HOME}/.pythonrc.py
-  export PYTHON_USERCUSTOM=$(command python -c "import site; print site.getusersitepackages()")
+  export PYTHON_USERCUSTOM=$(command python -c "import site; print(site.getusersitepackages())")
 fi
 
 # Ruby's gem environment
