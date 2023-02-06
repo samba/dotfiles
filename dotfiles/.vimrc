@@ -40,17 +40,12 @@ if has('cryptv')
     if has('crypt-blowfish2')
         set cryptmethod=blowfish2
     endif
-
-    " Disable swap, undo and viminfo for built-in crypto
-    if len(&key) > 0
-        set noundofile noswapfile viminfo=
-    endif
-
 endif
 " }}}
 
 let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
 let xterm = (matchstr(&term, "xterm", 0) == "xterm")
+let gnome_terminal = (matchstr(&term, "gnome-terminal", 0) == "gnome-terminal")
 let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
 let colors256 = (matchstr($COLORTERM, "256color") == "256color")
 
@@ -244,6 +239,14 @@ endif
 if has('mouse')
     set mouse=a
     set mousemodel=popup_setpos
+
+    if (gnu_screen || gnome_terminal)
+      if has('mouse_sgr')
+          set ttymouse=sgr
+      else
+          set ttymouse=xterm2
+      endif
+    endif
 endif
 
 " }}} end GUI settings
@@ -252,16 +255,15 @@ endif
 " GNU screen & terminal title handling {{{
 if has('title')
     set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
-    if ((gnu_screen || xterm))
+    if ((gnu_screen || xterm || gnome_terminal))
       set title
     end
 
-    if (gnu_screen)
+    if (gnu_screen || gnome_terminal)
       " auto BufEnter * :set title | let &titlestring = &g:titlestring_template
       auto VimLeave * :set t_ts=k\
       set t_ts=k
       set t_fs=\
-      set ttymouse=xterm2
     endif
 endif
 
