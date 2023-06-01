@@ -43,6 +43,24 @@ if has('cryptv')
 endif
 " }}}
 
+" Session management helpers {{{
+
+set sessionoptions=sesdir,buffers,tabpages,winsize,options,terminal
+
+" When started with only a directory, attempt to load the session
+if argc() == 1 && isdirectory(expand(argv(0)))
+    let g:session_path=fnamemodify(expand(argv(0)), ':p') .. '.session.vim'
+
+    " automatically save the session file
+    autocmd VimLeave * exe 'mksession!' fnameescape(g:session_path)
+
+    if filereadable(session_path)
+        autocmd VimEnter * exe 'source' fnameescape(g:session_path)
+    endif
+endif
+" }}}
+
+" Detection of various terminals for their features.
 let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
 let xterm = (matchstr(&term, "xterm", 0) == "xterm")
 let gnome_terminal = (matchstr(&term, "gnome-terminal", 0) == "gnome-terminal")
