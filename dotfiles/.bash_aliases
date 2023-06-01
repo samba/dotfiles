@@ -54,6 +54,11 @@ fi
 if _which vim >/dev/null; then
     # Shortcut for encrypted VIM sessions
     alias xvim='vim -xn'
+
+    # On some distributions, `view` is not provided
+    _which view >/dev/null || alias view='vim -R'
+
+    # Shortcut for editing my Notes...
     alias notes='vim ~/Notes'
 fi
 

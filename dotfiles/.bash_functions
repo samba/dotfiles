@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 function _which() {
+    # shell-native way of finding executables.
+    # usage:  _which curl wget     [[produces a list of any found]]
+    # returns 0 when any found
     ct=0
     for i; do
         command -v $i 2>/dev/null && ct=$((ct + 1))
