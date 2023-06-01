@@ -164,7 +164,7 @@ shelltitle "> |shell"
 
 
 # battery status
-backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do test -d \"\$i\" && printf '%d%%; %s\n' $(cat \"\$i/capacity\") $(cat \"\$i/status\"); break; done"
+backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do test -d \"\$i\" && printf '%d%%; %s\n' \"$(cat \"\$i/capacity\")\" \"$(cat \"\$i/status\")\"; break; done"
 
 # free memory status
 backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$7/\$2)) }'"
