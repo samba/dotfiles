@@ -52,8 +52,8 @@ def strip_whitespace(text):
 
 
 def safe_command(command, sudo=False):
-    firstword = r'^([\w-]+)'
-    repl = r'command -v \1 >/dev/null && %s \1' % ("sudo" if sudo else "")
+    firstword = r'^([\w-]+)(.*)$'  # entire line replacement
+    repl = r'if command -v "\1" >/dev/null; then\n\t%s "\1" \2;\nfi\n' % ("sudo" if sudo else "")
     return re.sub(firstword, repl, command).strip()
 
 def generate_install(conf, profiles, packager):
@@ -95,8 +95,6 @@ def generate_install(conf, profiles, packager):
         cmds = set(variants.get(inst, inst).split(' ') + [inst])
         cmds = [(template.replace("{handler}", c).strip()) for c in cmds]
 
-        cmds = [safe_command(c, use_sudo) for c in cmds]
-
         pkgs = packages.get(inst, [])
 
         if not each:
@@ -113,11 +111,11 @@ def generate_install(conf, profiles, packager):
                 continue
 
             if len(cmds) == 1:
-                yield cmds[0].replace("{packages}", pkgs).strip()
+                yield safe_command(cmds[0].replace("{packages}", pkgs).strip(), use_sudo)
 
             else:
                 cmds = reversed(cmds)  # alternates first
-                cmds = [c.replace("{packages}", pkgs).strip() for c in cmds]
+                cmds = [safe_command(c.replace("{packages}", pkgs).strip(), use_sudo) for c in cmds]
 
                 yield " ||\\\n\t".join(
                     ("{ %s ; }" % (c) for c in cmds)

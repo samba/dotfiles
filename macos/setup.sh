@@ -2,6 +2,8 @@
 
 set -euf -o pipefail
 
+export PATH="${PATH}:/usr/local/bin:/opt/homebrew/bin"
+
 require_sudo () {
     sudo -v && return 0 # get password earlier...
     echo "Cannot prepare system without sudo." >&2
@@ -20,17 +22,25 @@ install_homebrew () {
     which brew && return 0
     requires xcodebuild  "Please install XCode from the App Store." || return 1
 
-    set -e
+    set -e  # exit immediately on failure
 
     sudo xcodebuild -checkFirstLaunchStatus
-    [ $? -eq 69 ] || sudo xcodebuild -license
+    [ $? -eq 69 ] || sudo xcodebuild -runFirstLaunch
+    # sudo xcodebuild -license
+    sudo xcode-select --install || true
 
-    sudo xcode-select --install
-
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    # Install homebroew
+    set +x
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     set +e
     return 0
+}
+
+setup_homebrew_env () {
+	(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv zsh)"') >> ${HOME}/.zprofile
+	(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv bash)"') >> ${HOME}/.bash_profile
+    eval "$(/opt/homebrew/bin/brew shellenv $(basename ${SHELL}))"
 }
 
 brew::notify () {
@@ -39,9 +49,9 @@ brew::notify () {
 }
 
 install_python_base () {
-    which pip && return 0
-    sudo easy_install pip
-    sudo -H pip install --upgrade --ignore-installed six python-dateutil
+    which pip3 && return 0
+    sudo easy_install pip3
+    sudo -H pip3 install --upgrade --ignore-installed six python-dateutil
 }
 
 
@@ -53,7 +63,8 @@ install_fonts () {
 
 autostart_mysql () {
     # Set up MySQL to launch automatically
-    find "$(brew --prefix mysql)" -type f -name '*.plist' | while read f; do
+    (find "$(brew --prefix mysql)" -type f -name '*.plist' || true) | while read f; do
+        test -f "${f}" || continue
         mkdir -p ${HOME}/Library/LaunchAgents
         cp -v "${f}"  ${HOME}/Library/LaunchAgents/
         launchctl load -w "${HOME}/Library/LaunchAgents/$(basename "${f}")"
@@ -81,8 +92,9 @@ main () {
     case $1 in
         install) # TODO: consider the roles ($2) in selecting which installations to run here.
             install_homebrew
+			setup_homebrew_env
             install_python_base
-            install_fonts
+            # install_fonts
 
             for role in ${2:-none}; do
                 case $role in
@@ -92,6 +104,7 @@ main () {
 
             ;;
         configure)
+            eval "$(/opt/homebrew/bin/brew shellenv ${SHELL})"
             autostart_mysql
             setup_git_osx_keychain
             ;;

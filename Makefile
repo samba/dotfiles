@@ -119,9 +119,13 @@ else ifeq ($(LINUX_DISTRO),Arch)
 	command -v pacman 2>/dev/null && bash arch/prereq.sh >$@
 endif
 
+
+${HOME}/.empty:  # a placeholder
+	date > $@
+
 .PHONY: backup
 backup: generated/backup.$(DATE).tar.gz  ## Backup archive of settings this might change.
-generated/backup.$(DATE).tar.gz: generated/
+generated/backup.$(DATE).tar.gz: generated/  ${HOME}/.empty
 	# move any existing file to a discrete location.
 	cd ${HOME} && tar -czf $(PWD)/$@ \
 		--exclude=".git" \
@@ -138,7 +142,8 @@ generated/backup.$(DATE).tar.gz: generated/
 		$$(test -d ./.vim && echo './.vim*') \
 		$$(ls -1 ./.ssh/config* || exit 0) \
 		$$(ls -1 ./.ssh/id_rsa* || exit 0) \
-		$$(ls -1 ./.ssh/github_rsa* || exit 0)
+		$$(ls -1 ./.ssh/github_rsa* || exit 0) \
+		${HOME}/.empty
 
 
 
@@ -190,7 +195,7 @@ endif
 	bash -x $<  # install packages via generated/packages.sh
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh configure
-	bash macos/setup_fonts.sh
+	# bash macos/setup_fonts.sh
 endif
 ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
 	bash debian/setup.sh configure
