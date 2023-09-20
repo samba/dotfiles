@@ -166,6 +166,8 @@ $(CACHE)/mac_prefs_auto: macos/setup_mac_prefs.shell
 @install_repositories:
 ifeq ($(PACKAGE_HANDLER),apt-get)
 	sudo bash ./debian/setup.sh repos
+else ifeq ($(PACKAGE_HANDLER),pacman)
+	sudo bash ./arch/setup.sh repos
 endif
 
 # Ensure that any newly installed Go binary is reachable
@@ -182,6 +184,8 @@ ifeq ($(SYSTEM),Darwin)
 endif
 ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
 	bash debian/setup.sh install "$$(cat generated/roles.txt)"
+else ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Arch)
+	bash arch/setup.sh install "$$(cat generated/roles.txt)"
 endif
 	bash -x $<  # install packages via generated/packages.sh
 ifeq ($(SYSTEM),Darwin)
@@ -190,6 +194,8 @@ ifeq ($(SYSTEM),Darwin)
 endif
 ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Debian)
 	bash debian/setup.sh configure
+else ifeq ($(SYSTEM) $(LINUX_DISTRO),Linux Arch)
+	bash arch/setup.sh configure
 endif
 
 
@@ -239,6 +245,12 @@ endif
 @rustsetup:
 	bash util/rustsetup.sh
 
+
+arch/packages.lst:
+	sudo pacman -Qqe | grep -v "$$(sudo pacman -Qqm)" > $@
+
+@pacman_restore: arch/packages.lst
+	cat $< | sudo xargs pacman -S --needed --noconfirm
 
 
 # Setup my common Vim extensions
