@@ -7,6 +7,7 @@ install_pkg () {
 }
 
 list_pkg () {
+    command -v lsb_release >/dev/null 2>/dev/null || echo "lsb-release"
 	command -v rsync >/dev/null 2>/dev/null || echo "rsync"
     command -v wget >/dev/null 2>/dev/null || echo "wget"
 }
