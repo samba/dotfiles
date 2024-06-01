@@ -2,7 +2,7 @@
 
 
 " Leader {{{
- 
+
 " This comes first, because we have mappings that depend on leader
 " With a map leader it's possible to do extra key combinations
 " i.e: <leader>w saves the current file
@@ -76,23 +76,26 @@ let colors256 = (matchstr($COLORTERM, "256color") == "256color")
 
 function! FixWindowColors() abort
 
-  " Some solarized colors need higher contrast for me 
-  highlight! StatusLine ctermbg=Black " NB: this is inverted
+  " Some solarized colors need higher contrast for me
   highlight! StatusLineTerm ctermbg=LightGrey
   highlight! StatusLineTermNC ctermbg=DarkGrey
 
+  highlight! StatusLineNC ctermfg=58 ctermbg=none cterm=underline term=italic
+  highlight! StatusLine ctermfg=70 ctermbg=none cterm=underline,bold term=italic
+
+  highlight! VertSplit ctermbg=NONE ctermfg=NONE
 
   " highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
   " highlight! TabLineFill ctermbg=NONE guibg=NONE
 
   " statusline uses %2 for read-only or pending-edit status
-  highlight! User2 ctermfg=DarkRed
-  
+  highlight! User2 ctermfg=DarkRed cterm=underline,bold
+
   " statusline uses %3 for filename in window status
-  highlight! User3 ctermfg=Blue 
+  highlight! User3 ctermfg=Blue cterm=underline,bold
 
   " statusline for terminal uses %4 for command name
-  highlight! User4 cterm=bold ctermfg=Black ctermbg=Magenta
+  highlight! User4 cterm=underline,bold ctermfg=Black ctermbg=Magenta
 
 
 endfunction
@@ -295,11 +298,12 @@ set lazyredraw " don't update the screen when macros/etc running in background (
 set fillchars+=vert:│  " the vertical window barrier's character content
 " NB: this line character is inserted via `<ctrl-K>vv`, found via `:h digraph-table`
 
+
 set ruler
 set rulerformat=%30([%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
 
 " statusline overrides rulerformat
-set statusline=[%n]\ %2*\ %M%R%H%1*\ %3*%f\ %0*\ %=%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+set statusline=[%n]\ %2*%(%M%R%H%1*%)%0*\ %3*%f%0*\ %=%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
