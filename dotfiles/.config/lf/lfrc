@@ -1,0 +1,200 @@
+
+# Warn about nested instances.
+&[ $LF_LEVEL -eq 1 ] || lf -remote "send $id echoerr \"Warning: You're in a nested lf instance!\""
+
+set promptfmt "\033[32;1m%u\033[0m@\033[33;1m%h\033[0m:\033[34;1m%d\033[0m\033[1m%f\033[0m"
+set cursorpreviewfmt "\033[7;90m"
+
+
+# Allow lf to be dropped to background
+map <c-z> $ kill -STOP $PPID
+
+# repeat command, like vim's . function
+map . :read; cmd-history-prev; cmd-enter
+
+
+cmd edit-config ${{
+    $EDITOR ~/.config/lf/lfrc
+    lf -remote "send $id source ~/.config/lf/lfrc"
+}}
+
+map CC edit-config
+
+
+
+cmd on-redraw %{{
+    if [ $lf_width -le 80 ]; then
+        lf -remote "send $id set ratios 1:2"
+    elif [ $lf_width -le 160 ]; then
+        lf -remote "send $id set ratios 1:2:3"
+    else
+        lf -remote "send $id set ratios 1:2:3:5"
+    fi
+}}
+
+
+cmd toggle_preview %{{
+    if [ "$lf_preview" = "true" ]; then
+        lf -remote "send $id :set preview false; set ratios 1:5"
+    else
+        lf -remote "send $id :set preview true; set ratios 1:2:3"
+    fi
+}}
+
+map zp toggle_preview
+
+
+# set nopreview
+# set ratios 1
+
+# with preview, ratios must have at least 2 values by default
+set preview
+set ratios 1:2
+
+set previewer ctpv
+set cleaner ctpvclear
+&ctpv -s $id
+cmd on-quit &ctpvquit $id
+
+
+# set preview
+# set previewer "less -k ~/.config/less.lesskey"
+
+set period 1
+set dircounts
+set info size:time
+
+set drawbox
+
+cmd on-cd &{{
+    # '&' commands run silently in background (which is what we want here),
+    # but are not connected to stdout.
+    # To make sure our escape sequence still reaches stdout we pipe it to /dev/tty
+    # printf "\033]0; $PWD\007" > /dev/tty
+    # printf "\033]0; ${PWD/#$HOME/\~}\007" > /dev/tty
+    printf "\033]0; [lf] ${PWD/#$HOME/\~}\007" > /dev/tty
+
+}}
+
+# also run at startup
+on-cd
+
+# Navigating parent directories
+map J :updir; down; open
+map K :updir; up; open
+
+
+# "latest modified first"
+set sortby time
+set reverse
+
+
+cmd mkdir %mkdir "$@"
+map a push :mkdir<space>
+
+
+# unmap the default rename keybinding
+# map r
+
+# map R rename
+map I :rename; cmd-home
+map A :rename; cmd-end
+# map c :rename; cmd-delete-home
+# map C :rename; cmd-end; cmd-delete-home
+
+
+cmd follow_link %{{
+  lf -remote "send ${id} select '$(readlink $f)'"
+}}
+
+map gL follow_link
+
+
+set selmode dir
+
+
+# y (select for copy) and P to paste soft-link
+# d (select for cut) and P to paste hard-link
+cmd link %{{
+    set -- $(cat ~/.local/share/lf/files)
+    mode="$1"
+    shift
+    if [ "$#" -lt 1 ]; then
+        lf -remote "send $id echo no files to link"
+        exit 0
+    fi
+    case "$mode" in
+        # symbolically copy mode is indicating a soft link
+        copy) ln -sr -t . -- "$@";;
+        # while a move mode is indicating a hard link
+        move) ln -t . -- "$@";;
+    esac
+    rm ~/.local/share/lf/files
+    lf -remote "send clear"
+}}
+map P :link
+
+
+set globsearch
+set icons
+
+map sG glob-select
+map uG glob-unselect
+map ds calcdirsize
+map D delete
+map T tag
+
+
+cmd follow_link %{{
+  lf -remote "send ${id} select '$(readlink $f)'"
+}}
+map gL follow_link
+
+
+set incfilter
+map ff filter
+
+cmap <enter> &{{
+    # select and open file
+    if [ "$lf_mode" = "filter" ]; then
+        lf -remote "send $id :cmd-enter; setfilter; open"
+    else
+        lf -remote "send $id cmd-enter"
+    fi
+}}
+
+cmap <a-n> &{{
+    # go to next file
+    if [ "$lf_mode" = "filter" ]; then
+        lf -remote "send $id down"
+    fi
+}}
+
+cmap <a-p> &{{
+    # go to previous file
+    if [ "$lf_mode" = "filter" ]; then
+        lf -remote "send $id up"
+    fi
+}}
+
+
+
+cmap <enter> &{{
+    if [ "$lf_mode" = "command" ]; then
+        lf -remote "send $id complete-cmd"
+    else
+        lf -remote "send $id cmd-enter"
+    fi
+}}
+
+cmd complete-cmd :{{
+    # position cursor at the end of the first word
+    cmd-home
+    cmd-word
+
+    # perform tab completion before running the command
+    cmd-complete
+    cmd-enter
+}}
+
+# vim: set ft=bash

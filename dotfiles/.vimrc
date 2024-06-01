@@ -793,6 +793,12 @@ map <Leader>T :botright terminal ++close ++rows=10 bash<CR>
 " Shortcut to run any `make all` in the CWD
 map <Leader>m :make<CR>
 
+
+" File manager...
+if executable('lf')
+    map <leader>lf :botright terminal ++close ++rows=10 lf<CR>
+endif
+
 " Override terminal's statusline
 if has('autocmd')
 augroup test | au!
