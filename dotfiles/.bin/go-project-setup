@@ -14,7 +14,12 @@ test -d "$1" || fail 1 "Please provide a directory to prepare as a Go project."
 
 cd "$1"
 
-mkdir -p api api pkg cmd vendor web configs scripts build deployments test/data docs tools
+mkdir -p api pkg cmd vendor web configs scripts build deployments test/data docs tools
 
 touch README.md
 
+if test -f go.sum ; then
+    go mod verify
+else
+    go mod init
+fi
