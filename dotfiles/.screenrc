@@ -164,10 +164,10 @@ shelltitle "> |shell"
 
 
 # battery status
-backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do test -d \"\$i\" && printf '%d%%; %s\n' \"$(cat \"\$i/capacity\")\" \"$(cat \"\$i/status\")\"; break; done"
+backtick 1 10 10 bash -c "for i in /sys/class/power_supply/BAT?/; do test -d \"\$i\" && printf '%d%% %s\n' \"$(cat \"\$i/capacity\")\" \"$(sed 's/Discharging/▼/; s/Charging/▲/;' \"\$i/status\")\"; break; done"
 
 # free memory status
-backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$7/\$2)) }'"
+backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%% 🗋\", (100*\$7/\$2)) }'"
 
 # The following flags can be applied in hardstatus and caption declarations.
 # %t = title of the current window
@@ -182,7 +182,7 @@ backtick 2 5 5 bash -c "free -m | grep Mem | awk '{ printf(\"%.0f%%\", (100*\$7/
 # %s = window size
 
 
-hardstatus string "%{d dd}%{-d} %{+ .m}%n%{-} %{+ .g}%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .B}%1`%?%{-} %{+ .r}%2`%?%{-} %{+ .g}%l%{-} %{+ .y}%0c:%s%{-} "
+hardstatus string "%{d dd}%{-d} %{+ .m}%n%{-} %{+ .g}%t%{-} %= %{+ .C}%h%{-} %{+ .y}%H%{-} %{+ .B}%1`%?%{-} %{+ .r}%2`%?%{-} %{+ .g}%l%{-} %{+ .y}%0c:%s%{-}"
 hardstatus alwaysfirstline
 
 caption string "%{d dd}%?%F%{+bu .M}%:%{+ .m}%?%n%{-} %?%F%{+bu .G}%:%{+ .g}%?%t%{-} %= %{+ .C}%h%{-}"
