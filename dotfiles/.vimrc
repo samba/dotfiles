@@ -223,6 +223,12 @@ nmap <leader>Spell :setlocal spell! spell?<CR>
 " Remove search highlight
 nnoremap <leader><space> :nohlsearch<CR>
 
+" Replace selection (allow regex, default)
+vmap <leader>r "hy:%s/<C-r>h//gc<left><left><left>
+
+" Replace selection literally -- no regexp
+vmap <leader>R "hy:%sno/<C-r>h//gc<left><left><left>
+
 " toggles paste mode
 nmap <Leader>P :set paste! paste?<CR>
 
