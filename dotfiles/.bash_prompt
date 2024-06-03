@@ -263,7 +263,7 @@ function wtf () {
 
     printf "${usercolor}%s${reset}@${green}%s${reset}:${blue}%s${reset}\n" \
         "$(echo ${USER:-$(whoami)})" \
-        "$(hostname -f)" \
+        "$(echo ${HOSTNAME:-$(hostname -f)})" \
         "$(pwd | sed "s@${HOME}@~@")"  # TODO: simplify this with plain bash, no sed
 
 
