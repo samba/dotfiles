@@ -870,7 +870,7 @@ nnoremap <Leader>G :Grep<space>
 nnoremap <Leader>g :vimgrep!<space>
 
 " grep word under cursor
-nnoremap <Leader>K :Grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap <Leader>K :Grep "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " Some useful quickfix shortcuts
 ":cc      see the current error
