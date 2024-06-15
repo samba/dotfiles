@@ -211,7 +211,7 @@ gitrestore:    ## Restore the Git settings previously stashed
 .PRECIOUS: $(HOME)/.ssh/%.password $(HOME)/.ssh/%_rsa
 
 $(HOME)/.ssh/%.password:
-	shuf -n 3 $$(find -L /usr/share/dict -type f) | paste -sd '-' | tr -dc A-Za-z0-9- > $@
+	shuf -n 3 $$(find -L /usr/share/dict -type f | grep -e 'words' -e 'english' | head -n 1) | paste -sd '-' | tr -dc A-Za-z0-9- > $@
 
 sshkeys: $(HOME)/.ssh/id_rsa $(HOME)/.ssh/github_rsa  ## Generate SSH keys automatically
 $(HOME)/.ssh/%_rsa: $(HOME)/.ssh/%.password
