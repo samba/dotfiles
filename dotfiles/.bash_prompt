@@ -243,7 +243,19 @@ function prompt::git_status () {
 }
 
 
+function errbell() {
+    "$@"
+    local ret=$?
+    test 0 = ${ret} || echo -e '\a'
+    return ${ret}
+}
 
+function donebell () {
+    "$@"
+    local ret=$?
+    echo -e '\a'
+    return ${ret}
+}
 
 function wtf () {
     # these colors do not require all the bounding markers of a shell prompt.
