@@ -18,6 +18,45 @@ mkdir -p api pkg cmd vendor web configs scripts build deployments test/data docs
 
 touch README.md
 
+test -f Makefile || >>Makefile cat <<EOD
+PKGFILES = \$(shell find pkg -type f -name '*.go')
+PKGDIR = \$(shell find pkg -mindepth 1 -type d)
+
+GOOS := \$(shell go env GOOS)
+GOARCH := \$(shell go env GOARCH)
+
+CMD_DIRS := \$(shell find ./cmd -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+
+
+all: tidy test commands
+commands: \$(addprefix build/,\$(CMD_DIRS))
+
+
+build/%: build/o/%-\$(GOOS)-\$(GOARCH)
+	cp -v \$< \$@
+
+
+build/o/%-\$(GOOS)-\$(GOARCH): cmd/%/main.go \$(PKGFILES)
+	mkdir -p \$(@D)
+	go build -o \$@ $<
+
+
+style:
+	go vet ./...
+	gofmt -l -s \$(PKGFILES)
+
+clean:
+	rm -v \$(addprefix build/,\$(CMD_DIRS)) \\
+		build/o/*
+
+tidy:
+		go mod verify && go mod tidy
+
+test:
+	go test -v ./...
+EOD
+
+
 if test -f go.sum ; then
     go mod verify
 else
