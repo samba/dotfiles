@@ -5,7 +5,7 @@
 
 set -euf -o pipefail
 
-GOVERSION=1.17
+GOVERSION=1.22.4
 
 fail () {
     echo "$2" >&2
@@ -32,13 +32,13 @@ install_go () {
 
 _do_golang_installation () {
 
-    if ! command -v go; then
-        os_platform=$(uname -a | grep -oE '(Darwin|Linux)' | head -n 1)
-        case $(uname -a | grep -oE '(i386|amd64|x86_64)' | head -n 1) in
-            i386) install_go $GOVERSION $os_platform i386;;
-            amd64|x86_64) install_go $GOVERSION $os_platform amd64;;
-        esac
-    fi
+    command -v go >/dev/null && command go version 2>&1 | grep ${GOVERSION} && return 0
+
+    os_platform=$(uname -a | grep -oE '(Darwin|Linux)' | head -n 1)
+    case $(uname -a | grep -oE '(i386|amd64|x86_64)' | head -n 1) in
+        i386) install_go $GOVERSION $os_platform i386;;
+        amd64|x86_64) install_go $GOVERSION $os_platform amd64;;
+    esac
 
 }
 

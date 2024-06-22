@@ -239,7 +239,7 @@ endif
 
 .PHONY: @gosetup
 @gosetup:
-	eval $$(grep "export GOPATH" ~/.bash_profile) && bash util/gosetup.sh
+	eval $$(grep "export GOPATH" ~/.bash_profile) && bash -x util/gosetup.sh install
 
 .PHONY: @rustsetup
 @rustsetup:
