@@ -116,6 +116,12 @@ case $(uname -s) in
     alias mac_hide_hidden_files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
   ;;
+
+  Linux)
+    if command -v xdg-open >/dev/null 2>/dev/null; then
+        alias open=xdg-open
+    fi
+  ;;
 esac
 
 
