@@ -11,18 +11,25 @@ list_dotfiles () {
     find ${1} -type f   -print  | sed "s@^${1}@@"
 }
 
-scan_diff_dotfiles () {
+
+list_nonmatching_files () {
     local srcpath="${REPO_PATH}/dotfiles"
     local base="${1}";
     shift 1;
     while read versioned_file; do
-        diff -N -w -U 3 $@ \
-            "${srcpath}/${versioned_file}" \
-            "${base}/${versioned_file}" \
-            || true
-    done < <(list_dotfiles "${srcpath}")
+        diff -q "${srcpath}/${versioned_file}" "${base}/${versioned_file}" 1>/dev/null 2>/dev/null \
+            || printf "%q\t%q\n" "${srcpath}/${versioned_file}" "${base}/${versioned_file}"
+    done
 }
 
-# set -x -e
-scan_diff_dotfiles "${1:-${HOME}}" 
 
+print_patchdiff () {
+    diff -N -w -U 3 $@ || true
+}
+
+
+case "${1}" in
+    list)  list_dotfiles "${REPO_PATH}/dotfiles" | list_nonmatching_files "${2:-${HOME}}" ;;
+    print) list_dotfiles "${REPO_PATH}/dotfiles" | list_nonmatching_files "${2:-${HOME}}" | while read s d; do print_patchdiff "${s}" "${d}"; done
+        ;;
+esac

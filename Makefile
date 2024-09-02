@@ -283,4 +283,7 @@ run-docker: $(CACHE)/test-docker-image  ## Run this dotfiles project in a Docker
 		$(DOCKER_TEST_IMAGE) /bin/bash -c 'make dotfiles && bash -il'
 
 diff:  ## basically diff  -r ${HOME} ${repo} (for live dotfiles)
-	@bash util/live_diff.sh
+	@bash util/live_diff.sh print
+
+
+
