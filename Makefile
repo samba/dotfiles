@@ -49,12 +49,12 @@ dotfiles:  ## Install the dotfiles
 .PHONY: @sync_dotfiles
 @sync_dotfiles: prereq
 	rsync $(CURDIR)/dotfiles/ $(HOME)/ \
-        --exclude ".git/" \
-        --exclude ".osx" \
-        --exclude ".DS_Store" \
-        --exclude "*.md" \
-        --exclude "*.txt" \
-        -arvh --no-perms --no-links
+		--exclude ".git/" \
+		--exclude ".osx" \
+		--exclude ".DS_Store" \
+		--exclude "*.md" \
+		--exclude "*.txt" \
+		-arvh --no-perms --no-links
 
 
 $(SSH_CONFIG): dotfiles/.ssh/config.published Makefile
@@ -96,15 +96,15 @@ generated/:
 	test -d $(@) || mkdir $(@)
 
 .PHONY: roles
-roles: generated/roles.txt
+roles: generated/roles.txt  ## Generate roles for selecting packages
 generated/roles.txt: util/packages.ini | generated/
 	test -f $@ || \
 		python3 util/packages.py -c $< -d > $@
 	touch -r $< $@
 
 .PHONY: packages
-packages: generated/packages.sh
-generated/packages.sh: generated/roles.txt util/packages.ini util/packages.py 
+packages: generated/packages.sh  ## Generate package installer script
+generated/packages.sh: generated/roles.txt util/packages.ini util/packages.py
 	which python3
 	@echo "> Package handler is: " $(PACKAGE_HANDLER) >&2
 	python3 util/packages.py -c util/packages.ini $$(cat $<)> $@
@@ -112,7 +112,7 @@ generated/packages.sh: generated/roles.txt util/packages.ini util/packages.py
 
 .PHONY: prereq
 prereq: generated/prereqs_installed.txt
-generated/prereqs_installed.txt: debian/prereq.sh generated/ 
+generated/prereqs_installed.txt: debian/prereq.sh generated/
 	date >> $@
 ifeq ($(LINUX_DISTRO),Debian)
 	command -v apt-get 2>/dev/null && bash debian/prereq.sh > $@
@@ -185,7 +185,7 @@ export GO111MODULE := on
 
 
 .PHONY: @install_packages
-@install_packages: generated/packages.sh generated/roles.txt @install_repositories
+@install_packages: generated/packages.sh generated/roles.txt | @install_repositories
 	echo "$(SYSTEM) $(LINUX_DISTRO)"
 ifeq ($(SYSTEM),Darwin)
 	bash macos/setup.sh install "$$(cat generated/roles.txt)"
@@ -237,20 +237,19 @@ ifneq ($(KEEP_CACHE),FALSE)
 	rm -rvf $(CACHE)
 endif
 
-# Install the Python usercustomize.py at the correct location. 
 .PHONY: @pythonconfig
-@pythonconfig:
+@pythonconfig:  ## Set up Python programming environment
 	which python3 && python3 -c "import site; print(site.getusersitepackages())" | \
 		while read p; do \
 			mkdir -p $$p; cp -v $(CURDIR)/generic/misc/usercustomize.py $$p/ ;\
 		done
 
 .PHONY: @gosetup
-@gosetup:
+@gosetup:  ## Set up Go programming tools
 	eval $$(grep "export GOPATH" ~/.bash_profile) && bash -x util/gosetup.sh install
 
 .PHONY: @rustsetup
-@rustsetup:
+@rustsetup:  ## Set up rust programming tools
 	bash util/rustsetup.sh
 
 
@@ -263,7 +262,7 @@ arch/packages.lst:
 
 # Setup my common Vim extensions
 .PHONY: @vimconfig
-@vimconfig: $(CACHE)/vim_plugins_loaded
+@vimconfig: $(CACHE)/vim_plugins_loaded  ## Set up vim config and plugins
 $(CACHE)/vim_plugins_loaded: util/vimsetup.sh | $(CACHE)
 	# This requires some bash-specific functionality.
 	bash util/vimsetup.sh
