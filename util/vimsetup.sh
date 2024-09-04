@@ -13,7 +13,7 @@ function gitclone () {
         cd "${target_path}";
         git pull --rebase;
         cd ${OLDPWD};
-    else 
+    else
         cd $(dirname "${target_path}");
         git clone "${git_origin}" $(basename "${target_path}");
         cd ${OLDPWD};
@@ -26,7 +26,9 @@ function do:vim:install_packaages () {
     gitclone "${HOME}/.vim/bundle/vim-json" "https://github.com/elzr/vim-json.git"
     gitclone "${HOME}/.vim/bundle/vim-openssl" "https://github.com/vim-scripts/openssl.vim.git"
     gitclone "${HOME}/.vim/bundle/vim-markdown" "https://github.com/tpope/vim-markdown.git"
-	gitclone "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
+    gitclone "${HOME}/.vim/bundle/vim-fugitive" "https://tpope.io/vim/fugitive.git"
+	gitclone "${HOME}/.vim/bundle/vim-vinegar" "https://github.com/tpope/vim-vinegar.git"
+    gitclone "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
 	gitclone "${HOME}/.vim/bundle/vim-ps1" "https://github.com/PProvost/vim-ps1.git"
 	gitclone "${HOME}/.vim/bundle/vim-go" "https://github.com/fatih/vim-go.git"
     gitclone "${HOME}/.vim/bundle/solarized" "https://github.com/altercation/vim-colors-solarized.git"
