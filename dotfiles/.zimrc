@@ -1,0 +1,66 @@
+
+
+
+
+# Theme
+zmodule asciiship
+
+
+
+# Prompt and utilities
+zmodule git-info
+zmodule prompt-pwd
+zmodule duration-info
+zmodule git
+zmodule magic-enter
+zmodule ssh
+zmodule termtitle
+zmodule utility
+
+# Distro
+zmodule pacman
+zmodule homebrew
+
+# Utilities from community repos
+zmodule joke/zim-k9s
+
+
+
+
+zmodule zsh-users/zsh-completions --fpath src
+# zmodule zsh-users/zsh-syntax-highlighting
+zmodule zsh-users/zsh-autosuggestions
+zmodule zsh-users/zsh-history-substring-search
+
+
+zmodule zdharma-continuum/fast-syntax-highlighting
+
+zmodule completion
+
+### NB --- ALL OMZ plugins must load AFTER completion
+
+zmodule ohmyzsh/ohmyzsh --root plugins/vim-interaction
+zmodule ohmyzsh/ohmyzsh --root plugins/colored-man-pages
+zmodule ohmyzsh/ohmyzsh --root plugins/z
+zmodule ohmyzsh/ohmyzsh --root plugins/vscode
+zmodule ohmyzsh/ohmyzsh --root plugins/tmux
+zmodule ohmyzsh/ohmyzsh --root plugins/rsync
+zmodule ohmyzsh/ohmyzsh --root plugins/kubectl
+zmodule ohmyzsh/ohmyzsh --root plugins/kind
+zmodule ohmyzsh/ohmyzsh --root plugins/podman
+zmodule ohmyzsh/ohmyzsh --root plugins/systemd
+zmodule ohmyzsh/ohmyzsh --root plugins/golang
+zmodule ohmyzsh/ohmyzsh --root plugins/postgres
+
+# Distro -- OMZ
+zmodule ohmyzsh/ohmyzsh --root plugins/archlinux
+zmodule ohmyzsh/ohmyzsh --root plugins/macos
+zmodule ohmyzsh/ohmyzsh --root plugins/debian
+
+
+
+
+# For some reason... this causes an error:
+# "command not found: completion"
+#zmodule k  # kubectl
+
