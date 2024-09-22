@@ -52,10 +52,10 @@ config = dict(
     download_icon='󰇚',
     memory_icon='🗋',
     window_list=True,
-    window_title_inactive="%wt",
-    window_title_active="%wt",
-    default_leftstatus=["%uh", "%sn", "%nu", "%nd", "%sl", "%sm"],
-    default_rightstatus=["%pt", "%pc", "%ap", "%T", "%D"],
+    window_title_inactive="%wn",
+    window_title_active="%wn",
+    default_leftstatus=["%uh", "%sn", "%pc", "%pt" ],
+    default_rightstatus=[ "%ap",  "%nu", "%nd", "%sl", "%sm", "%T", "%D"],
     regular_bg=REGULAR_BG,
     regular_fg=REGULAR_FG,
     highlight_bg=HIGHLIGHT_BG,
@@ -65,6 +65,7 @@ config = dict(
 global param_interpol
 param_interpol = ({
         "wt": "#I:#W#F",  # removing pane_title here... it's already in the window list
+        "wn": "#I#F",
         "pt": "#{pane_title}", # pane title
         "pc": "#{p8:#{=8:pane_current_command}}",
         "pp": "#{pane_current_path}",
@@ -98,8 +99,8 @@ output = dict(
     status_left="",
     status_right="",
     status_style="bg=terminal,fg=terminal",
-    status_left_length=150,
-    status_right_length=150,
+    status_left_length=60,
+    status_right_length=60,
     status_attr="none",
     status_justify="centre",
     window_status_separator="",
@@ -138,6 +139,10 @@ themecolor = dict(
 PAD_BEFORE = 1
 PAD_AFTER = 2
 
+
+TERM_WIDTH_MIN=120
+TERM_CELL_WIDTH=10
+
 def colorseq (index: int, val: str, arr: str, last: bool, pad_position=PAD_BEFORE):
     default_bg = REGULAR_BG
     theme_fg = THEME_FG
@@ -151,6 +156,8 @@ def colorseq (index: int, val: str, arr: str, last: bool, pad_position=PAD_BEFOR
     if last:
         next_bg = default_bg
 
+    minwidth = TERM_WIDTH_MIN - ((index + 1) * TERM_CELL_WIDTH)
+
     beforepad = ""
     afterpad = ""
 
@@ -159,16 +166,32 @@ def colorseq (index: int, val: str, arr: str, last: bool, pad_position=PAD_BEFOR
     if pad_position & PAD_AFTER:
         afterpad = " "
 
+
+    #fmt_primary = "#[fg=%(tb)s,bg=%(tc)s,bold]#{?#{e|<:#{client_width},%(mw)d},,%(pb)s%(val)s%(pa)s}"
+    fmt_primary = "#[fg=%(tb)s,bg=%(tc)s,bold]%(pb)s%(val)s%(pa)s"
+    #fmt_secondary = "#[fg=%(tc)s,bg=%(tb)s,nobold]#{?#{e|<:#{client_width},%(mw)d},,%(pb)s%(val)s%(pa)s}"
+    fmt_secondary = "#[fg=%(tc)s,bg=%(tb)s,nobold]%(pb)s%(val)s%(pa)s"
+
     if index == 0:
         # invert color scheme
-        return ("#[fg={tb},bg={tc},bold]{pb}{val}{pa}".format(
-                        tb=theme_fg, tc=theme_bg, val=val, pa=afterpad, pb=beforepad),
+        return (fmt_primary % dict(
+                    tb=theme_fg,
+                    tc=theme_bg,
+                    val=val,
+                    pa=afterpad,
+                    pb=beforepad,
+                    mw=minwidth),
                 "#[fg={tc},bg={nb},nobold]{arr}".format(
                     tc=theme_bg, nb=next_bg, arr=arr))
 
     else:
-        return ("#[fg={tc},bg={tb},nobold]{pb}{val}{pa}".format(
-                        tc=theme_bg, tb=this_bg, val=val, pa=afterpad, pb=beforepad),
+        return (fmt_secondary % dict(
+                    tc=theme_bg,
+                    tb=this_bg,
+                    val=val,
+                    pa=afterpad,
+                    pb=beforepad,
+                    mw=minwidth),
                 "#[fg={tc},bg={nb},nobold]{arr}".format(
                     tc=this_bg, nb=next_bg, arr=arr))
 
@@ -179,7 +202,7 @@ def wintab(pat: str, active: bool) -> str:
     else:
         parts = ('#[fg=HB,bg=BG,nobold]', '#[nobold]')
 
-    return fmt(parts[0] + " " + pat + " " + parts[1])
+    return parts[0] + " " + fmt(pat) + " " + parts[1]
 
 
 def left_status(sections: stringlist):
@@ -188,8 +211,6 @@ def left_status(sections: stringlist):
     for i, v in enumerate(sections):
         t, a = colorseq(i, v, arrow, (i == last), PAD_BEFORE)
         yield t + " " + a
-
-
 
 def right_status(sections: stringlist):
     arrow = config.get('left_arrow', '')
@@ -208,6 +229,7 @@ def inject(m: re.Match) -> str :
 def fmt(statusline: str) -> str :
     """ Render format parameters """
     s = alias.sub(r'{\1}', statusline)
+    ##  print(repr(s))
     s = s.format(**param_interpol).replace("\\", "\\\\")
     return cmdpat.sub(inject, s)
 
@@ -256,23 +278,25 @@ def main (args) -> int :
         theme = (opts.theme or 'default')
     )
 
-    output.update(
-        window_status_format = wintab(config.get('window_title_inactive'), False),
-        window_status_current_format = wintab(config.get('window_title_active'), True)
-    )
-
     if (lstat is None) and not opts.noleft:
         lstat = config.get('default_leftstatus')
 
     if (rstat is None) and not opts.noright:
         rstat = config.get('default_rightstatus')
 
+    output.update(
+        window_status_format = wintab(config.get('window_title_inactive'), False),
+        window_status_current_format = wintab(config.get('window_title_active'), True),
+        status_left_length = (15 * len(lstat)),
+        status_right_length = (15 * len(rstat))
+    )
+
 
     if lstat:
-        output['status_left'] = fmt(' '.join(list(left_status(lstat))))
+        output['status_left'] = (' '.join(list(left_status([ fmt(l) for l in lstat ]))))
 
     if rstat:
-        output['status_right'] = fmt(' '.join(list(right_status(rstat))))
+        output['status_right'] = (' '.join(list(right_status([ fmt(r) for r in rstat ]))))
 
 
     print(render_output(**output))
