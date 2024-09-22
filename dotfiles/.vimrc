@@ -280,18 +280,13 @@ endif
 
 
 " GNU screen & terminal title handling {{{
-if has('title')
-    set titlestring = "vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}"
-    if ((gnu_screen || xterm || gnome_terminal))
-      set title
-    end
-
-    if (gnu_screen || gnome_terminal)
-      " auto BufEnter * :set title | let &titlestring = &g:titlestring_template
-      auto VimLeave * :set t_ts=k\
-      set t_ts=k
-      set t_fs=\
-    endif
+if has('title') && ((gnu_screen || xterm || gnome_terminal || apple_terminal))
+    " set titlestring=vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
+    set title  titlelen=30
+    autocmd BufEnter * let &titlestring = ' ' . expand("%:t")
+    auto VimLeave * :set t_ts=k\
+    set t_ts=k
+    set t_fs=\
 endif
 
 set ttyfast    " optimize for fast terminal connections

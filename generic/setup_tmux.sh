@@ -10,6 +10,4 @@ else
     git clone --quiet https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-
-
 grep 'plugins/tpm' ~/.tmux.conf && ${SHELL} ~/.tmux/plugins/tpm/scripts/install_plugins.sh
