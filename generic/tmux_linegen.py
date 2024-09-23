@@ -121,6 +121,7 @@ output = dict(
 
 global themecolor
 themecolor = dict(
+        amber="#FFBF00",
         gold="#ffb86c",
         redwine="#b34a47",
         moon="#00abab",

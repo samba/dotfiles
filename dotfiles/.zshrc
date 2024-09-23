@@ -4,16 +4,6 @@
 export ZIM_CONFIG_FILE=~/.config/zsh/zimrc
 export ZIM_HOME=~/.zim
 
-# TODO: enable environment-specific options
-# macos, archlinux, debian, brew
-
-plugins=(
-  vi-mode
-  brew
-  battery
-  pyenv
-)
-
 
 function _zimload () {
 
@@ -51,8 +41,42 @@ zstyle ':zim:termtitle:preexec' format '${${(A)=1}[1]}'
 zstyle ':zim:termtitle:precmd'  format '%1~'
 
 
-#set -x
  _zimload
-#set +x
+
+# ============================
+# Key bindings
+
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 
+# =============================
+# Prompt customization
+# This must come after the theme loaded by Zim
+# Effects:
+#   - Keep main prompt PS1 as light as possible; one line, usually one character
+#   - Add a few useful properties to the right-side prompt
+#   - Move the default multi-line PS1 bits to the right-side prompt
+#   - Touch up the color to fit with the theme I use in tmux
+#   - Shorten the CWD notation to reflect 3 directory levels
+
+PROMPT_COLOR="#FFBF00"  # amber
+
+# Split the PS1 by newline
+pslines=( ${(f)"${PS1//%~/%3~}"} )
+linecount=${#pslines}
+
+unset PS1
+export PS1=${pslines[-1]//(green)/${PROMPT_COLOR}}
+unset 'pslines[-1]'  # delete last one, i.e. pop from the array
+
+printf -v RPROMPT "%s %s %s %s %s" \
+	"%F{${PROMPT_COLOR}}<%f" \
+	"${${(j: :)pslines//\%~/%3~}//(cyan|green|magenta)/${PROMPT_COLOR}}" \
+	"%F{${PROMPT_COLOR}}\$(command -v kubectl >/dev/null && kubectl config current-context 2>/dev/null)%f" \
+	"%F{${PROMPT_COLOR}}%T%f"
+
+
+export RPROMPT
+unset pslines linecount PROMPT_COLOR
+# =======================
