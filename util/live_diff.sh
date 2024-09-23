@@ -8,7 +8,7 @@
 REPO_PATH="$(dirname $(dirname $0))"
 
 list_dotfiles () {
-    find ${1} -type f -print | sed "s@^${1}@@" | grep -v zshrc # the general case
+    find ${1} -type f -print | sed "s@^${1}@@" | grep -v '.session.vim' # the general case
 }
 
 
@@ -21,9 +21,6 @@ list_nonmatching_files () {
             || printf "%q\t%q\n" "${srcpath}/${versioned_file}" "${base}/${versioned_file}"
     done
 
-    # special cases
-    diff -q "${srcpath}/.zshrc" "${base}/.zshrc.${USER}" 1>/dev/null 2>/dev/null \
-        || printf "%q\t%q\n" "${srcpath}/.zshrc" "${base}/.zshrc.${USER}"
 }
 
 

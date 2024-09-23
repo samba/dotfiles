@@ -1,0 +1,67 @@
+
+if ls --color >/dev/null 2>/dev/null ; then  # GNU/Linux
+  _which dircolors >/dev/null && eval "$(dircolors -b)"
+  export LS_OPTIONS="--color=auto"
+else # MacOS or some BSD
+  export LS_OPTIONS="-G"
+  export LSCOLORS='gxfxcxdxbxegedabagacad'
+fi
+
+alias j='jobs -l'
+alias d='dirs -l -v'
+
+alias bell="tput bel"
+alias g=git
+
+# Encryption shortcuts
+alias encrypt="openssl aes-256-cbc -e";
+alias decrypt="openssl aes-256-cbc -d";
+
+
+# Archival shortcuts
+alias squash="mksquashfs"
+
+# Kubernetes
+alias k='kubectl'
+alias kpo='kubectl get pods -o wide'
+alias ksvc='kubectl get services -o wide'
+alias kdep='kubectl get deployments -o wide'
+alias knod='kubectl get nodes -o wide'
+alias ktail='kubectl log -f'
+
+
+# Easily trigger Python's debugger...
+alias pdb='python -m pdb'
+
+# URL-encode strings
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+
+
+if command -v mutt >/dev/null; then
+    alias lmail='mutt -f ${MAIL}'
+fi
+
+
+
+case $(command -v hd) in
+  *hd) ;; # it exists!
+  *) command -v hd > /dev/null || alias hd="hexdump -C" ;;
+esac
+
+case $(command -v md5sum ; command -v md5) in
+  *md5) alias md5sum="md5 -r";; # BSD/OS X compatibility with Linux environs
+esac
+
+for f in $( # Some useful built-ins from Apple
+
+  # A javascript interpreter
+  echo '/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc'
+);  do
+  test -e "$f" && alias $(basename $f)="$f"
+done
+
+command -v xdg-open >/dev/null && alias open=xdg-open
+
+
+
+

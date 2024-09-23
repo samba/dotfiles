@@ -150,15 +150,12 @@ generated/backup.$(DATE).tar.gz: generated/  ${HOME}/.empty
 
 .PHONY: import
 import:  ## Copy changes from live system into this working directory.
-	find ./dotfiles -type f -print | grep -v zshrc | sed 's@$(PWD)/@@; s@./dotfiles/@@;' | \
+	find ./dotfiles -type f -print | sed 's@$(PWD)/@@; s@./dotfiles/@@;' | \
 		while read df; do \
 			diff -q "$${HOME}/$${df}" "./dotfiles/$${df}"; \
 			test $$? -eq 1 || continue; \
 			cp -v "$${HOME}/$${df}" "./dotfiles/$${df}"; \
 		done
-	# special cases...
-	test -f  ~/.zshrc.$${USER} && cp -v ~/.zshrc.$${USER} ./dotfiles/.zshrc
-
 
 clean-backup:
 	rm -v generated/backup.*.tar.gz
@@ -270,9 +267,8 @@ $(CACHE)/vim_plugins_loaded: util/vimsetup.sh | $(CACHE)
 
 .PHONY: @shellsetup
 @shellsetup: @sync_dotfiles  ## Set up whell environment, especially tmux and zsh
-	test -f ~/.tmux.status.conf || python3 generic/tmux_linegen.py -t orange > ~/.tmux.status.conf
+	test -f ~/.tmux.status.conf || python3 generic/tmux_linegen.py -t amber > ~/.tmux.status.conf
 	bash generic/setup_tmux.sh
-	bash generic/setup_zsh.sh  # this is super noisy in debug...
 
 
 

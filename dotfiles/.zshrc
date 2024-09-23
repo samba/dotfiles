@@ -80,3 +80,7 @@ printf -v RPROMPT "%s %s %s %s %s" \
 export RPROMPT
 unset pslines linecount PROMPT_COLOR
 # =======================
+
+
+
+test -f ~/.zsh_aliases && source ~/.zsh_aliases
