@@ -29,10 +29,15 @@ parser.add_option("-w", "--win", dest="wintitle", action="store")
 parser.add_option("-t", "--theme", dest="theme", default="default", action="store")
 
 global gradients
+# gradients = [
+#    '#080808', '#121212', '#1c1c1c', '#262626', '#303030', '#3a3a3a',
+#    '#444444', '#4e4e4e', '#585858', '#626262', '#6c6c6c', '#767676',
+#]
 gradients = [
-    '#080808', '#121212', '#1c1c1c', '#262626', '#303030', '#3a3a3a',
-    '#444444', '#4e4e4e', '#585858', '#626262', '#6c6c6c', '#767676',
+    'colour236', 'colour237', 'colour238', 'colour239', 'colour240', 'colour241',
+    'colour246', 'colour247', 'colour248', 'colour251', 'colour253', 'colour255',
 ]
+
 
 # defaults...
 REGULAR_BG = "terminal"
@@ -41,13 +46,25 @@ HIGHLIGHT_FG = gradients[7]
 HIGHLIGHT_BG = gradients[11]
 THEME_FG = gradients[0]
 
+LEFT_TRIANGLE="◢"
+RIGHT_TRIANGLE="◣"
+LEFT_ANGLE_STEEP=""
+RIGHT_ANGLE_STEEP=""
+RIGHT_ARROW="▶"
+LEFT_ARROW="◀"
+
+LEFT_QUOTE_ANGLE="❮"
+RIGHT_QUOTE_ANGLE="❯"
+
+
+
 global config
 config = dict(
     theme='default',
     date_format="%y-%m-%d",
     time_format="%T",
-    right_arrow='',
-    left_arrow='',
+    right_arrow=RIGHT_QUOTE_ANGLE,
+    left_arrow=LEFT_QUOTE_ANGLE,
     upload_icon='󰕒',
     download_icon='󰇚',
     memory_icon='🗋',
@@ -118,7 +135,36 @@ output = dict(
     mode_style="bg=TC,fg=FG",
 )
 
+global outvars
+outvars = dict(
+    themecolorbg="TC",  # default
+    themecolorfg="TF",  # default
+    themecolorhbg="HB", # default
+    themecolorhfg="HF", # default
+    themecolorrbg="BG", # default
+    themecolorrfg="terminal", # default
+    themelarr="LARR", # default
+    themerarr="RARR", # default
+    themeheadtxt="nobold"
+)
 
+
+global colorvarmap
+colorvarmap = dict(
+    TC="themecolorbg",
+    TF="themecolorfg",
+    BG="themecolorrbg",
+    FG="themecolorrfg",
+    HF="themecolorhfg",
+    HB="themecolorhbg",
+    TH="themeheadtxt",
+    LARR="themelarr",
+    RARR="themerarr"
+)
+
+
+# BUG/XXX: MacOS doesn't like hex colours.
+# TODO convert these to number aliases. https://superuser.com/questions/285381/how-does-the-tmux-color-palette-work
 global themecolor
 themecolor = dict(
         amber="#FFBF00",
@@ -134,6 +180,7 @@ themecolor = dict(
         magenta="magenta",
         dullgreen="color64",
         darkgreen="color22",
+        burntorange="colour166",
         default="colour3",
 )
 
@@ -149,7 +196,7 @@ def colorseq (index: int, val: str, arr: str, last: bool, pad_position=PAD_BEFOR
     theme_fg = THEME_FG
     theme_bg = themecolor.get(config.get('theme', 'default') or 'default')
 
-    q = math.ceil(len(gradients)/(1.5)) - (1 + index)
+    q = math.floor(len(gradients)/(2)) - (index)
 
     this_bg = gradients[max(0, q)]
     next_bg = gradients[max(0, q-1)]
@@ -169,25 +216,22 @@ def colorseq (index: int, val: str, arr: str, last: bool, pad_position=PAD_BEFOR
 
 
     #fmt_primary = "#[fg=%(tb)s,bg=%(tc)s,bold]#{?#{e|<:#{client_width},%(mw)d},,%(pb)s%(val)s%(pa)s}"
-    fmt_primary = "#[fg=%(tb)s,bg=%(tc)s,bold]%(pb)s%(val)s%(pa)s"
+    fmt_primary = "#[fg=TF,bg=TC,bold]%(pb)s%(val)s%(pa)s"
     #fmt_secondary = "#[fg=%(tc)s,bg=%(tb)s,nobold]#{?#{e|<:#{client_width},%(mw)d},,%(pb)s%(val)s%(pa)s}"
-    fmt_secondary = "#[fg=%(tc)s,bg=%(tb)s,nobold]%(pb)s%(val)s%(pa)s"
+    fmt_secondary = "#[fg=TC,bg=%(tb)s,TH]%(pb)s%(val)s%(pa)s"
 
     if index == 0:
         # invert color scheme
         return (fmt_primary % dict(
-                    tb=theme_fg,
-                    tc=theme_bg,
                     val=val,
                     pa=afterpad,
                     pb=beforepad,
                     mw=minwidth),
-                "#[fg={tc},bg={nb},nobold]{arr}".format(
+                "#[fg=TC,bg={nb},nobold]{arr}".format(
                     tc=theme_bg, nb=next_bg, arr=arr))
 
     else:
         return (fmt_secondary % dict(
-                    tc=theme_bg,
                     tb=this_bg,
                     val=val,
                     pa=afterpad,
@@ -199,9 +243,9 @@ def colorseq (index: int, val: str, arr: str, last: bool, pad_position=PAD_BEFOR
 
 def wintab(pat: str, active: bool) -> str:
     if active:
-        parts = ("#[fg=TC,bg=BG,us=TC,nobold,underscore]LARR#[fg=TF,bg=TC,bold,nounderscore]",  "#[fg=TC,bg=BG,nobold,underscore,us=BG]RARR")
+        parts = ("#[fg=TC,bg=BG,us=TC,nobold]LARR#[fg=TF,bg=TC,bold,nounderscore]",  "#[fg=TC,bg=BG,nobold,us=BG]RARR")
     else:
-        parts = ('#[fg=HB,bg=BG,nobold]', '#[nobold]')
+        parts = ('#[fg=HB,bg=BG,TH]', '#[nobold]')
 
     return parts[0] + " " + fmt(pat) + " " + parts[1]
 
@@ -212,6 +256,8 @@ def left_status(sections: stringlist):
     for i, v in enumerate(sections):
         t, a = colorseq(i, v, arrow, (i == last), PAD_BEFORE)
         yield t + " " + a
+    # and finally
+    yield "#[default]"
 
 def right_status(sections: stringlist):
     arrow = config.get('left_arrow', '')
@@ -246,23 +292,24 @@ def render_output(**kwargs) -> str :
     result = [ "# BEGIN generated status line",
                "# this config is generated by tmux_linegen.py" ]
 
-    tc = themecolor.get(
-            config.get('theme', None),
-            themecolor.get('default'))
+    for k, v in outvars.items():
+        result.append("%s=\"%s\"" % (k, v))
 
 
     for k, v in kwargs.items():
         ka = k.replace('_', '-')
-        q = quoted(str(v))
+        ov = outvars.get(colorvarmap.get(v, None), None)
+        q = quoted(str(ov or v))
         q = re.sub(r'\s+', ' ', q)
-        q = q.replace('TC', tc)
-        q = q.replace('TF', THEME_FG)
-        q = q.replace('BG', config.get('regular_bg', REGULAR_BG))
-        q = q.replace('FG', config.get('regular_fg', REGULAR_FG))
-        q = q.replace('HF', config.get('highlight_fg', HIGHLIGHT_FG))
-        q = q.replace('HB', config.get('highlight_bg', HIGHLIGHT_BG))
-        q = q.replace('LARR', config.get('left_arrow', ''))
-        q = q.replace('RARR', config.get('right_arrow', ''))
+        q = q.replace('TC', "#{themecolorbg}")
+        q = q.replace('TF', "#{themecolorfg}")
+        q = q.replace('BG', "#{themecolorrbg}")
+        q = q.replace('FG', "#{themecolorrfg}")
+        q = q.replace('HF', "#{themecolorhfg}")
+        q = q.replace('HB', "#{themecolorhbg}")
+        q = q.replace('TH', "#{themeheadtxt}")
+        q = q.replace('LARR', "#{themelarr}")
+        q = q.replace('RARR', "#{themerarr}")
         result.append("set -gq {ka} {qv}".format(ka=ka, qv=q))
 
     result.append('# END generated status line')
@@ -290,6 +337,22 @@ def main (args) -> int :
         window_status_current_format = wintab(config.get('window_title_active'), True),
         status_left_length = (15 * len(lstat)),
         status_right_length = (15 * len(rstat))
+    )
+
+
+    tc = (themecolor.get(
+            config.get('theme', None),
+            config.get('theme') or 'default') or 'terminal')
+
+    outvars.update(
+        themecolorbg = tc,
+        themecolorfg = THEME_FG,
+        themecolorrbg = config.get('regular_bg', REGULAR_BG),
+        themecolorrfg = config.get('regular_fg', REGULAR_FG),
+        themecolorhfg = config.get('highlight_fg', HIGHLIGHT_FG),
+        themecolorhbg = config.get('highlight_bg', HIGHLIGHT_BG),
+        themelarr = (config.get('left_arrow', '')),
+        themerarr = (config.get('right_arrow', ''))
     )
 
 
