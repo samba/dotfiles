@@ -268,7 +268,7 @@ $(CACHE)/vim_plugins_loaded: util/vimsetup.sh | $(CACHE)
 .PHONY: @shellsetup
 @shellsetup: @sync_dotfiles  ## Set up whell environment, especially tmux and zsh
 	test -f ~/.tmux.status.conf || python3 generic/tmux_linegen.py -t amber > ~/.tmux.status.conf
-	bash generic/setup_tmux.sh
+	if [ "$$(basename -a $$(command -v tmux || true ) nope)" = "tmux" ] ; then  bash generic/setup_tmux.sh ; fi
 
 
 
