@@ -60,7 +60,7 @@ bindkey '^[[B' history-substring-search-down
 #   - Touch up the color to fit with the theme I use in tmux
 #   - Shorten the CWD notation to reflect 3 directory levels
 
-PROMPT_COLOR="#FFBF00"  # amber
+PROMPT_COLOR="214"  # amber
 
 # Split the PS1 by newline
 pslines=( ${(f)"${PS1//%~/%3~}"} )
