@@ -4,6 +4,11 @@
 export ZIM_CONFIG_FILE=~/.config/zsh/zimrc
 export ZIM_HOME=~/.zim
 
+export HISTFILE=~/.zsh_history
+export HISTSIZE=50000
+export SAVEHIST=50000
+
+setopt SHARE_HISTORY
 
 function _zimload () {
 
@@ -48,6 +53,9 @@ zstyle ':zim:termtitle:precmd'  format '%1~'
 
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
+
+bindkey -v  # sets vi mode for ZLE  (see zshle(1))
+bindkey "^R" history-incremental-search-backward
 
 
 # =============================
