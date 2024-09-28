@@ -63,5 +63,7 @@ done
 command -v xdg-open >/dev/null && alias open=xdg-open
 
 
+command -v git >/dev/null && alias diff='git diff --no-index --color-words'
+
 
 
