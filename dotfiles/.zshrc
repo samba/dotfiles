@@ -78,15 +78,21 @@ unset PS1
 export PS1=${pslines[-1]//(green)/${PROMPT_COLOR}}
 unset 'pslines[-1]'  # delete last one, i.e. pop from the array
 
-printf -v RPROMPT "%s %s %s %s %s" \
-	"%F{${PROMPT_COLOR}}<%f" \
+
+PS1_KUBECTX="\$(command -v kubectl >/dev/null && kubectl config current-context 2>/dev/null)"
+
+printf -v PS1 "%s %s %s \n%s" \
+	"%F{${PROMPT_COLOR}}#%f" \
 	"${${(j: :)pslines//\%~/%3~}//(cyan|green|magenta)/${PROMPT_COLOR}}" \
-	"%F{${PROMPT_COLOR}}\$(command -v kubectl >/dev/null && kubectl config current-context 2>/dev/null)%f" \
-	"%F{${PROMPT_COLOR}}%T%f"
+	"%F{${PROMPT_COLOR}}${PS1_KUBECTX}%f" \
+    "$PS1" # the final line
+
+printf -v RPROMPT "%s" \
+	"%F{${PROMPT_COLOR}}< %T%f"
 
 
 export RPROMPT
-unset pslines linecount PROMPT_COLOR
+unset pslines linecount PROMPT_COLOR PS1_KUBECTX
 # =======================
 
 
