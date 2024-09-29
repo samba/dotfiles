@@ -98,3 +98,4 @@ unset pslines linecount PROMPT_COLOR PS1_KUBECTX
 
 
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
+test -f ~/.zsh_functions && source ~/.zsh_functions

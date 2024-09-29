@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+
+# NB: this probably won't work with zim title plugin
+function set_terminal_title() {
+    echo -en "\e]2;$@\a"
+}

@@ -281,9 +281,10 @@ endif
 
 " GNU screen & terminal title handling {{{
 if has('title') && ((gnu_screen || xterm || gnome_terminal || apple_terminal))
-    " set titlestring=vim:\ %t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
+    " set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
     set title  titlelen=30
-    autocmd BufEnter * let &titlestring = ' ' . expand("%:t")
+    " autocmd BufEnter * let &titlestring = ' ' . expand("%:~:.")
+    autocmd BufEnter * let &titlestring = ' ' . substitute(expand('%:~:.'), '\([^/]\)\([^/]*\)/', {m -> m[1] .. '/'}, 'g')
     auto VimLeave * :set t_ts=k\
     set t_ts=k
     set t_fs=\
