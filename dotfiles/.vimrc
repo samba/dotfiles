@@ -621,6 +621,7 @@ au FileType go nmap <buffer> <Leader>grn <Plug>(go-rename)
 au FileType go nmap <buffer> <Leader>gca <Plug>(go-callees)
 au FileType go nmap <buffer> <Leader>gcr <Plug>(go-callers)
 
+au FileType go nmap <buffer> <leader>gin <Plug>(go-info)
 au FileType go nmap <buffer> <Leader>gdc <Plug>(go-describe)
 au FileType go nmap <buffer> <Leader>gcs <Plug>(go-callstack)
 au FileType go nmap <buffer> <Leader>gfv <Plug>(go-freevars)
@@ -892,6 +893,16 @@ if executable('ag')
   let g:ctrlp_use_caching = 0
 endif
 
+
+" Options for Go...
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
 
 
 " }}} end Development environment
