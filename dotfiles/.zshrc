@@ -48,6 +48,12 @@ zstyle ':zim:termtitle:precmd'  format '%1~'
 
  _zimload
 
+autoload edit-command-line
+autoload -U insert-files
+autoload -U zargs
+autoload -U zmv
+
+
 # ============================
 # Key bindings
 
@@ -56,6 +62,16 @@ bindkey '^[[B' history-substring-search-down
 
 bindkey -v  # sets vi mode for ZLE  (see zshle(1))
 bindkey "^R" history-incremental-search-backward
+
+# this causes "Esc-V" to trigger editor
+# load module edit-command-line from zshcontrib
+zle -N edit-command-line
+bindkey -M vicmd  v edit-command-line
+
+
+# vim-like filename completion
+bindkey "^Xf" insert-files
+
 
 
 # =============================
