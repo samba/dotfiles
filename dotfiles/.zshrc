@@ -64,29 +64,45 @@ zstyle ':zim:termtitle:precmd'  format '%1~'
 
  _zimload
 
+# load module edit-command-line from zshcontrib
 autoload edit-command-line
 autoload -U insert-files
 autoload -U zargs
 autoload -U zmv
 
+# load widgets
+zle -N edit-command-line
 
 # ============================
 # Key bindings
 
+# let up- and down-arrow keys iterate through history
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-bindkey -v  # sets vi mode for ZLE  (see zshle(1))
-bindkey "^R" history-incremental-search-backward
+# Due to my history with bash, I'm accustomed to emacs-style keybindings...
+bindkey -e  # sets emacs mode for ZLE  (see zshle(1))
+# bindkey -v  # sets vi mode for ZLE  (see zshle(1))
+
+
+# bindkey "^R" history-incremental-search-backward
+
+# Edit the current command line in $EDITOR, via "ctrl-x ctrl-e" like bash
+bindkey '\C-x\C-e' edit-command-line
+
+# Beginning and end of line, like bash.
+# bindkey '\C-a' beginning-of-line
+# bindkey '\C-e' end-of-line
+
+
+# == vi/vim-style keybindings too... just to confuse myself. ==
 
 # this causes "Esc-V" to trigger editor
-# load module edit-command-line from zshcontrib
-zle -N edit-command-line
 bindkey -M vicmd  v edit-command-line
-
 
 # vim-like filename completion
 bindkey "^Xf" insert-files
+
 
 
 
@@ -128,6 +144,6 @@ unset pslines linecount PROMPT_COLOR PS1_KUBECTX
 # =======================
 
 
-
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
 test -f ~/.zsh_functions && source ~/.zsh_functions
+test -f ~/.zsh_localrc && source ~/.zsh_localrc
