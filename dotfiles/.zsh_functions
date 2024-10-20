@@ -1,6 +1,34 @@
 #!/usr/bin/env zsh
 
 # NB: this probably won't work with zim title plugin
-function set_terminal_title() {
+function set_terminal_title () {
     echo -en "\e]2;$@\a"
 }
+
+
+function gen_passwd () {
+    printf "%s\n" "$(tr -dc A-Za-z0-9 </dev/urandom | head -c ${1:-13})"
+}
+
+function brew_cask_upgrade () {
+    command -v brew && brew upgrade $(brew outdated --cask --greedy --quiet)
+}
+
+
+function ssh_fingerprints () {
+  find ${HOME}/.ssh -name '*rsa' | while read f; do
+  echo $(ssh-keygen -E md5  -lf "${f}") "($f)"
+  done
+}
+
+
+# Simple shortcut for read-only vim w/ arbitrary filetype coloring
+function cview () {
+  local ft="$1"; shift;
+  if test $# -eq 0; then
+    vim -R -c "set ft=${ft}" -
+  else
+    vim -R -c "set ft=${ft}" "$@"
+  fi
+}
+

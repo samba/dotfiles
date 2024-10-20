@@ -1,4 +1,4 @@
-
+# Configuration loaded for login shells
 
 
 

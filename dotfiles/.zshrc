@@ -1,14 +1,34 @@
 #!/usr/bin/env zsh
-
+# Configuration loaded for interactive shells
 
 export ZIM_CONFIG_FILE=~/.config/zsh/zimrc
 export ZIM_HOME=~/.zim
+
+export MAIL=/var/mail/${USER}
+export MAILCHECK=30
+
 
 export HISTFILE=~/.zsh_history
 export HISTSIZE=50000
 export SAVEHIST=50000
 
+export ZSH_TMUX_AUTOSTART=true
+
+# my typical usage enjoys symlinks... 
+# setopt CHASE_LINKS
+
+setopt APPEND_HISTORY
 setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_SAVE_NO_DUPS
+
+setopt PUSHD_IGNORE_DUPS
+setopt MAIL_WARN
+setopt MAIL_WARNING
+setopt CHECK_JOBS
+setopt CHECK_RUNNING_JOBS
 
 function _zimload () {
 
@@ -35,10 +55,6 @@ function _zimload () {
 	source ${ZIM_HOME}/init.zsh
 
 }
-
-export ZSH_TMUX_AUTOSTART=true
-
-setopt CHASE_LINKS
 
 # Set shell title based on user's typed command, then fall back to directory name
 zstyle ':zim:termtitle' hooks 'preexec' 'precmd'
