@@ -36,3 +36,79 @@ function tma () {
     tmux new-session -A -s ${1:-main}
 }
 
+
+function _znote () {
+
+    local notesdir="${NOTES:-${HOME}/.notes}"
+    local vimopts="--ttyfail -p"
+
+    local bin_search="grep"
+
+    command -v ag > /dev/null && bin_search="ag"
+
+    mkdir -p "${notesdir}"
+
+    local help=() search=() edit=() title=()
+
+    zparseopts -D -E -K -- \
+        {t,-title}:=title \
+        {s,-search}=search \
+        {e,-edit}=edit \
+        {h,-help}=help \
+        || return 1
+
+
+    # Remove meaningless defaults...
+    title=("${(@)title:#-t}")
+
+    echo -e "title: ${title}\nsearch: $#search ${search}\nedit: $#edit ${edit}\nhelp: $#help ${help}\n@: ${@}\n" >&2
+
+    if (( $#help )) ; then
+        echo "usage: ${0} [-e] [-s] [-t title] [-- <more search args>]"
+        echo "\t -e        \t Edit these files, instead of just listing them."
+        echo "\t -s        \t Search (using grep) all notes for a given pattern. List these files."
+        echo "\t -t <title>\t Look for a specific note of a given title. If found list this file."
+        echo "Options -s with terminal arguments (-- [args]) will pass them to grep directly."
+        return 0
+    fi
+
+    if (( $#title )) ; then
+        fname="$(echo "${title[@]}" | tr -C -s '[:alnum:]' '-' | tr -s '[:upper:]' '[:lower:]' | sed 's@-$@@')"
+        fname="${notesdir}/${fname%%.md}.md"
+
+        if (( $#edit )) ; then
+            test -f ${fname} || echo -e "---\ntitle: ${title[@]}\ndate: $(date)\n---" >> ${fname}
+
+            case ${EDITOR} in
+                *vim) ${EDITOR} ${vimopts} ${fname} ;;
+                *) ${EDITOR} ${fname} ;;
+            esac
+        else
+            ls -alh ${fname}
+            return
+        fi
+    fi
+
+    if (( $#search )) ; then
+
+        if (( $#edit )) ; then
+            case ${EDITOR} in
+                *vim)
+                    zargs -- $(${bin_search} -lr "${(@)@:#--}" ${notesdir}) -- ${EDITOR} ${vimopts}
+                    ;;
+                *)
+                    zargs -- $(${bin_search} -lr "${(@)@:#--}" ${notesdir}) -- ${EDITOR}
+                    ;;
+            esac
+        else
+
+            ${bin_search} -r "${(@)@:#--}"  ${notesdir}
+            return
+        fi
+
+    fi
+
+
+ }
+
+
