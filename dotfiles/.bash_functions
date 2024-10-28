@@ -251,3 +251,10 @@ function gen_passwd () {
     openssl rand -base64 64 | tr -d '\n'
     echo
 }
+
+
+
+function tma () {
+    tmux new-session -A -s ${1:-main}
+}
+
