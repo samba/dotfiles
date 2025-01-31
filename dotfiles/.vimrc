@@ -61,11 +61,11 @@ endif
 " }}}
 
 " Detection of various terminals for their features.
-let gnu_screen = (matchstr(&term, "screen", 0) == "screen")
-let xterm = (matchstr(&term, "xterm", 0) == "xterm")
-let gnome_terminal = (matchstr(&term, "gnome-terminal", 0) == "gnome-terminal")
-let apple_terminal = (match($TERM_PROGRAM, "Apple_Terminal", 0) == "Apple_Terminal")
-let colors256 = (matchstr($COLORTERM, "256color") == "256color")
+let gnu_screen = (stridx(&term, "screen") > -1)
+let xterm = (stridx(&term, "xterm") > -1)
+let gnome_terminal = (stridx(&term, "gnome-terminal") > -1)
+let apple_terminal = (stridx($TERM_PROGRAM, "Apple_Terminal") > -1)
+let colors256 = (stridx($COLORTERM, "256color") > -1)
 
 
 
@@ -116,9 +116,7 @@ if colors256
     set t_Co=256
 endif
 
-" NB: when using GNU screen or another terminal over SSH, it should not use
-" true-color mode
-if has('termguicolors') && (!gnu_screen) && (!xterm)
+if has('termguicolors')
     set termguicolors  " use true-color mode
 endif
 

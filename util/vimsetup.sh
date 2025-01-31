@@ -22,23 +22,27 @@ function gitclone () {
 }
 
 function do:vim:install_packaages () {
-    gitclone "${HOME}/.vim/modules/pathogen" "https://github.com/tpope/vim-pathogen.git"
-    gitclone "${HOME}/.vim/bundle/vim-json" "https://github.com/elzr/vim-json.git"
-    gitclone "${HOME}/.vim/bundle/vim-openssl" "https://github.com/vim-scripts/openssl.vim.git"
-    gitclone "${HOME}/.vim/bundle/vim-markdown" "https://github.com/tpope/vim-markdown.git"
-    gitclone "${HOME}/.vim/bundle/vim-fugitive" "https://tpope.io/vim/fugitive.git"
-	gitclone "${HOME}/.vim/bundle/vim-vinegar" "https://github.com/tpope/vim-vinegar.git"
-    gitclone "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
-	gitclone "${HOME}/.vim/bundle/vim-ps1" "https://github.com/PProvost/vim-ps1.git"
-	gitclone "${HOME}/.vim/bundle/vim-go" "https://github.com/fatih/vim-go.git"
-    gitclone "${HOME}/.vim/bundle/solarized" "https://github.com/altercation/vim-colors-solarized.git"
+    echo "${HOME}/.vim/modules/pathogen" "https://github.com/tpope/vim-pathogen.git"
+    echo "${HOME}/.vim/bundle/vim-json" "https://github.com/elzr/vim-json.git"
+    echo "${HOME}/.vim/bundle/vim-openssl" "https://github.com/vim-scripts/openssl.vim.git"
+    echo "${HOME}/.vim/bundle/vim-markdown" "https://github.com/tpope/vim-markdown.git"
+    echo "${HOME}/.vim/bundle/vim-fugitive" "https://tpope.io/vim/fugitive.git"
+    echo "${HOME}/.vim/bundle/vim-vinegar" "https://github.com/tpope/vim-vinegar.git"
+    echo "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
+    echo "${HOME}/.vim/bundle/vim-ps1" "https://github.com/PProvost/vim-ps1.git"
+    echo "${HOME}/.vim/bundle/vim-go" "https://github.com/fatih/vim-go.git"
+    echo "${HOME}/.vim/bundle/solarized" "https://github.com/ericbn/vim-solarized.git"
 }
 
 function main () {
+    local min=3 max=10
     mkdir -p ${HOME}/.vim/{backup,swap,modules,bundle,doc,autoload,syntax,plugin,ftdetect};
-	ping -q -c 1 -W 1 google.com || echo -e "\n\n###_____ COULD NOT VERIFY INTERNET ACCESS  ____<<<<\n\n" >&2
-	do:vim:install_packaages || return $?;
-	cd "${HOME}/.vim/autoload" && ln -sf ../modules/pathogen/autoload/pathogen.vim ./pathogen.vim;
+    ping -q -c 1 -W 1 google.com || echo -e "\n\n###_____ COULD NOT VERIFY INTERNET ACCESS  ____<<<<\n\n" >&2
+    do:vim:install_packaages | shuf |  while read tgt src; do
+        gitclone "${tgt}" "${src}" || return $?
+        sleep $((RANDOM%($max-$min+1)+$min))
+    done
+    cd "${HOME}/.vim/autoload" && ln -sf ../modules/pathogen/autoload/pathogen.vim ./pathogen.vim;
 }
 
 main "$@"
