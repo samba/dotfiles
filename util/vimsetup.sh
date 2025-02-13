@@ -31,7 +31,6 @@ function do:vim:install_packaages () {
     echo "${HOME}/.vim/bundle/jsbeautify" "https://github.com/vim-scripts/jsbeautify.git"
     echo "${HOME}/.vim/bundle/vim-ps1" "https://github.com/PProvost/vim-ps1.git"
     echo "${HOME}/.vim/bundle/vim-go" "https://github.com/fatih/vim-go.git"
-    echo "${HOME}/.vim/bundle/solarized" "https://github.com/ericbn/vim-solarized.git"
 }
 
 function main () {

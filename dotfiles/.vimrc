@@ -77,25 +77,30 @@ let colors256 = (stridx($COLORTERM, "256color") > -1)
 function! FixWindowColors() abort
 
   " Some solarized colors need higher contrast for me
-  highlight! StatusLineTerm ctermbg=LightGrey
-  highlight! StatusLineTermNC ctermbg=DarkGrey
+  " highlight! StatusLineTerm ctermbg=LightGrey
+  " highlight! StatusLineTermNC ctermbg=DarkGrey
 
-  highlight! StatusLineNC ctermfg=58 ctermbg=none cterm=underline term=italic
-  highlight! StatusLine ctermfg=70 ctermbg=none cterm=underline,bold term=italic
+  " highlight! StatusLineNC ctermfg=58 ctermbg=none cterm=underline term=italic
+  " highlight! StatusLine ctermfg=70 ctermbg=none cterm=underline,bold term=italic
 
-  highlight! VertSplit ctermbg=NONE ctermfg=NONE
+  " highlight! VertSplit ctermbg=NONE ctermfg=NONE
+
+  " highlight! TabLineFill ctermbg=DarkGrey ctermfg=Black
+  " highlight! TabLine ctermbg=DarkGrey ctermfg=LightGrey
+  " highlight! TabLineSel ctermbg=none ctermfg=White
+
 
   " highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
   " highlight! TabLineFill ctermbg=NONE guibg=NONE
 
   " statusline uses %2 for read-only or pending-edit status
-  highlight! User2 ctermfg=DarkRed cterm=underline,bold
+  " highlight! User2 ctermfg=DarkRed cterm=underline,bold
 
   " statusline uses %3 for filename in window status
-  highlight! User3 ctermfg=Blue cterm=underline,bold
+  " highlight! User3 ctermfg=Blue cterm=underline,bold
 
   " statusline for terminal uses %4 for command name
-  highlight! User4 cterm=underline,bold ctermfg=Black ctermbg=Magenta
+  " highlight! User4 cterm=underline,bold ctermfg=Black ctermbg=Magenta
 
 
 endfunction
@@ -112,29 +117,20 @@ set background=dark  " necessary for correct colors in MacOS screen (>=4.8.0)
 
 
 " Correctly define available colors based on current terminal environment
-if colors256
-    set t_Co=256
+if colors256 == 1
+  set t_Co=256
+  " disable Background Color Erase (BCE)
+  set t_ut=
 endif
+
 
 if has('termguicolors')
     set termguicolors  " use true-color mode
 endif
 
-" Solarized tuning {{{
-if !has('gui_running')
-    let g:solarized_termcolors=&t_Co
-endif
-
-let g:solarized_termtrans=1  " I often use transparent terminals :)
-let g:solarized_contrast='high' " I prefer slightly higher contrast
-
-" }}}
 
 
-colorscheme solarized
-
-" colorscheme darkblue
-" colorscheme delek
+colorscheme retrobox 
 
 
 " }}} end common customizations
@@ -241,8 +237,12 @@ inoremap <C-U> <C-G>u<C-U>
 " (The thing that triggers when you accidently type q... in Normal mode.)
 map q: :q
 
+" Jump to start/end of line (emacs style)
 inoremap <C-A> <ESC>^i
 inoremap <C-E> <ESC>$i
+
+" Edit my vim preferences
+nmap <Leader>vp :tabe ~/.vimrc<CR>
 
 
 " }}} end shortcuts
@@ -295,7 +295,7 @@ set lazyredraw " don't update the screen when macros/etc running in background (
 
 " VIM's own window structure {{{
 "
-set fillchars+=vert:│  " the vertical window barrier's character content
+set fillchars+=vert:│,foldsep:∫ " the vertical window barrier's character content
 " NB: this line character is inserted via `<ctrl-K>vv`, found via `:h digraph-table`
 
 
@@ -303,7 +303,7 @@ set ruler
 set rulerformat=%30([%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
 
 " statusline overrides rulerformat
-set statusline=[%n]\ %2*%(%M%R%H%1*%)%0*\ %3*%f%0*\ %=%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+set statusline=[%n]\ %3*\ %f\ %0*\ %=\ %#Question#%(%M%R%H%)%0*\ %y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
@@ -591,7 +591,7 @@ au FileType nginx setlocal noet
 au FileType go setlocal noet
 
 
-" Shortcuts and configuration for Go code files
+" Shortcuts and configuration for Go code files (golang)
 au FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4
 au FileType go nmap <buffer> <Leader>gr <Plug>(go-run)
 au FileType go nmap <buffer> <Leader>gb <Plug>(go-build)
@@ -746,8 +746,11 @@ let g:netrw_banner    = 0
 
 " Hide dot files and the like by default. (reactivate via `gh`)
 let g:netrw_hide      = 1
-let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,' . netrw_gitignore#Hide()
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,'
 
+if exists('netrw_gitignore#Hide')
+    let g:netrw_list_hide += netrw_gitignore#Hide()
+endif
 
 " Highlight files correctly in netrw
 let g:netrw_special_syntax = 1
@@ -892,7 +895,7 @@ if executable('ag')
 endif
 
 
-" Options for Go...
+" Options for Go... (golang)
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
@@ -901,7 +904,8 @@ let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_generate_tags = 1
-
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 
 " }}} end Development environment
 
