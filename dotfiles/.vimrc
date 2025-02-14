@@ -129,8 +129,15 @@ if has('termguicolors')
 endif
 
 
+try
+    colorscheme retrobox
+    catch
+    try
+        colorscheme industry  " reasonable fallback
+        catch
+    endtry
+endtry
 
-colorscheme retrobox 
 
 
 " }}} end common customizations
