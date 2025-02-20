@@ -129,14 +129,14 @@ if has('termguicolors')
 endif
 
 
-try
-    colorscheme retrobox
-    catch
+for csc in ["retrobox", "habamax", "industry"]
     try
-        colorscheme industry  " reasonable fallback
+        exe 'colorscheme ' . csc
+        break
         catch
+            continue
     endtry
-endtry
+endfor
 
 
 
