@@ -116,6 +116,13 @@ function _znote () {
     fi
 
 
- }
+}
 
+function pasteup () {
+    curl --data-binary @${1:-"-"} https://paste.rs/
+}
+
+function pastedel () {
+    curl -X DELETE https://paste.rs/${1}
+}
 
