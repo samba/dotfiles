@@ -65,53 +65,12 @@ let gnu_screen = (stridx(&term, "screen") > -1)
 let xterm = (stridx(&term, "xterm") > -1)
 let gnome_terminal = (stridx(&term, "gnome-terminal") > -1)
 let apple_terminal = (stridx($TERM_PROGRAM, "Apple_Terminal") > -1)
-let colors256 = (stridx($COLORTERM, "256color") > -1)
+let colors256 = (stridx($COLORTERM, "256color") > -1) || apple_terminal || gnome_terminal || gnu_screen
 
 
 
 " Color scheme {{{
 
-
-" Fine-tuning {{{
-
-function! FixWindowColors() abort
-
-  " Some solarized colors need higher contrast for me
-  " highlight! StatusLineTerm ctermbg=LightGrey
-  " highlight! StatusLineTermNC ctermbg=DarkGrey
-
-  " highlight! StatusLineNC ctermfg=58 ctermbg=none cterm=underline term=italic
-  " highlight! StatusLine ctermfg=70 ctermbg=none cterm=underline,bold term=italic
-
-  " highlight! VertSplit ctermbg=NONE ctermfg=NONE
-
-  " highlight! TabLineFill ctermbg=DarkGrey ctermfg=Black
-  " highlight! TabLine ctermbg=DarkGrey ctermfg=LightGrey
-  " highlight! TabLineSel ctermbg=none ctermfg=White
-
-
-  " highlight! TabLine ctermbg=NONE guibg=NONE ctermfg=Blue cterm=underline gui=underline
-  " highlight! TabLineFill ctermbg=NONE guibg=NONE
-
-  " statusline uses %2 for read-only or pending-edit status
-  " highlight! User2 ctermfg=DarkRed cterm=underline,bold
-
-  " statusline uses %3 for filename in window status
-  " highlight! User3 ctermfg=Blue cterm=underline,bold
-
-  " statusline for terminal uses %4 for command name
-  " highlight! User4 cterm=underline,bold ctermfg=Black ctermbg=Magenta
-
-
-endfunction
-
-" NB: this must be configured before the colorscheme is declared (below)
-augroup MyColors
-  autocmd!
-  autocmd ColorScheme * call FixWindowColors()
-augroup END
-
-" }}}
 
 set background=dark  " necessary for correct colors in MacOS screen (>=4.8.0)
 
@@ -120,12 +79,14 @@ set background=dark  " necessary for correct colors in MacOS screen (>=4.8.0)
 if colors256 == 1
   set t_Co=256
   " disable Background Color Erase (BCE)
-  set t_ut=
+  " set t_ut=
 endif
 
 
-if has('termguicolors')
+if has('termguicolors') && (apple_terminal==0)
     set termguicolors  " use true-color mode
+else
+    set notermguicolors
 endif
 
 
@@ -137,8 +98,6 @@ for csc in ["retrobox", "habamax", "industry"]
             continue
     endtry
 endfor
-
-
 
 " }}} end common customizations
 
@@ -286,13 +245,16 @@ endif
 
 " GNU screen & terminal title handling {{{
 if has('title') && ((gnu_screen || xterm || gnome_terminal || apple_terminal))
-    " set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)\ -\%{v:servername}
     set title  titlelen=30
-    " autocmd BufEnter * let &titlestring = ' ' . expand("%:~:.")
     autocmd BufEnter * let &titlestring = ' ' . substitute(expand('%:~:.'), '\([^/]\)\([^/]*\)/', {m -> m[1] .. '/'}, 'g')
+    
+    " Clear the terminal title on exit
     auto VimLeave * :set t_ts=k\
-    set t_ts=k
-    set t_fs=\
+    
+    " NB: these cause problems for MacOS terminal, making the first line of
+    " drawn output get "stuck" or offset. Though it works fine in tmux.
+    " set t_ts=k
+    " set t_fs=\
 endif
 
 set ttyfast    " optimize for fast terminal connections
