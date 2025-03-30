@@ -4,6 +4,9 @@
 export ZIM_CONFIG_FILE=~/.config/zsh/zimrc
 export ZIM_HOME=~/.zim
 
+export ZSH_CACHE_DIR=~/.cache/zsh
+mkdir -p ${ZSH_CACHE_DIR}/completions
+
 export MAIL=/var/mail/${USER}
 export MAILCHECK=30
 
@@ -14,7 +17,7 @@ export SAVEHIST=50000
 
 export ZSH_TMUX_AUTOSTART=true
 
-# my typical usage enjoys symlinks... 
+# my typical usage enjoys symlinks...
 # setopt CHASE_LINKS
 
 setopt APPEND_HISTORY
@@ -70,6 +73,10 @@ autoload -U insert-files
 autoload -U zargs
 autoload -U zmv
 
+# load default color shortcuts & prompts
+autoload -U colors && colors
+autoload -U promptinit && promptinit
+
 # load widgets
 zle -N edit-command-line
 
@@ -115,8 +122,23 @@ bindkey "^Xf" insert-files
 #   - Move the default multi-line PS1 bits to the right-side prompt
 #   - Touch up the color to fit with the theme I use in tmux
 #   - Shorten the CWD notation to reflect 3 directory levels
+# Additional color codes:
+# https://unix.stackexchange.com/questions/124407/what-color-codes-can-i-use-in-my-bash-ps1-prompt 
 
-PROMPT_COLOR="214"  # amber
+
+PROMPT_COLOR=banana
+
+case ${UID} in
+    1) PROMPT_COLOR="009" ;; ## red for root
+    *)  case $PROMPT_COLOR in
+            green)  PROMPT_COLOR="034"   ;;
+            amber)  PROMPT_COLOR="214"   ;;
+            blue)   PROMPT_COLOR="019"   ;;
+            banana) PROMPT_COLOR="227"   ;;
+        esac ;;
+esac
+
+
 
 # Split the PS1 by newline
 pslines=( ${(f)"${PS1//%~/%3~}"} )

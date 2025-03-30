@@ -62,5 +62,5 @@ zmodule ohmyzsh/ohmyzsh --root plugins/debian
 
 # For some reason... this causes an error:
 # "command not found: completion"
-#zmodule k  # kubectl
+zmodule k  # kubectl
 
