@@ -39,6 +39,7 @@ function cview () {
   fi
 }
 
+# Quickly attach to a named (or default) tmux session
 function tma () {
     tmux new-session -A -s ${1:-main}
 }
@@ -126,3 +127,12 @@ function pastedel () {
     curl -X DELETE https://paste.rs/${1}
 }
 
+# Force colorful grep in a pager.
+function cgrep () {
+    grep "${@}" --color=always | less -R
+}
+
+# Find all keymappings in my vim config, and open them in a pager w/ color output
+function vim_shortcuts () {
+    cgrep -B 3 -E "[ivn](nore)?map\s+([^ ]+)" ~/.vimrc
+}

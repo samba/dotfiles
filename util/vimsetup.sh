@@ -3,6 +3,7 @@
 set -euf -o pipefail
 
 
+
 function gitclone () {
     local target_path="$1";
     local git_origin="$2";
@@ -38,11 +39,16 @@ function main () {
     local min=3 max=10
     mkdir -p ${HOME}/.vim/{backup,swap,modules,bundle,doc,autoload,syntax,plugin,ftdetect};
     ping -q -c 1 -W 1 google.com || echo -e "\n\n###_____ COULD NOT VERIFY INTERNET ACCESS  ____<<<<\n\n" >&2
+
+    # In random order, with random intermediary delay, clone all the repositories
     do:vim:install_packaages | shuf |  while read tgt src; do
         gitclone "${tgt}" "${src}" || return $?
         sleep $((RANDOM%($max-$min+1)+$min))
     done
+
     cd "${HOME}/.vim/autoload" && ln -sf ../modules/pathogen/autoload/pathogen.vim ./pathogen.vim;
 }
+
+
 
 main "$@"

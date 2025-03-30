@@ -1,8 +1,50 @@
 " Vim runtime configuration.
 
+" To quickly review all mappings of this configuration:
+" (shell command)  grep -B 3 -E "[ivn](nore)?map\s+([^ ]+)" ~/.vimrc
+
+" Quick reference on default VIM behavior.
+"
+" Spell check/correction (normal mode)
+"   ]s   - next spelling error
+"   [s   - previous spelling error
+"   z=   - list recommended replacements, choose by number
+"   zg   - add current word to dictionary
+"   zw   - mark current word as incorrect
+"
+"
+" Diff mode (normal mode)
+"   [buf#]do   - "diff obtain" -- get lines from other buffer (given number)
+"   [buf#]dp   - "diff put" -- push lines to other buffer (given number)
+
+" Tab navigation (normal mode)
+"   gt   - go to next tab
+"   gT   - go to previous tab
+
+" Quickfix navigation (command shortcuts)
+"   :cc     see the current error
+"   :cn     next error
+"   :cp     previous error
+"   :clist  list all errors
+
+" Default autocomplete methods
+" C-X C-L   match similar lines
+" C-X C-F   match file names
+" C-X C-K   match from dictionary
+" C-X C-S   match spelling suggestions
+" C-X C-T   match from thesaurus
+" C-X C-O   match via Omnicomplete
+" C-X C-]   match via tag database
+" C-X C-U   match based on user 'completefunc' if defined (or syntax file)
+" C-X C-I   match via keywords in include files (see also 'include' and 'path')
+" C-X C-N   match keywords in current file
+" C-X C-D   match macros & definitions
+
+
+" Customizations follow. =====================================
+
 
 " Leader {{{
-
 " This comes first, because we have mappings that depend on leader
 " With a map leader it's possible to do extra key combinations
 " i.e: <leader>w saves the current file
@@ -89,7 +131,7 @@ else
     set notermguicolors
 endif
 
-
+" Pick the first available colorscheme from my list of preferences
 for csc in ["retrobox", "habamax", "industry"]
     try
         exe 'colorscheme ' . csc
@@ -98,6 +140,15 @@ for csc in ["retrobox", "habamax", "industry"]
             continue
     endtry
 endfor
+
+" Setup color/style for completion menu {{{
+if 0 " this is disabled
+    hi Pmenu cterm=NONE ctermfg=DarkGreen ctermbg=Black
+    hi PmenuSel cterm=bold ctermfg=Green ctermbg=black
+    hi PmenuSbar cterm=NONE ctermfg=NONE ctermbg=Green
+    hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
+endif
+" }}}
 
 " }}} end common customizations
 
@@ -283,7 +334,12 @@ set laststatus=1
 " end VIM window structure }}}
 
 " Tab, Window, and Buffer navigation {{{=
-"
+
+" default: `gt` and `gT` switch to next and previous tabs (respectively)
+" noremap <Leader>tn :tabnext<CR>
+" noremap <Leader>tp :tabprev<CR>
+
+
 " Buffer handling - these are performance improvements.
 set switchbuf=useopen,usetab,split,newtab           "swb:   Jumps to first window or tab that contains specified buffer instead of duplicating an open window
 
@@ -317,13 +373,8 @@ nmap <Leader>p :prev<CR>
 command! Qbuffers call setqflist(map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), '{"bufnr":v:val}'), 'r')
 nmap <Leader>b :Qbuffers <CR> :copen <CR>
 
-
-" Tab navigation shortcuts
+" New explorer window in a new tab
 noremap <Leader>tex :35Lexplore %:h<CR>
-
-" default: `gt` and `gT` switch to next and previous tabs (respectively)
-" noremap <Leader>tn :tabnext<CR>
-" noremap <Leader>tp :tabprev<CR>
 
 " if has('browse') or exists('+browse')
 " only if the browse flag is enabled at compile (not macOS)
@@ -345,8 +396,6 @@ nmap <Leader>Wrap :set nowrap! wrap?<CR>
 " Display non-wrapping line-continues
 set listchars+=precedes:<,extends:<
 
-" Use this to override keymapping elsewhere if needed
-" let mapleader=","
 " toggle readonly
 nmap <Leader>ro :set invreadonly readonly?<CR>
 
@@ -363,9 +412,9 @@ if has('syntax')
     syntax sync minlines=256
     set synmaxcol=800
 
-if has('autocmd')
+
+    " Re-draw the syntax highlighting
     nmap <Leader>ss :syn sync fromstart<CR>
-endif
 
 endif  " end syntax
 
@@ -384,6 +433,8 @@ if has('folding')
     set foldenable
     set foldcolumn=4
     set foldmethod=syntax
+
+    " Toggle folding
     nmap <Leader>Fold set foldenable!<CR>
 
     " In normal mode, Spacebar toggles a fold, zi toggles all folding, zM closes all folds
@@ -411,27 +462,14 @@ endif
 set suffixes+=.in,.a,.bak,.swp,.pyc
 
 
-""" Default autocomplete methods
-" C-X C-L   match similar lines
-" C-X C-F   match file names
-" C-X C-K   match from dictionary
-" C-X C-S   match spelling suggestions
-" C-X C-T   match from thesaurus
-" C-X C-O   match via Omnicomplete
-" C-X C-]   match via tag database
-" C-X C-U   match based on user 'completefunc' if defined (or syntax file)
-" C-X C-I   match via keywords in include files (see also 'include' and 'path')
-" C-X C-N   match keywords in current file
-" C-X C-D   match macros & definitions
-
 
 if has('insert_expand')
-    set completeopt=menu,menuone,preview,longest,noinsert,noselect
+    set completeopt=menu,menuone,preview,longest,noinsert,noselect,fuzzy,nosort
     set complete=.,w,b,u,t,i,d
 
     " Use the popup mode
-    if has('&completepopup')
-        set completeopt+=popup
+    if has('textprop')
+        set completeopt+=popup,preview
         set completepopup=align:item,height:10,width:60,highlight:InfoPopup
     endif
 
@@ -468,13 +506,14 @@ inoremap <expr> <tab> InsertTabWrapper("\<c-p>")
 " Ctrl-O completion uses omni-complete
 inoremap <expr> <c-o> InsertTabWrapper("\<c-x>\<c-o>")
 
-inoremap <s-tab> <c-n>
+" Shift-Tab completion picks the nearest matching string
+inoremap <expr> <s-tab> <c-n>
 
 
 
 if has('wildmenu')
     set wildmenu
-    set wildmode=list:longest,list:full
+    set wildmode=list:longest,noselect:lastused,noselect:full
 
     set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
     set wildignore+=.sw?,.bak       " vim swap files etc
@@ -487,15 +526,10 @@ if has('wildmenu')
     set wildignore+=go/bin-vagrant  " Go vagrant files
     set wildignore+=*.pyc           " Python byte code
     set wildignore+=*.orig          " Git's merge resolution cache
+
+    set wildoptions=fuzzy,pum
 endif
 
-
-" Setup color/style for completion menu {{{
-hi Pmenu cterm=NONE ctermfg=DarkGreen ctermbg=Black
-hi PmenuSel cterm=bold ctermfg=Green ctermbg=black
-hi PmenuSbar cterm=NONE ctermfg=NONE ctermbg=Green
-hi PmenuThumb cterm=bold ctermfg=Blue ctermbg=black
-" }}}
 
 
 
@@ -648,8 +682,9 @@ autocmd FileType python set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%
 " Javascript {{{
 "
 " autocmd FileType javascript set makeprg=make\ test
-autocmd FileType javascript set makeprg=closure\ --test\ -p\ '%'
-
+if executable('closure')
+    autocmd FileType javascript set makeprg=closure\ --test\ -p\ '%'
+endif
 
 " }}} end Javascript
 
@@ -788,6 +823,10 @@ autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 " Open or Close quickfix easily
 nnoremap <leader>q :cwindow<CR>
 
+" Close the quickfix window (proper)
+nmap <Leader>qc :cclose<CR>
+
+
 
 " Simplify finding files in working path. {{{
 let s:default_path = escape(&path, '\ ') " store default value of 'path'
@@ -839,11 +878,7 @@ nnoremap <Leader>g :vimgrep!<space>
 " grep word under cursor
 nnoremap <Leader>K :Grep "\b<C-R><C-W>\b"<CR>:cw<CR>
 
-" Some useful quickfix shortcuts
-":cc      see the current error
-":cn      next error
-":cp      previous error
-":clist   list all errors
+" Next & previous errors in quickfix list
 nmap [q :cn<CR>
 nmap ]q :cp<CR>
 
