@@ -323,7 +323,7 @@ set ruler
 set rulerformat=%30([%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
 
 " statusline overrides rulerformat
-set statusline=[%n]\ %3*\ %f\ %0*\ %=\ %#Question#%(%M%R%H%)%0*\ %y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+set statusline=[%n]\ %3*\ %f\ %#Conditional#%(%M%R%H%)\ %0*\ %=\ %q%w%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
