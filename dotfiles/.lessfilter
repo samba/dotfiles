@@ -3,7 +3,7 @@
 shopt -s extglob globstar
 
 declare -a USE_BINARIES
-USE_BINARIES=( bat )
+USE_BINARIES=( bat batcat )
 
 # Don't attempt to process compressed files
 file "${1}" | grep -q -E '(compressed|ISO|archive)' && exit 1
@@ -13,13 +13,13 @@ for bin in ${USE_BINARIES[@]}; do
 
     if command -v ${bin} >/dev/null ; then
         case ${bin} in
-        bat)
+        bat|batcat)
             while read ext; do
                 if [ "${1}" == "${ext}" ] || [[ "${1}" ==  *.@(${ext}) ]] || [[ "${1}" == ${ext} ]]; then
-                    bat --paging never --color always --style numbers --theme=${BAT_THEME:-default} "${1}"
+                    ${bin} --paging never --color always --style numbers --theme=${BAT_THEME:-default} "${1}"
                     exit 0
                 fi
-            done < <(bat -L | cut -d: -f2 | tr ',' '\n')
+            done < <(${bin} -L | cut -d: -f2 | tr ',' '\n')
         ;;
         esac
     fi
