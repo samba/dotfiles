@@ -163,8 +163,22 @@ printf -v RPROMPT "%s" \
 
 export RPROMPT
 unset pslines linecount PROMPT_COLOR PS1_KUBECTX
-# =======================
 
+
+# =======================
+# Pager setup
+
+export BAT_THEME="Monokai Extended"
+
+# Import the native lesspipe function of this host.
+if command -v lesspipe.sh >/dev/null ; then
+    eval $($(command -v lesspipe.sh))
+elif command -v lesspipe >/dev/null ; then
+    eval $($(command -v lesspipe))
+fi
+
+# =======================
+# Local imports
 
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
 test -f ~/.zsh_functions && source ~/.zsh_functions

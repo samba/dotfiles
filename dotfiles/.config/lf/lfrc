@@ -1,29 +1,29 @@
 # Configuration for "lf" file manager.
 #
 # Shortcuts...
-#   . (period)      repeat last command
-#   CC              edit lf configuration
-#   zp              toggle Preview pane
-#   J / K           up/down directory navigation
-#   I / A           rename a file (position cursor at start / end)
-#   gL              follow a link (navigation)
-#   d / y           mark a file for linking via <P> -- (d:hard link, y: soft)
-#   P               paste a link (from file marked via d/y)
-#   sG / uG         select/unselecct files by glob pattern
-#   ds              calculate directory size
-#   D               delete selected file(s)
-#   T               tag selected file(s)
-#   f               find files (default)
-#   F               find files in reverse (default)
-#   a               make new directory at cursor location
-#   ctrl-t          make a new file at current location (touch)
-#   <enter>         open file in editor
+#   . (period)          repeat last command
+#   CC                  edit lf configuration
+#   zp                  toggle Preview pane
+#   J / K               up/down directory navigation
+#   I / A               rename a file (position cursor at start / end)
+#   gL                  follow a link (navigation)
+#   d / y               mark a file for linking via <P> -- (d:hard link, y: soft)
+#   P                   paste a link (from file marked via d/y)
+#   sG / uG             select/unselecct files by glob pattern
+#   ds                  calculate directory size
+#   D                   delete selected file(s)
+#   T                   tag selected file(s)
+#   f                   find files (default)
+#   F                   find files in reverse (default)
+#   a                   make new directory at cursor location
+#   ctrl-t              make a new file at current location (touch)
+#   <enter>             open file in editor
 #
 #
 # Filtering: (applied per-deirectory)
-#   Z               start filter entry
-#   alt-n / alt-p   go to next/prev in temp filter (live entry)
-#   <enter>         set the filter to persist, return to normal navigation
+#   Z                   start filter entry
+#   alt-n / alt-p       go to next/prev in temp filter (live entry)
+#   <enter>             set the filter to persist, return to normal navigation
 
 # Warn about nested instances.
 &[ $LF_LEVEL -eq 1 ] || lf -remote "send $id echoerr \"Warning: You're in a nested lf instance!\""
@@ -80,8 +80,8 @@ map K :updir; up; open
 map I :rename; cmd-home
 map A :rename; cmd-end
 
-map P :link                # defiend below
-map gL follow_link            # defined below
+map P :link                 # defiend below
+map gL follow_link             # defined below
 
 # Other variants I don't use...
 # unmap the default rename keybinding
@@ -97,13 +97,13 @@ map gL follow_link            # defined below
 map . :read; cmd-history-prev; cmd-enter
 
 # Edit configuration for `lf` (and then reload it)
-map CC edit-config              # defined below
+map CC edit-config               # defined below
 
 # Activate (or deactivate) the preview pane
-map zp toggle_preview            # defined below
+map zp toggle_preview             # defined below
 
 # Create new file (touch)
-map <c-t> push :touch<space>    # defined below
+map <c-t> push :touch<space>     # defined below
 
 # Make new directory
 map a push :mkdir<space>        # defiend below
@@ -213,7 +213,7 @@ on-cd
 
 
 cmd follow_link %{{
-    lf -remote "send ${id} select '$(readlink $f)'"
+  lf -remote "send ${id} select '$(readlink $f)'"
 }}
 
 
