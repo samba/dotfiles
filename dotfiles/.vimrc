@@ -464,8 +464,15 @@ set suffixes+=.in,.a,.bak,.swp,.pyc
 
 
 if has('insert_expand')
-    set completeopt=menu,menuone,preview,longest,noinsert,noselect,fuzzy,nosort
+    set completeopt=menu,menuone,preview,longest,noinsert,noselect
     set complete=.,w,b,u,t,i,d
+
+    if exists('*matchfuzzy')
+        try
+            set completeopt+=fuzzy,nosort
+            catch  " do nothing
+        endtry
+    endif
 
     " Use the popup mode
     if has('textprop')
@@ -513,7 +520,12 @@ inoremap <expr> <s-tab> <c-n>
 
 if has('wildmenu')
     set wildmenu
-    set wildmode=list:longest,noselect:lastused,noselect:full
+
+    try
+        set wildmode=list:longest,noselect:lastused,noselect:full
+        catch
+            set wildmode=list:longest,list:lastused
+    endtry
 
     set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
     set wildignore+=.sw?,.bak       " vim swap files etc
