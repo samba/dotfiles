@@ -136,3 +136,18 @@ function cgrep () {
 function vim_shortcuts () {
     cgrep -B 3 -E "[ivn](nore)?map\s+([^ ]+)" ~/.vimrc
 }
+
+
+# To avoid accidental commands on prod clusters...
+export SAFE_KUBECONFIG=${HOME}/.kube/safe.kubeconfig
+export PROD_KUBECONFIG=${HOME}/.kube/prod.kubeconfig
+
+# default to safety
+export KUBECONFIG=${SAFE_KUBECONFIG}
+
+function use_prod () {
+    echo "# usage:  eval \$(use_prod) 2>/dev/null" >&2
+    echo "export KUBECONFIG=${PROD_KUBECONFIG}"
+}
+
+
