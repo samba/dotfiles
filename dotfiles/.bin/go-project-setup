@@ -50,7 +50,7 @@ clean:
 		build/o/*
 
 tidy:
-		go mod verify && go mod tidy
+	go mod verify && go mod tidy
 
 test:
 	go test -v ./...
