@@ -1,2 +1,5 @@
-.mode columns
-.separator "|"
+.headers on
+.changes on
+.timer on
+.mode table
+.databases
