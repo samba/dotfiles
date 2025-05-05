@@ -29,16 +29,6 @@ function ssh_fingerprints () {
 }
 
 
-# Simple shortcut for read-only vim w/ arbitrary filetype coloring
-function cview () {
-  local ft="$1"; shift;
-  if test $# -eq 0; then
-    vim -R -c "set ft=${ft}" -
-  else
-    vim -R -c "set ft=${ft}" "$@"
-  fi
-}
-
 # Quickly attach to a named (or default) tmux session
 function tma () {
     tmux new-session -A -s ${1:-main}
@@ -132,9 +122,33 @@ function cgrep () {
     grep "${@}" --color=always | less -R
 }
 
+# Simple shortcut for read-only vim w/ arbitrary filetype coloring
+function cview () {
+  local ft="$1"; shift;
+  if test $# -eq 0; then
+    vim -R -c "set ft=${ft}" -
+  else
+    vim -R -c "set ft=${ft}" "$@"
+  fi
+}
+
 # Find all keymappings in my vim config, and open them in a pager w/ color output
 function vim_shortcuts () {
     cgrep -B 3 -E "[ivn](nore)?map\s+([^ ]+)" ~/.vimrc
+}
+
+
+function wtf () {
+    type colors >/dev/null && colors
+    printf "%s${USER}${reset_color}@%s${HOST:-$(hostname)}${reset_color} %s$(pwd)${reset_color}\n" \
+        "${fg[green]}" "${fg[yellow]}" "${fg[cyan]}"
+    command -v kubectl >/dev/null && \
+        printf "${fg[green]}%s${reset_color}\n" "$(kubectl version)" && \
+        printf "${fg[cyan]}kubeconfig: %s${reset_color}\n" "${KUBECONFIG}" && \
+        printf "${fg[yellow]}%s${reset_color}\n" "$(kubectl config current-context)"
+    command -v go >/dev/null && printf "${fg[yellow]}%s${reset_color}\n" "$(go version)"
+    command -v python3 >/dev/null && printf "${fg[blue]}%s${reset_color}\n" "$(python3 --version)"
+    command -v git >/dev/null && git status --short --column --ahead-behind --untracked=no
 }
 
 
@@ -150,4 +164,16 @@ function use_prod () {
     echo "export KUBECONFIG=${PROD_KUBECONFIG}"
 }
 
-
+function kctx () {
+    local arg="${1:-current}"
+    shift
+    case "${arg}" in
+        -h|help) echo -e "Kubernetes context. Usage: kctx <verb> <options>. \nVerbs are: list, use, set, rename, delete, current\n" ;;
+        -l|list) kubectl config get-contexts "${@}" ;;
+        -u|use) kubectl config use-context "${@}" ;;
+        -d|delete) kubectl config delete-context "${@}" ;;
+        -r|rename) kubectl config rename-context "${@}" ;;
+        -s|set) kubectl config set-context "${@}" ;;
+        -c|current) kubectl config current-context "${@}" ;;
+    esac
+}

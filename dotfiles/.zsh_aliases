@@ -1,12 +1,14 @@
 
 
+alias -r la || alias la='ls -alh'
+
 alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zmv='noglob zmv'
 
 
 if ls --color >/dev/null 2>/dev/null ; then  # GNU/Linux
-  _which dircolors >/dev/null && eval "$(dircolors -b)"
+  command -v dircolors >/dev/null && eval "$(dircolors -b)"
   export LS_OPTIONS="--color=auto"
 else # MacOS or some BSD
   export LS_OPTIONS="-G"
@@ -44,7 +46,7 @@ alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.ar
 
 
 if command -v mutt >/dev/null; then
-    alias lmail='mutt -f ${MAIL}'
+    alias lmail='mutt -f ${MAIL:-/var/mail/${USER}}'
 fi
 
 
@@ -68,8 +70,23 @@ done
 
 command -v xdg-open >/dev/null && alias open=xdg-open
 
-
+# Use Git's formatted diff
 command -v git >/dev/null && alias diff='git diff --no-index --color-words'
 
+# Preview a file in "bat" with syntax highlighting & line numbers
 command -v bat >/dev/null && alias bp='bat --style=numbers'
+
+
+if command -v vim >/dev/null ; then
+    command -v view >/dev/null || alias view='vim -R'
+    command -v ex >/dev/null   || alias ex='vim -e'
+    command -v rvim >/dev/null || alias rvim='vim -Z'
+
+
+    # Some shorthand for cleaning files...
+    #  -- trim **/*.php   (removes trailing whitespace from all lines in all given files)
+    #  -- retab **/*.php  (adjusts tab width and formatting in all given files)
+    alias trim="ex +'bufdo!%s/\s\+$//e' -scxa"
+    alias retab="ex +'set ts=4 tw=4 et' +'bufdo retab' -scxa"
+fi
 
