@@ -159,9 +159,17 @@ export PROD_KUBECONFIG=${HOME}/.kube/prod.kubeconfig
 # default to safety
 export KUBECONFIG=${SAFE_KUBECONFIG}
 
-function use_prod () {
-    echo "# usage:  eval \$(use_prod) 2>/dev/null" >&2
-    echo "export KUBECONFIG=${PROD_KUBECONFIG}"
+function use_env () {
+    echo "# usage:  eval \$(use_env [safe|prod]) 2>/dev/null" >&2
+    case "${1}" in
+        prod)
+            echo "export KUBECONFIG=${PROD_KUBECONFIG}"
+            ;;
+        safe|*)
+            echo "export KUBECONFIG=${SAFE_KUBECONFIG}"
+            ;;
+    esac
+
 }
 
 function kctx () {
