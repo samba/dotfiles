@@ -177,6 +177,13 @@ elif command -v lesspipe >/dev/null ; then
     eval $($(command -v lesspipe))
 fi
 
+# === completion shortcuts
+
+if command -v op >/dev/null ; then
+    eval "$(op completion zsh)"
+    compdef _op op
+fi
+
 # =======================
 # Local imports
 
