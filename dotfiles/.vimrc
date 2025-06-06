@@ -209,7 +209,9 @@ if has('smartindent') " sensible defaults. note that many filetypes tune this be
     set autoindent smartindent
 endif
 
-
+" disable mode status messages, so that other kit (like vim-go) can post
+" more useful messages
+set noshowmode
 
 " =}}}
 
@@ -298,10 +300,10 @@ endif
 if has('title') && ((gnu_screen || xterm || gnome_terminal || apple_terminal))
     set title  titlelen=30
     autocmd BufEnter * let &titlestring = ' ' . substitute(expand('%:~:.'), '\([^/]\)\([^/]*\)/', {m -> m[1] .. '/'}, 'g')
-    
+
     " Clear the terminal title on exit
     auto VimLeave * :set t_ts=k\
-    
+
     " NB: these cause problems for MacOS terminal, making the first line of
     " drawn output get "stuck" or offset. Though it works fine in tmux.
     " set t_ts=k
@@ -320,15 +322,16 @@ set fillchars+=vert:│,foldsep:∫ " the vertical window barrier's character co
 
 
 set ruler
-set rulerformat=%30([%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
+set rulerformat=%30(%#ModeMsg#%{mode()}%0*\ [%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
+
 
 " statusline overrides rulerformat
-set statusline=[%n]\ %3*\ %f\ %#Conditional#%(%M%R%H%)\ %0*\ %=\ %q%w%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+set statusline=[%n]\ %3*\ %f\ %#Conditional#%(%M%R%H%)\ %#ModeMsg#\ %{mode()}\ %0*\ %=\ %q%w%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+
+
 
 " statusline is only displayed if there are at least 2 windows.
 set laststatus=1
-
-
 
 
 " end VIM window structure }}}
@@ -582,7 +585,6 @@ autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
 
-
 " Detect some file types by name
 augroup filetypedetect
   au BufNewFile,BufRead .tmux.conf*,tmux.conf* setf tmux
@@ -605,55 +607,30 @@ au FileType dockerfile setlocal noet
 au FileType nginx setlocal noet
 au FileType go setlocal noet
 
+" Go bindings have been moved to ftplugin/go.vim
 
-" Shortcuts and configuration for Go code files (golang)
-au FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4
-au FileType go nmap <buffer> <Leader>gr <Plug>(go-run)
-au FileType go nmap <buffer> <Leader>gb <Plug>(go-build)
-au FileType go nmap <buffer> <Leader>gta <Plug>(go-test)
-au FileType go nmap <buffer> <Leader>gtf <Plug>(go-test-func)
-au FileType go nmap <buffer> <Leader>gtc <Plug>(go-test-compile)
-au FileType go nmap <buffer> <Leader>gcv <Plug>(go-coverage)
-au FileType go nmap <buffer> <Leader>gcc <Plug>(go-cloverage-toggle)
-au FileType go nmap <buffer> <Leader>gl <Plug>(go-lint)
-au FileType go nmap <buffer> <Leader>gv <Plug>(go-vet)
-au FileType go nmap <buffer> <Leader>gdp <Plug>(go-deps)
-au FileType go nmap <buffer> <Leader>gdo <Plug>(go-doc)
-au FileType go nmap <buffer> <Leader>gds <Plug>(go-doc-split)
-
-" Go symbol navigation
-au FileType go nmap <buffer> <Leader>gs <Plug>(go-def)
-au FileType go nmap <buffer> <Leader>gds <Plug>(go-def-split)
-au FileType go nmap <buffer> <Leader>gdt <Plug>(go-def-tab)
-au FileType go nmap <buffer> <Leader>gds <Plug>(go-def-stack)
-au FileType go nmap <buffer> <Leader>gtx <Plug>(go-def-stack-clear)
-
-
-au FileType go nmap <buffer> <Leader>gti <Plug>(go-implements)
-au FileType go nmap <buffer> <Leader>grn <Plug>(go-rename)
-au FileType go nmap <buffer> <Leader>gca <Plug>(go-callees)
-au FileType go nmap <buffer> <Leader>gcr <Plug>(go-callers)
-
-au FileType go nmap <buffer> <leader>gin <Plug>(go-info)
-au FileType go nmap <buffer> <Leader>gdc <Plug>(go-describe)
-au FileType go nmap <buffer> <Leader>gcs <Plug>(go-callstack)
-au FileType go nmap <buffer> <Leader>gfv <Plug>(go-freevars)
-au FileType go nmap <buffer> <Leader>gcp <Plug>(go-channelpeers)
-au FileType go nmap <buffer> <Leader>grf <Plug>(go-referrers)
-au FileType go nmap <buffer> <Leader>gpt <Plug>(go-pointsto)
-au FileType go nmap <buffer> <Leader>gml <Plug>(go-metalinter)
-au FileType go nmap <buffer> <Leader>gas <Plug>(go-alternate-split)
-au FileType go nmap <buffer> <Leader>gav <Plug>(go-alternate-vertical)
-
-" Calls :GoImport for the current package
-au FileType go nmap <buffer> <Leader>gi <Plug>(go-import)
-" Calls goimports (CLI) for the current package
-au FileType go nmap <buffer> <Leader>gim <Plug>(go-imports)
-
-" Generates an `if err != nil` clause
-au FileType go nmap <buffer> <Leader>gie <Plug>(go-iferr)
-
-
+" Options for Go... (golang)
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+let g:go_def_mode = 'gopls'
+let g:go_info_mode = 'gopls'
+let g:go_fillstruct_mode = 'gopls'
+let g:go_auto_type_info = 1
+let g:go_auto_sameids = 1
+let g:go_doc_keywordprg_enabled = 1
+let g:go_def_mapping_enabled = 1
+let g:go_code_completion_enabled = 1
+let g:go_code_completion_icase = 1
+let g:go_textobj_enabled = 1
+let g:go_fmt_autosave = 1
+let g:go_fmt_command = 'gopls'
+let g:go_doc_balloon = 1
 
 " Let the enter key take me to navigate help files
 autocmd FileType help nmap <buffer> <CR> <C-]>
@@ -730,7 +707,7 @@ let g:terraform_fmt_on_safe = 1
 let g:terraform_align = 1
 
 " BASH and similar shell languages {{{
-"" :help bash
+" :help bash
 " let g:is_sh = 1
 " let g:is_bash = 1
 " let g:is_posix = 1
@@ -855,7 +832,7 @@ autocmd BufRead *
 
 " }}}
 
-" Define an "Ag" search command for grepping with eag`
+" Define an "Ag" search command for grepping with `ag`
 command! -nargs=+ -complete=file_in_path -bar Ag silent! grep! <args>|cwindow|redraw!
 
 " Improved grep capabilities {{{
@@ -909,19 +886,6 @@ if executable('ag')
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
   let g:ctrlp_use_caching = 0
 endif
-
-
-" Options for Go... (golang)
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_generate_tags = 1
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
 
 " }}} end Development environment
 

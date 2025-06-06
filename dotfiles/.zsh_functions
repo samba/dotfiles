@@ -134,7 +134,7 @@ function cview () {
 
 # Find all keymappings in my vim config, and open them in a pager w/ color output
 function vim_shortcuts () {
-    cgrep -B 3 -E "[ivn](nore)?map\s+([^ ]+)" ~/.vimrc
+    cgrep -B 3 -E "[ivn](nore)?map\s+([^ ]+)" ~/.vimrc ~/.vim/ftplugin/*.vim
 }
 
 
