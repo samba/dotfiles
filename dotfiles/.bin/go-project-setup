@@ -14,7 +14,11 @@ test -d "$1" || fail 1 "Please provide a directory to prepare as a Go project."
 
 cd "$1"
 
-mkdir -p api pkg cmd vendor web configs scripts build deployments test/data docs tools
+# NB: stop creating the vendor directory by default
+# If present, the vendor directory requires go.mod to be synchronized with vendor/modules.txt
+# When this is not synchronized (and the directory exists) gopls will fail, and then IDEs don't like to do their job.
+
+mkdir -p api pkg cmd web configs scripts build deployments test/data docs tools
 
 touch README.md
 
@@ -50,7 +54,7 @@ clean:
 		build/o/*
 
 tidy:
-	go mod verify && go mod tidy
+		go mod verify && go mod tidy
 
 test:
 	go test -v ./...
