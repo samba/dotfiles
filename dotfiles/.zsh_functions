@@ -35,76 +35,127 @@ function tma () {
 }
 
 
+# Search, edit, preview, and quickly jot notes, either by title, keyword or date
+# Typically I alias this as `note`
 function _znote () {
 
     local notesdir="${NOTES:-${HOME}/.notes}"
-    local vimopts="--ttyfail -p"
-
+    local vimopts="--ttyfail -p -Z"
+    local listfmt="${fg[cyan]}%TF${reset_color}\t%f\n"
     local bin_search="grep"
+    local pager="${PAGER:-less}"
 
+    command -v bat >/dev/null && pager="bat"
     command -v ag > /dev/null && bin_search="ag"
+
+    type colors >/dev/null && colors
 
     mkdir -p "${notesdir}"
 
-    local help=() search=() edit=() title=()
+    local mode=() search=() title=() fname=
 
     zparseopts -D -E -K -- \
         {t,-title}:=title \
-        {s,-search}=search \
-        {e,-edit}=edit \
-        {h,-help}=help \
+        {s,-search}:=search \
+        {d,-daily}=title \
+        {l,-list}=mode \
+        {v,-view}=mode \
+        {e,-edit}=mode \
+        {h,-help}=mode \
         || return 1
 
-
-    # Remove meaningless defaults...
+    # keep only their arguments
     title=("${(@)title:#-t}")
+    search=("${(@)search:#-s}")
 
-    echo -e "title: ${title}\nsearch: $#search ${search}\nedit: $#edit ${edit}\nhelp: $#help ${help}\n@: ${@}\n" >&2
-
-    if (( $#help )) ; then
-        echo "usage: ${0} [-e] [-s] [-t title] [-- <more search args>]"
-        echo "\t -e        \t Edit these files, instead of just listing them."
-        echo "\t -s        \t Search (using grep) all notes for a given pattern. List these files."
-        echo "\t -t <title>\t Look for a specific note of a given title. If found list this file."
-        echo "Options -s with terminal arguments (-- [args]) will pass them to grep directly."
-        return 0
+    # search provides content match by default...
+    if (( $#search > 0 && $#mode < 1 )) ; then
+        mode=("--search")
+    elif (( $#mode < 1 )) ; then
+        mode=("--list")
     fi
+
+    case "${title[-1]}" in
+        --daily|-d)
+            title=("$(date "+%Y-%m-%d") Daily Notes")
+            ;;
+    esac
+
 
     if (( $#title )) ; then
         fname="$(echo "${title[@]}" | tr -C -s '[:alnum:]' '-' | tr -s '[:upper:]' '[:lower:]' | sed 's@-$@@')"
         fname="${notesdir}/${fname%%.md}.md"
-
-        if (( $#edit )) ; then
-            test -f ${fname} || echo -e "---\ntitle: ${title[@]}\ndate: $(date)\n---" >> ${fname}
-
-            case ${EDITOR} in
-                *vim) ${EDITOR} ${vimopts} ${fname} ;;
-                *) ${EDITOR} ${fname} ;;
-            esac
-        else
-            ls -alh ${fname}
-            return
-        fi
     fi
 
-    if (( $#search )) ; then
+    case "${mode[-1]}" in
+        --search)
+            PAGER=${pager} ${bin_search} -r "${search}" "${(@)@:#--}"  ${notesdir}
+            ;;
+        --list|-l|NONE)
+            if (( $#fname )) ; then
+                find ${fname} -printf "${listfmt}"
+            elif (( $#search )) ; then
+                ${bin_search} -rl "${search}" "${(@)@:#--}"  ${notesdir}
+            else
+                find ${notesdir}/ -type f -name '*.md' -printf "${listfmt}"
+            fi
+            ;;
+        --view|-v)
+            if (( $#fname )) ; then
+                find ${fname} -print0 | xargs -r --null ${pager}
+            elif (( $#search )) ; then
+                ${bin_search} -rl "${search}" "${(@)@:#--}"  ${notesdir} | xargs -r ${pager}
+            else
+                find ${notesdir}/ -type f -name '*.md' -print0 | xargs -r --null ${pager}
+            fi
+            ;;
+        --edit|-e)
+            if (( $#fname )) ; then
+                # Create the file if not exists
+                test -f ${fname} || echo -e "---\ntitle: ${title[@]}\ndate: $(date "+%Y-%m-%d %H:%M:%S")\n---\n\n" > ${fname}
 
-        if (( $#edit )) ; then
-            case ${EDITOR} in
-                *vim)
-                    zargs -- $(${bin_search} -lr "${(@)@:#--}" ${notesdir}) -- ${EDITOR} ${vimopts}
-                    ;;
-                *)
-                    zargs -- $(${bin_search} -lr "${(@)@:#--}" ${notesdir}) -- ${EDITOR}
-                    ;;
-            esac
-        else
+                case ${EDITOR} in
+                    *vim) ${EDITOR} -p  ${vimopts} ${fname} ; return ;;
+                    *) ${EDITOR} ${fname} ; return ;;
+                esac
 
-            ${bin_search} -r "${(@)@:#--}"  ${notesdir}
-            return
-        fi
+            elif (( $#search )) ; then
+                case ${EDITOR} in
+                    *vim)
+                        zargs -- $(${bin_search} -lr "${search}" "${(@)@:#--}" ${notesdir}) -- ${EDITOR} -p ${vimopts}
+                        return
+                        ;;
+                    *)
+                        zargs -- $(${bin_search} -lr "${search}" "${(@)@:#--}" ${notesdir}) -- ${EDITOR}
+                        return
+                        ;;
+                esac
+            else
+                case ${EDITOR} in
+                    # NB: I cannot infer that other editors will do the right thing with a direcotry...
+                    *vim)
+                        ${EDITOR} ${vimopts} ${notesdir}
+                        ;;
+                esac
+            fi
 
-    fi
+
+            ;;
+        --help|-h)
+
+            echo "usage: ${0} [-edlv] [-s pat] [-t title] [-- <more search args>]"
+            echo "\t -l        \t Only list matching notes. (default)"
+            echo "\t -e        \t Edit these files, instead of just listing them."
+            echo "\t -v        \t Preview matching notes in pager (${pager})."
+            echo "\t -d        \t Quick access to daily notes. (aliases the current date as title)"
+            echo "\t -t <title>\t Look for a specific note of a given title. If found list this file."
+            echo "\t -s <pat>  \t Search (using ${bin_search}) all notes for a given pattern."
+
+            echo "Options -s with terminal arguments (-- [args]) will pass them to ${bin_search} directly."
+            return 0
+
+            ;;
+    esac
 
 
 }

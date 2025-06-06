@@ -45,6 +45,10 @@ alias pdb='python -m pdb'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
 
+# Notes manager
+alias note=_znote
+
+
 if command -v mutt >/dev/null; then
     alias lmail='mutt -f ${MAIL:-/var/mail/${USER}}'
 fi
