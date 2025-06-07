@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
+
+set -euf -o pipefail
+
 NOTESDIR=${HOME}/Notes
+VIMARGS="--ttyfail -Z"
 
 mkdir -p "${NOTESDIR}"
 
@@ -22,7 +26,7 @@ EOF
 }
 
 search () {
-    $(_grep) $@ -R ${NOTESDIR}
+    find "${NOTESDIR}" -type f -iname '*.md' | xargs -r $(_grep) $@
 }
 
 
@@ -41,7 +45,7 @@ create () {
     fname="$(title_to_filename "$@")"
     test -f "$fname" || template "$@" > "$fname"
     if test -t 0; then
-        vim $fname
+        vim ${VIMARGS} $fname
     else
         cat >> "$fname"  # copy stdin to the file
     fi
@@ -49,7 +53,9 @@ create () {
 
 
 
-
+edit () {
+    vim ${VIMARGS} -p $(find ${NOTESDIR} -type f -iname "*$(echo "$@" | slug)*")
+}
 
 
 print_help () {
@@ -75,11 +81,15 @@ mode=${1:-generic}
 test $# -eq 0 || shift 1
 
 case $mode in
-    generic)             vim --ttyfail -x "${NOTESDIR}" ;;
-    list)                ls -l "${NOTESDIR}" ;;
+    init)                cd "${NOTESDIR}" ; git init -q  ;;
+    commit)              cd "${NOTESDIR}" ; git commit ;;
+    dir)                 vim ${VIMARGS} "${NOTESDIR}" ;;
+    generic)             vim ${VIMARGS} -x "${NOTESDIR}/notes.enc.vim" ;;
+    list)                find "${NOTESDIR}" -type f -name '*.md' -printf '%TF\t%f\n';;
     search)              search "$@" ;;
+    gather)              vim ${VIMARGS} -p $(search -l "$@") ;;
     today)               create "$(date "+%Y-%m-%d") Daily notes";;
-    edit|create|open)    edit "$@";;
+    edit|create)         create "$@";;
     *)                   print_help;;
 esac
 
