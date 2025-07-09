@@ -64,10 +64,9 @@ execute pathogen#helptags()
 
 execute modelines#bind()
 execute comments#bind()
-
-
-" moved diff-mode and git merge improvements to .vim/autoload/diff.vim
 execute diff#bind()
+execute tabcomplete#bind()
+
 
 filetype plugin indent on " restore filetype sensibility
 
@@ -131,7 +130,7 @@ else
     set notermguicolors
 endif
 
-" Pick the first available colorscheme from my list of preferences
+
 for csc in ["retrobox", "habamax", "industry"]
     try
         exe 'colorscheme ' . csc
@@ -191,9 +190,12 @@ set splitright   " Vertical windows split right of the current window
 
 set backspace=eol,indent,start
 
+if has('syntax')
 set nocursorcolumn
 " set nocursorline
 set cursorline
+set cursorlineopt=number,screenline
+endif
 
 set modeline     " Enable per-file configuration lines
 
@@ -299,10 +301,11 @@ endif
 " GNU screen & terminal title handling {{{
 if has('title') && ((gnu_screen || xterm || gnome_terminal || apple_terminal))
     set title  titlelen=30
-    autocmd BufEnter * let &titlestring = ' ' . substitute(expand('%:~:.'), '\([^/]\)\([^/]*\)/', {m -> m[1] .. '/'}, 'g')
+    " autocmd BufEnter * let &titlestring = ' ' . substitute(expand('%:~:.'), '\([^/]\)\([^/]*\)/', {m -> m[1] .. '/'}, 'g')
+    autocmd BufEnter * let &titlestring = ' ' . pathshorten(expand('%:~:.'))
 
     " Clear the terminal title on exit
-    auto VimLeave * :set t_ts=k\
+    autocmd VimLeave * :set t_ts=k\
 
     " NB: these cause problems for MacOS terminal, making the first line of
     " drawn output get "stuck" or offset. Though it works fine in tmux.
@@ -322,11 +325,11 @@ set fillchars+=vert:│,foldsep:∫ " the vertical window barrier's character co
 
 
 set ruler
-set rulerformat=%30(%#ModeMsg#%{mode()}%0*\ [%n]\ %y\ %B\ %=\ %l,%c%V\ %P%)
+set rulerformat=%60([%n]\ %#Directory#%{pathshorten((expand('%:~')))}%0*\ %#ModeMsg#%{mode()}%0*\ %#LineNr#%y\ %B%0*\ %=\ %#Folded#%l,%c%V\ %P%0*%)
 
 
 " statusline overrides rulerformat
-set statusline=[%n]\ %3*\ %f\ %#Conditional#%(%M%R%H%)\ %#ModeMsg#\ %{mode()}\ %0*\ %=\ %q%w%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
+set statusline=[%n]\ %3*\ %#Directory#%f\ %#Conditional#%(%M%R%H%)\ %#ModeMsg#\ %{mode()}\ %0*\ %=\ %q%w%y\ %-14.(%l,%c%V%)\ %P\ (%{winnr()})
 
 
 
@@ -387,6 +390,39 @@ noremap <Leader>tw :browse aboveleft 35vsplit .<CR>
 
 
 " =}}}
+
+" Menus & completion for file discovery {{{
+
+
+if has('wildmenu')
+    set wildmenu
+
+    try
+        set wildmode=list:longest,noselect:lastused,noselect:full
+        catch
+            set wildmode=list:longest,list:lastused
+    endtry
+
+    set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
+    set wildignore+=.sw?,.bak       " vim swap files etc
+    set wildignore+=.git,.hg,.svn   " version control
+    set wildignore+=.DS_Store       " macOS, how tiresome
+    set wildignore+=migrations      " Django migrations code (generated)
+    set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg  " images
+    set wildignore+=go/pkg          " Go packages
+    set wildignore+=go/bin          " Go binaries
+    set wildignore+=go/bin-vagrant  " Go vagrant files
+    set wildignore+=*.pyc           " Python byte code
+    set wildignore+=*.orig          " Git's merge resolution cache
+
+    set wildoptions=fuzzy,pum
+endif
+
+
+
+" }}}
+
+
 
 " Text display, wrapping and annotation {{{
 
@@ -458,12 +494,10 @@ endif
 
 " =}}}
 
-
 " Completion menu and related {{{
 
 " Ignored filename suffixes
 set suffixes+=.in,.a,.bak,.swp,.pyc
-
 
 
 if has('insert_expand')
@@ -493,66 +527,13 @@ if has('insert_expand')
 
 endif
 
-" Easy tab completion
-" via https://github.com/garybernhardt/dotfiles/blob/main/.vimrc
-function! InsertTabWrapper(key)
-    let col = col('.') - 1
-    if !col
-        return "\<tab>"
-    endif
-
-    let char = getline('.')[col - 1]
-    if char =~ '\k'
-        " There's an identifier before the cursor, so complete the identifier.
-        return a:key
-    else
-        return "\<tab>"
-    endif
-endfunction
-
-" Regular tab-completion tries exisitng words in the codebase
-inoremap <expr> <tab> InsertTabWrapper("\<c-p>")
-
-" Ctrl-O completion uses omni-complete
-inoremap <expr> <c-o> InsertTabWrapper("\<c-x>\<c-o>")
-
-" Shift-Tab completion picks the nearest matching string
-inoremap <expr> <s-tab> <c-n>
-
-
-
-if has('wildmenu')
-    set wildmenu
-
-    try
-        set wildmode=list:longest,noselect:lastused,noselect:full
-        catch
-            set wildmode=list:longest,list:lastused
-    endtry
-
-    set wildignore+=*.o,*.obj,*.~,.lo,.so  " compiled object files etc
-    set wildignore+=.sw?,.bak       " vim swap files etc
-    set wildignore+=.git,.hg,.svn   " version control
-    set wildignore+=.DS_Store       " macOS, how tiresome
-    set wildignore+=migrations      " Django migrations code (generated)
-    set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg  " images
-    set wildignore+=go/pkg          " Go packages
-    set wildignore+=go/bin          " Go binaries
-    set wildignore+=go/bin-vagrant  " Go vagrant files
-    set wildignore+=*.pyc           " Python byte code
-    set wildignore+=*.orig          " Git's merge resolution cache
-
-    set wildoptions=fuzzy,pum
-endif
-
-
-
 
 " }}} end Completion menu
 
+
 " Language-specific (and filetype-specific) settings: {{{
 
-if has('autocmd')  " Most of the per-file functionality requires autocmd.
+if has('autocmd')  " Most of the per-file functionality requires autocmd. {{{
 
 " Highlight unwanted spaces
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -566,20 +547,10 @@ autocmd BufWinLeave * call clearmatches()
 " disable whitespace highlights in quickfix list
 autocmd BufReadPost quickfix match ExtraWhitespace "^$"
 
-" Sensible per-language defaults.
-if has('folding')
-    autocmd FileType python setlocal noet foldenable foldmethod=indent
-    autocmd FileType javascript setlocal foldenable foldmethod=indent
-    autocmd FileType html setlocal foldenable foldmethod=indent
-    autocmd FileType help set foldcolumn=0 nonumber foldenable foldmethod=marker "no foldcolumn for help files
-endif
 
 " Autocompletion functions, if available...
 autocmd FileType sql set omnifunc=sqlcomplete#Complete
 autocmd FileType ruby set omnifunc=rubycomplete#Complete
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
@@ -593,31 +564,32 @@ augroup filetypedetect
   au BufRead   *access.log*  setf httplog
 augroup END
 
-" Markdown, YAML and some others need real tabs.
-au FileType markdown setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4 formatoptions+=t
-au FileType yaml setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-au FileType cpp setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-au FileTYpe json setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-
 " Disable tab expansion in some commonly stringent formats
 au FileType gitconfig setlocal noet
 au FileType fstab setlocal noet
 au FileType systemd setlocal noet
 au FileType dockerfile setlocal noet
 au FileType nginx setlocal noet
-au FileType go setlocal noet
+
+
 
 " Go bindings have been moved to ftplugin/go.vim
 
 " Options for Go... (golang)
+let g:go_highlight_debug = 1
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
+let g:go_highlight_function_parameters = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_generate_tags = 1
+let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
 let g:go_def_mode = 'gopls'
 let g:go_info_mode = 'gopls'
 let g:go_fillstruct_mode = 'gopls'
@@ -631,9 +603,8 @@ let g:go_textobj_enabled = 1
 let g:go_fmt_autosave = 1
 let g:go_fmt_command = 'gopls'
 let g:go_doc_balloon = 1
+" let g:go_debug = ["lsp"]
 
-" Let the enter key take me to navigate help files
-autocmd FileType help nmap <buffer> <CR> <C-]>
 
 
 " Configuration files should permit hex colors
@@ -646,48 +617,15 @@ autocmd FileType conf
 " Configure matchit so that it goes from opening tag to closing tag.
 au FileType html,eruby,rb,css,js,xml runtime! macros/matchit.vim
 
-" Activate dictionary completion for text files
-if has('spell')
-au FileType markdown setlocal complete+=k spell
-au FileType gitcommit setlocal complete+=k spell
-au FileType text setlocal complete+=k spell
-endif
-
-
-au FileType text setlocal textwidth=78 formatoptions+=t
-
-" Python {{{
-" We want consistent spacing in Python, and not tabs.
-autocmd FileType python setlocal ai tabstop=4 softtabstop=4 shiftwidth=4 textwidth=80 smarttab expandtab
-
-" And an easy way to check syntax...
-autocmd FileType python set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
-autocmd FileType python set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
-
-
-" }}} end Python
-
-
-" Javascript {{{
-"
-" autocmd FileType javascript set makeprg=make\ test
-if executable('closure')
-    autocmd FileType javascript set makeprg=closure\ --test\ -p\ '%'
-endif
-
-" }}} end Javascript
-
-" Makefile {{{
-" Makefiles should permit tabs.
-autocmd FileType make setlocal noexpandtab
-" }}}
 
 
 
-endif  " end if has('autocmd') above
+
+
+endif  " end if has('autocmd') above }}}
 
 " Sensible markdown handling
-let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'shell=sh']
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'shell=sh', 'go', 'c', 'lua', 'perl', 'awk']
 
 " For the vim-markdown plugin
 let g:vim_markdown_math = 1
@@ -776,7 +714,7 @@ endif
 
 
 
-" Development Environment {{{
+" Development Workflow {{{
 
 " Opens a terminal at the bottom of the screen
 map <Leader>T :botright terminal ++close ++rows=10 bash<CR>
@@ -887,7 +825,7 @@ if executable('ag')
   let g:ctrlp_use_caching = 0
 endif
 
-" }}} end Development environment
+" }}} end Development Workflow
 
 
 

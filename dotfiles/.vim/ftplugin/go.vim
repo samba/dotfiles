@@ -1,68 +1,98 @@
 " Shortcuts and configuration for Go code files (golang)
 setlocal tabstop=4 shiftwidth=4 softtabstop=4
+setlocal noet
+
+
+setlocal omnifunc=go#complete#Complete
+
+
+" Coverage {{{
+nnoremap <buffer> <Leader>co <Plug>(go-coverage-toggle)
+nnoremap <buffer> <Leader>cob <Plug>(go-coverage-browser)
+nnoremap <buffer> <Leader>cov <Plug>(go-coverage)
+" }}}
 
 
 
-nnoremap <leader>b :<C-u>call Build_go_files()<cr>
-nnoremap <Leader>co <Plug>(go-coverage-toggle)
-nnoremap <Leader>cob <Plug>(go-coverage-browser)
-nnoremap <Leader>i <Plug>(go-info)
-nnoremap <leader>r :!clear<cr><Plug>(go-run)
-nnoremap <leader>t <Plug>(go-test)
+" Testing {{{
+nnoremap <buffer> <leader>t <Plug>(go-test)
 
 " Compiles but does not test!
-nnoremap <leader>tc <Plug>(go-test-compile)
+nnoremap <buffer> <leader>tc <Plug>(go-test-compile)
 
 " Only test the function under the cursor.
-nnoremap <leader>tf <Plug>(go-test-func)
+nnoremap <buffer> <leader>tf <Plug>(go-test-func)
+
+" Opens test & implementation side-by-side (or below)
+nnoremap <buffer> <Leader>as <Plug>(go-alternate-split)
+nnoremap <buffer> <Leader>av <Plug>(go-alternate-vertical)
 
 
-" nmap <buffer> <Leader>gr <Plug>(go-run)
-nmap <buffer> <Leader>gb <Plug>(go-build)
-" nmap <buffer> <Leader>gta <Plug>(go-test)
-" nmap <buffer> <Leader>gtf <Plug>(go-test-func)
-" nmap <buffer> <Leader>gtc <Plug>(go-test-compile)
-nmap <buffer> <Leader>gcv <Plug>(go-coverage)
-" nmap <buffer> <Leader>gcc <Plug>(go-cloverage-toggle)
-nmap <buffer> <Leader>gl <Plug>(go-lint)
-nmap <buffer> <Leader>gv <Plug>(go-vet)
-nmap <buffer> <Leader>gdp <Plug>(go-deps)
-nmap <buffer> <Leader>gdo <Plug>(go-doc)
-nmap <buffer> <Leader>gds <Plug>(go-doc-split)
+
+" }}}
+
+
+" Symbol discovery, navigation, docs, etc {{{
+nnoremap <buffer> <Leader>i <Plug>(go-info)
+nnoremap <buffer> <Leader>do <Plug>(go-doc)
+nnoremap <buffer> <Leader>ds <Plug>(go-doc-split)
+nnoremap <buffer> <Leader>dv <Plug>(go-doc-vertical)
+nnoremap <buffer> <Leader>dt <Plug>(go-doc-tab)
+
+" Show dependencies of current package
+nnoremap <buffer> <Leader>dp <Plug>(go-deps)
 
 " Go symbol navigation
-nmap <buffer> <Leader>gs <Plug>(go-def)
-nmap <buffer> <Leader>gds <Plug>(go-def-split)
-nmap <buffer> <Leader>gdt <Plug>(go-def-tab)
-nmap <buffer> <Leader>gdk <Plug>(go-def-stack)
-nmap <buffer> <Leader>gtx <Plug>(go-def-stack-clear)
+nnoremap <buffer> <Leader>f <Plug>(go-def)
+nnoremap <buffer> <Leader>fy <Plug>(go-def-type-split)
+nnoremap <buffer> <Leader>fs <Plug>(go-def-split)
+nnoremap <buffer> <Leader>fk <Plug>(go-def-stack)
+nnoremap <buffer> <Leader>fc <Plug>(go-def-stack-clear)
+nnoremap <buffer> <Leader>fp <Plug>(go-def-pop)
 
 
-nmap <buffer> <Leader>gti <Plug>(go-implements)
-nmap <buffer> <Leader>grn <Plug>(go-rename)
-nmap <buffer> <Leader>gca <Plug>(go-callees)
-nmap <buffer> <Leader>gcr <Plug>(go-callers)
+nnoremap <buffer> <Leader>im <Plug>(go-implements)
+nnoremap <buffer> <Leader>cl <Plug>(go-callees)
+nnoremap <buffer> <Leader>cr <Plug>(go-callers)
 
-" nmap <buffer> <leader>gin <Plug>(go-info)
-nmap <buffer> <Leader>gdc <Plug>(go-describe)
-nmap <buffer> <Leader>gcs <Plug>(go-callstack)
-nmap <buffer> <Leader>gfv <Plug>(go-freevars)
-nmap <buffer> <Leader>gcp <Plug>(go-channelpeers)
-nmap <buffer> <Leader>grf <Plug>(go-referrers)
-nmap <buffer> <Leader>gpt <Plug>(go-pointsto)
-nmap <buffer> <Leader>gml <Plug>(go-metalinter)
-nmap <buffer> <Leader>gas <Plug>(go-alternate-split)
-nmap <buffer> <Leader>gav <Plug>(go-alternate-vertical)
+" nnoremap <buffer> <leader>gin <Plug>(go-info)
+nnoremap <buffer> <Leader>dc <Plug>(go-describe)
+nnoremap <buffer> <Leader>cs <Plug>(go-callstack)
+nnoremap <buffer> <Leader>fv <Plug>(go-freevars)
+nnoremap <buffer> <Leader>cp <Plug>(go-channelpeers)
+nnoremap <buffer> <Leader>rf <Plug>(go-referrers)
+nnoremap <buffer> <Leader>pt <Plug>(go-pointsto)
+
+
+
+" }}}
+
+
+" nnoremap <buffer> <Leader>gr <Plug>(go-run)
+nnoremap <buffer> <leader>r :!clear<cr><Plug>(go-run)
+nnoremap <buffer> <Leader>gb <Plug>(go-build)
+
+" Hygiene {{{
+nnoremap <buffer> <Leader>gv <Plug>(go-vet)
+nnoremap <buffer> <Leader>gl <Plug>(go-lint)
+nnoremap <buffer> <Leader>gml <Plug>(go-metalinter)
 
 " Calls :GoImport for the current package
-nmap <buffer> <Leader>gi <Plug>(go-import)
+nnoremap <buffer> <Leader>gi <Plug>(go-import)
 " Calls goimports (CLI) for the current package
-nmap <buffer> <Leader>gim <Plug>(go-imports)
+nnoremap <buffer> <Leader>gim <Plug>(go-imports)
+
+
+" }}}
+
+" Refactoring {{{
+nnoremap <buffer> <Leader>rn <Plug>(go-rename)
+" }}}
 
 " Generates an `if err != nil` clause
-nmap <buffer> <Leader>gie <Plug>(go-if-err)
+nnoremap <buffer> <Leader>ie <Plug>(go-if-err)
 
 
 
 
-
+" vim: set foldmethod=marker
