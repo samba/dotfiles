@@ -19,14 +19,17 @@ endfunction
 
 function! tabcomplete#bind()
 
-    " Use default context complete
-    let b:TabCompletionMode="\<c-p>"
+    let g:tabcomplete_contextComplete = "\<c-p>"
+    let g:tabcomplete_omnifuncComplete = "\<c-x>\<c-o>"
 
-    " Use omnicomplete for sensible languages
-    autocmd FileType go,python,javascript,rust let b:TabCompletionMode="\<c-x>\<c-o>"
+    " Use default context complete
+    " let b:TabCompletionMode="\<c-p>"
+
+      " Use omnicomplete for sensible languages
+    " autocmd FileType go,python,javascript,rust let b:TabCompletionMode="\<c-x>\<c-o>"
 
     " Regular tab-completion tries exisitng words in the codebase
-    autocmd BufReadPost * :imap <expr> <tab> InsertTabWrapper(b:TabCompletionMode)
+    autocmd BufReadPost * :imap <expr> <tab> InsertTabWrapper((&omnifunc == 'syntaxcomplete#Complete') ? g:tabcomplete_contextComplete : g:tabcomplete_omnifuncComplete)
 
     " Shift-Tab completion picks the nearest matching string
     imap <expr> <s-tab> InsertTabWrapper("\<c-n>")

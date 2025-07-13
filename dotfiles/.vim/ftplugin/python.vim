@@ -7,7 +7,7 @@ setlocal ai tabstop=4 softtabstop=4 shiftwidth=4 textwidth=80 smarttab expandtab
 setlocal makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
 setlocal efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
 
-setlocal omnifunc=pythoncomplete#Complete
+setlocal omnifunc=python3complete#Complete
 
 if has('folding')
     setlocal noet foldenable foldmethod=indent

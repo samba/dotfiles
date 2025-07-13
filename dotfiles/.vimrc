@@ -570,9 +570,10 @@ au FileType fstab setlocal noet
 au FileType systemd setlocal noet
 au FileType dockerfile setlocal noet
 au FileType nginx setlocal noet
+au FileType make setlocal noet
 
 
-
+" Go/golang {{{
 " Go bindings have been moved to ftplugin/go.vim
 
 " Options for Go... (golang)
@@ -604,7 +605,7 @@ let g:go_fmt_autosave = 1
 let g:go_fmt_command = 'gopls'
 let g:go_doc_balloon = 1
 " let g:go_debug = ["lsp"]
-
+" }}}
 
 
 " Configuration files should permit hex colors
@@ -647,16 +648,42 @@ let g:terraform_align = 1
 " BASH and similar shell languages {{{
 " :help bash
 " let g:is_sh = 1
-" let g:is_bash = 1
+" I mostly write my scripts for Bash...
+let g:is_bash = 1
 " let g:is_posix = 1
 " let g:is_kornshell = 1
 " let g:sh_fold_enabled = {0:none,1:function,2:heredoc,4:if/do/for} (or a sum of them)
-let g:sh_fold_enabled=8
+let g:sh_fold_enabled=7
 let g:sh_minlines=500
 let g:sh_maxlines=1000
 
+let g:zsh_fold_enable=1
 
+" I'm gonna throw Sed in here too
+let g:sed_highlight_tabs=1
 " end BASH etc }}}
+
+" Python options {{{
+let python_highlight_all=1
+let python_space_error_highlight=1
+" end Python options }}}
+
+" SQL options {{{
+" NB: you can change this on the fly using SQLSetType
+let g:sql_type_default = 'postgresql'
+
+
+" NB: <C-C> means Ctrl-Space
+" default from `:help sql-completion-static`
+"  <C-C>a       SQL syntax completion
+"  <C-C>k       SQL keyword completion
+"  <C-C>f       SQL function completion
+"  <C-C>o       SQL option completion
+"  <C-C>T       SQL type completion
+"  <C-C>s       SQL statement completion
+let g:ftplugin_sql_omni_key = "\<C-C>"
+" end SQL options }}}
+
 
 " NetRW File Browser configuration {{{==
 
