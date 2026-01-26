@@ -16,7 +16,7 @@ for bin in ${USE_BINARIES[@]}; do
         bat|batcat)
             while read ext; do
                 if [ "${1}" == "${ext}" ] || [[ "${1}" ==  *.@(${ext}) ]] || [[ "${1}" == ${ext} ]]; then
-                    ${bin} --paging never --color always --style numbers --theme=${BAT_THEME:-default} "${1}"
+                    ${bin} --paging never --color always --style numbers --theme="${BAT_THEME:-default}" "${1}"
                     exit 0
                 fi
             done < <(${bin} -L | cut -d: -f2 | tr ',' '\n')
