@@ -171,6 +171,7 @@ set nobackup      " don't create backup files.
 set nowritebackup
 set nocompatible  " more features please.
 set autowrite     " Automatically save before :next, :make etc.
+set autoread      " Automatically load content from disk after change (see below)
 
 set incsearch     " incremental search - actively find matches while typing
 set tagbsearch    " use binary search for tags (:ta) - performance improvement
@@ -304,6 +305,9 @@ if has('title') && ((gnu_screen || xterm || gnome_terminal || apple_terminal))
     " autocmd BufEnter * let &titlestring = ' ' . substitute(expand('%:~:.'), '\([^/]\)\([^/]*\)/', {m -> m[1] .. '/'}, 'g')
     autocmd BufEnter * let &titlestring = ' ' . pathshorten(expand('%:~:.'))
 
+    " Re-emit title after resuming from Ctrl+Z suspend
+    autocmd VimResume * let &titlestring = &titlestring
+
     " Clear the terminal title on exit
     autocmd VimLeave * :set t_ts=k\
 
@@ -388,6 +392,8 @@ noremap <Leader>tex :35Lexplore %:h<CR>
 noremap <Leader>tw :browse aboveleft 35vsplit .<CR>
 " endif
 
+" Trigger reload properly...
+au CursorHold * checktime | call feedkeys("lh")
 
 " =}}}
 
