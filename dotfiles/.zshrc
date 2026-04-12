@@ -61,8 +61,9 @@ function _zimload () {
 
 # Set shell title based on user's typed command, then fall back to directory name
 zstyle ':zim:termtitle' hooks 'preexec' 'precmd'
-zstyle ':zim:termtitle:preexec' format '${${(A)=1}[1]}'
-zstyle ':zim:termtitle:precmd'  format '%1~'
+zstyle ':zim:termtitle:preexec' format '${${(Az)1}[1]}'
+# zstyle ':zim:termtitle:precmd'  format '%1~'
+zstyle ':zim:termtitle:precmd'  format '%# %1~'
 
 
  _zimload
