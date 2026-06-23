@@ -112,6 +112,10 @@ bindkey -M vicmd  v edit-command-line
 bindkey "^Xf" insert-files
 
 
+# ============================-
+# Some specific runtime support..
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:${PATH}"
 
 
 # =============================
@@ -191,3 +195,4 @@ fi
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
 test -f ~/.zsh_functions && source ~/.zsh_functions
 test -f ~/.zsh_localrc && source ~/.zsh_localrc
+test -f ~/.zshrc.local && source ~/.zshrc.local
