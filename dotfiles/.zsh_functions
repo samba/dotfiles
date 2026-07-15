@@ -194,11 +194,12 @@ function wtf () {
     printf "%s${USER}${reset_color}@%s${HOST:-$(hostname)}${reset_color} %s$(pwd)${reset_color}\n" \
         "${fg[green]}" "${fg[yellow]}" "${fg[cyan]}"
     command -v kubectl >/dev/null && \
-        printf "${fg[green]}%s${reset_color}\n" "$(kubectl version)" && \
+        printf "${fg[green]}%s${reset_color}\n" "$(kubectl version | sed 's%^%kubectl: %')" && \
         printf "${fg[cyan]}kubeconfig: %s${reset_color}\n" "${KUBECONFIG}" && \
-        printf "${fg[yellow]}%s${reset_color}\n" "$(kubectl config current-context)"
+        printf "${fg[magenta]}kube context: %s${reset_color}\n" "$(kubectl config current-context)"
     command -v go >/dev/null && printf "${fg[yellow]}%s${reset_color}\n" "$(go version)"
     command -v python3 >/dev/null && printf "${fg[blue]}%s${reset_color}\n" "$(python3 --version)"
+    echo && \
     command -v git >/dev/null && git status --short --column --ahead-behind --untracked=no
 }
 
