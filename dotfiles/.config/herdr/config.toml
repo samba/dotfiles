@@ -1,5 +1,8 @@
 onboarding = false
 
+[ui.toast]
+delivery = "terminal"
+
 [theme]
 name = "gruvbox"
 auto_switch = false
@@ -10,6 +13,14 @@ shell_mode = "auto"
 
 [keys]
 prefix = "ctrl+h"
+goto = "prefix+g"
+
+[ui]
+tab_bar_right = [
+  { type = "datetime", format = "%H:%M" },
+  { type = "hostname" },
+  { type = "command", command = "cat /proc/loadavg  | awk '{ print $1, $2, $3 }'", interval_seconds = 5, timeout_seconds = 2 },
+]
 
 [remote]
 manage_ssh_config = false
