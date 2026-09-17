@@ -15,7 +15,20 @@ export HISTFILE=~/.zsh_history
 export HISTSIZE=50000
 export SAVEHIST=50000
 
-export ZSH_TMUX_AUTOSTART=true
+# export ZSH_TMUX_AUTOSTART=true
+export ZSH_TMUX_AUTOSTART=${ZSH_TMUX_AUTOSTART:-false}
+
+
+if command -v vim > /dev/null ; then
+    export EDITOR=${EDITOR:-vim}
+fi
+
+
+# Defaults appropriate for Herdr, the AI agent multiplexer.
+if [ "${HERDR_ENV:-0}" -eq 1 ] ; then
+    export ZSH_TMUX_AUTOSTART=false  # Don't start tmux inside herdr.
+fi
+
 
 # my typical usage enjoys symlinks...
 # setopt CHASE_LINKS

@@ -324,9 +324,11 @@ set lazyredraw " don't update the screen when macros/etc running in background (
 
 " VIM's own window structure {{{
 "
+set encoding=utf-8
 set fillchars+=vert:│,foldsep:∫ " the vertical window barrier's character content
 " NB: this line character is inserted via `<ctrl-K>vv`, found via `:h digraph-table`
-
+" NB: tmux handles utf-8 correctly in MacOS terminal; I'm going to assume that
+" most terminals I use in the future will be utf-8 capable.
 
 set ruler
 set rulerformat=%60([%n]\ %#Directory#%{pathshorten((expand('%:~')))}%0*\ %#ModeMsg#%{mode()}%0*\ %#LineNr#%y\ %B%0*\ %=\ %#Folded#%l,%c%V\ %P%0*%)

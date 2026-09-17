@@ -1,0 +1,15 @@
+onboarding = false
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[terminal]
+default_shell = "zsh"
+shell_mode = "auto"
+
+[keys]
+prefix = "ctrl+h"
+
+[remote]
+manage_ssh_config = false
