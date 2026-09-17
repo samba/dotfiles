@@ -5,7 +5,7 @@
 
 set -euf -o pipefail
 
-GOVERSION=1.22.4
+GOVERSION=1.27.0
 
 fail () {
     echo "$2" >&2
